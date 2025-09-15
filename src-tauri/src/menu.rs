@@ -1,5 +1,5 @@
 use tauri::{
-    menu::{Menu, MenuBuilder, MenuItemBuilder, Submenu, SubmenuBuilder},
+    menu::{Menu, MenuBuilder, MenuEvent, MenuItemBuilder, Submenu, SubmenuBuilder},
     App, Wry,
 };
 
@@ -41,7 +41,15 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     file_menu
 }
 
-// TODO handler for menu events
+pub fn handle_menu_events(event: &MenuEvent) {
+    match event.id().0.as_str() {
+        "open-file" => todo!(),
+        "save-file" => todo!(),
+        "save-as-file" => todo!(),
+        "settings" => todo!(),
+        _ => {}
+    }
+}
 
 pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
     let file_menu = build_file_menu(app);

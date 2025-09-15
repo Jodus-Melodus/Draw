@@ -1,3 +1,5 @@
+use crate::menu::handle_menu_events;
+
 mod menu;
 
 // #[tauri::command]
@@ -13,6 +15,7 @@ pub fn run() {
             app.set_menu(menu)?;
             Ok(())
         })
+        .on_menu_event(|_, event| handle_menu_events(&event))
         .plugin(tauri_plugin_opener::init())
         // .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
