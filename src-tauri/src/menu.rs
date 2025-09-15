@@ -1,7 +1,9 @@
 use tauri::{
     menu::{Menu, MenuBuilder, MenuEvent, MenuItemBuilder, Submenu, SubmenuBuilder},
-    App, Wry,
+    App, AppHandle, Manager, Wry,
 };
+
+use crate::audio_input::{start_audio_input, stop_audio_input};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let open_file = MenuItemBuilder::new("Open File")
@@ -28,12 +30,24 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
         .build(app)
         .unwrap();
 
+    let start_record = MenuItemBuilder::new("Start Record")
+        .id("start-record")
+        .build(app)
+        .unwrap();
+
+    let stop_record = MenuItemBuilder::new("Stop Record")
+        .id("stop-record")
+        .build(app)
+        .unwrap();
+
     let file_menu = SubmenuBuilder::new(app, "File")
         .item(&open_file)
         .item(&save_file)
         .item(&save_as_file)
         .separator()
         .item(&settings)
+        .item(&start_record)
+        .item(&stop_record)
         .quit()
         .build()
         .unwrap();
@@ -41,12 +55,16 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     file_menu
 }
 
-pub fn handle_menu_events(event: &MenuEvent) {
+pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
+    let state = app.state();
+
     match event.id().0.as_str() {
         "open-file" => todo!(),
         "save-file" => todo!(),
         "save-as-file" => todo!(),
         "settings" => todo!(),
+        "start-record" => start_audio_input(state),
+        "stop-record" => stop_audio_input(state),
         _ => {}
     }
 }
