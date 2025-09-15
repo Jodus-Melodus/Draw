@@ -14,7 +14,7 @@ pub fn start_audio_input(state: tauri::State<RecordingState>) {
     let running = state.running.clone();
 
     thread::spawn(move || {
-        let host = cpal::default_host();
+        let host = cpal::default_host(); // TODO save list of devices and let user choose
         let device = host
             .default_input_device()
             .expect("No input device available");
@@ -24,7 +24,7 @@ pub fn start_audio_input(state: tauri::State<RecordingState>) {
             .build_input_stream(
                 &config.into(),
                 move |data: &[f32], _: &cpal::InputCallbackInfo| {
-                    println!("Received {} samples", data.len());
+                    println!("Received {} samples", data.len()); // TODO write the data to a global Arc<ArrayQueue<f32>> for processing
                 },
                 move |err| eprintln!("Stream error: {}", err),
                 None,
@@ -45,3 +45,6 @@ pub fn start_audio_input(state: tauri::State<RecordingState>) {
 pub fn stop_audio_input(state: tauri::State<RecordingState>) {
     state.running.store(false, Ordering::SeqCst);
 }
+
+// TODO save audio to file
+// TODO read audio from file
