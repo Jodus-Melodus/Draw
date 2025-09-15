@@ -41,6 +41,8 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     file_menu
 }
 
+// TODO handler for menu events
+
 pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
     let file_menu = build_file_menu(app);
     MenuBuilder::new(app).items(&[&file_menu]).build().unwrap()

@@ -11,8 +11,10 @@
     "windows": [
       {
         "title": "Draw",
-        "width": 800,
-        "height": 600
+        "backgroundColor": "#000000",
+        "center": true,
+        "titleBarStyle": "Overlay",
+        "maximized": true
       }
     ],
     "security": {
