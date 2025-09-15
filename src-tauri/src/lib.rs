@@ -11,7 +11,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
-            let menu = menu::build_menu(app);
+            let menu = menu::build_menus(app);
             app.set_menu(menu)?;
             Ok(())
         })
