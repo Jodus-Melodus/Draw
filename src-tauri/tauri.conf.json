@@ -10,7 +10,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "draw",
+        "title": "Draw",
         "width": 800,
         "height": 600
       }
