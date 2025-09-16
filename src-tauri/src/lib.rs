@@ -1,19 +1,16 @@
-use std::sync::{atomic::AtomicBool, Arc};
-
-use crate::{menu::handle_menu_events, types::RecordingState};
+use crate::{menu::handle_menu_events, states::build_audio_context};
 
 mod audio_input;
 mod menu;
+mod states;
 mod types;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let recording = RecordingState {
-        running: Arc::new(AtomicBool::new(false)),
-    };
+    let audio_context = build_audio_context(cpal::HostId::Wasapi);
 
     tauri::Builder::default()
-        .manage(recording)
+        .manage(audio_context)
         .setup(|app| {
             let menu = menu::build_menus(app);
             app.set_menu(menu)?;

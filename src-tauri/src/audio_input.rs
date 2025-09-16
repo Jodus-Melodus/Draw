@@ -1,24 +1,35 @@
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use cpal::traits::{DeviceTrait, StreamTrait};
 use std::{sync::atomic::Ordering, thread};
 
-use crate::types::RecordingState;
+use crate::types::AudioContext;
 
 #[tauri::command]
-pub fn start_audio_input(state: tauri::State<RecordingState>) {
-    if state.running.load(Ordering::SeqCst) {
+pub fn start_audio_input(state: tauri::State<AudioContext>) {
+    let audio_state = state.audio_state.clone();
+    let input_device_registry = state.input_device_registry.clone();
+
+    if audio_state.recording.load(Ordering::SeqCst) {
         println!("Audio stream already running");
         return;
     }
 
-    state.running.store(true, Ordering::SeqCst);
-    let running = state.running.clone();
+    audio_state.recording.store(true, Ordering::SeqCst);
+    let recording = audio_state.recording.clone();
 
     thread::spawn(move || {
-        let host = cpal::default_host(); // TODO save list of devices and let user choose
-        let device = host
-            .default_input_device()
-            .expect("No input device available");
-        let config = device.default_input_config().unwrap();
+        let devices = input_device_registry.list();
+        if devices.is_empty() {
+            eprintln!("No input devices available");
+            return;
+        }
+
+        let device = input_device_registry
+            .get(&devices[0])
+            .expect("Failed to get input device");
+
+        let config = device
+            .default_input_config()
+            .expect("Failed to get input config");
 
         let stream = device
             .build_input_stream(
@@ -29,11 +40,11 @@ pub fn start_audio_input(state: tauri::State<RecordingState>) {
                 move |err| eprintln!("Stream error: {}", err),
                 None,
             )
-            .unwrap();
+            .expect("Failed to create input stream");
 
-        stream.play().unwrap();
+        stream.play().expect("Failed to play stream");
 
-        while running.load(Ordering::SeqCst) {
+        while recording.load(Ordering::SeqCst) {
             std::thread::sleep(std::time::Duration::from_millis(100));
         }
 
@@ -42,8 +53,8 @@ pub fn start_audio_input(state: tauri::State<RecordingState>) {
 }
 
 #[tauri::command]
-pub fn stop_audio_input(state: tauri::State<RecordingState>) {
-    state.running.store(false, Ordering::SeqCst);
+pub fn stop_audio_input(state: tauri::State<AudioContext>) {
+    state.audio_state.recording.store(false, Ordering::SeqCst);
 }
 
 // TODO save audio to file
