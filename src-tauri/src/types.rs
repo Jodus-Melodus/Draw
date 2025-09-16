@@ -1,6 +1,9 @@
 use std::{
     collections::HashMap,
-    sync::{atomic::AtomicBool, Arc},
+    sync::{
+        atomic::{AtomicBool, AtomicUsize, Ordering},
+        Arc,
+    },
 };
 
 use cpal::traits::{DeviceTrait, HostTrait};
@@ -9,8 +12,8 @@ use cpal::traits::{DeviceTrait, HostTrait};
 pub struct AudioContext {
     pub input_device_registry: Arc<InputDeviceRegistry>,
     pub output_device_registry: Arc<OutputDeviceRegistry>,
-    pub input_device_index: usize,
-    pub output_device_index: usize,
+    pub input_device_index: Arc<AtomicUsize>,
+    pub output_device_index: Arc<AtomicUsize>,
     pub host_id: cpal::HostId,
     pub audio_state: AudioState,
 }
@@ -21,10 +24,12 @@ impl AudioContext {
     }
 
     pub fn input_device(&self) -> Option<&cpal::Device> {
-        self.input_device_registry.get(self.input_device_index)
+        self.input_device_registry
+            .get(self.input_device_index.load(Ordering::SeqCst))
     }
     pub fn output_device(&self) -> Option<&cpal::Device> {
-        self.output_device_registry.get(self.output_device_index)
+        self.output_device_registry
+            .get(self.output_device_index.load(Ordering::SeqCst))
     }
 }
 

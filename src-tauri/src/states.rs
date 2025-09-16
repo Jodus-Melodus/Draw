@@ -1,4 +1,7 @@
-use std::sync::{atomic::AtomicBool, Arc};
+use std::sync::{
+    atomic::{AtomicBool, AtomicUsize},
+    Arc,
+};
 
 use crate::types::{AudioContext, AudioState, InputDeviceRegistry, OutputDeviceRegistry};
 
@@ -13,8 +16,8 @@ pub fn build_audio_context(host_id: cpal::HostId) -> AudioContext {
     AudioContext {
         input_device_registry,
         output_device_registry,
-        input_device_index: 0,
-        output_device_index: 0,
+        input_device_index: Arc::new(AtomicUsize::new(0)),
+        output_device_index: Arc::new(AtomicUsize::new(0)),
         host_id,
         audio_state,
     }
