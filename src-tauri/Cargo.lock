@@ -856,6 +856,7 @@ name = "draw"
 version = "0.1.0"
 dependencies = [
  "cpal",
+ "once_cell",
  "serde",
  "serde_json",
  "tauri",
