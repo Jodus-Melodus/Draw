@@ -10,9 +10,11 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "draw",
-        "width": 800,
-        "height": 600
+        "title": "Draw",
+        "backgroundColor": "#000000",
+        "center": true,
+        "titleBarStyle": "Overlay",
+        "maximized": true
       }
     ],
     "security": {

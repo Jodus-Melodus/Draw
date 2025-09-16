@@ -1,0 +1,75 @@
+use tauri::{
+    menu::{Menu, MenuBuilder, MenuEvent, MenuItemBuilder, Submenu, SubmenuBuilder},
+    App, AppHandle, Manager, Wry,
+};
+
+use crate::audio_input::{start_audio_input, stop_audio_input};
+
+fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
+    let open_file = MenuItemBuilder::new("Open File")
+        .id("open-file")
+        .accelerator("CmdOrCtrl+O")
+        .build(app)
+        .unwrap();
+
+    let save_file = MenuItemBuilder::new("Save")
+        .id("save-file")
+        .accelerator("CmdOrCtrl+S")
+        .build(app)
+        .unwrap();
+
+    let save_as_file = MenuItemBuilder::new("Save As")
+        .id("save-as-file")
+        .accelerator("CmdOrCtrl+Shift+S")
+        .build(app)
+        .unwrap();
+
+    let settings = MenuItemBuilder::new("Settings")
+        .id("settings")
+        .accelerator("CmdOrCtrl+,")
+        .build(app)
+        .unwrap();
+
+    let start_record = MenuItemBuilder::new("Start Record")
+        .id("start-record")
+        .build(app)
+        .unwrap();
+
+    let stop_record = MenuItemBuilder::new("Stop Record")
+        .id("stop-record")
+        .build(app)
+        .unwrap();
+
+    let file_menu = SubmenuBuilder::new(app, "File")
+        .item(&open_file)
+        .item(&save_file)
+        .item(&save_as_file)
+        .separator()
+        .item(&settings)
+        .item(&start_record)
+        .item(&stop_record)
+        .quit()
+        .build()
+        .unwrap();
+
+    file_menu
+}
+
+pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
+    let state = app.state();
+
+    match event.id().0.as_str() {
+        "open-file" => todo!(),
+        "save-file" => todo!(),
+        "save-as-file" => todo!(),
+        "settings" => todo!(),
+        "start-record" => start_audio_input(state),
+        "stop-record" => stop_audio_input(state),
+        _ => {}
+    }
+}
+
+pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
+    let file_menu = build_file_menu(app);
+    MenuBuilder::new(app).items(&[&file_menu]).build().unwrap()
+}
