@@ -13,6 +13,8 @@ pub fn build_audio_context(host_id: cpal::HostId) -> AudioContext {
     AudioContext {
         input_device_registry,
         output_device_registry,
+        input_device_index: 0,
+        output_device_index: 0,
         host_id,
         audio_state,
     }

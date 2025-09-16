@@ -9,6 +9,8 @@ use cpal::traits::{DeviceTrait, HostTrait};
 pub struct AudioContext {
     pub input_device_registry: Arc<InputDeviceRegistry>,
     pub output_device_registry: Arc<OutputDeviceRegistry>,
+    pub input_device_index: usize,
+    pub output_device_index: usize,
     pub host_id: cpal::HostId,
     pub audio_state: AudioState,
 }
@@ -16,6 +18,13 @@ pub struct AudioContext {
 impl AudioContext {
     pub fn host(&self) -> cpal::Host {
         cpal::host_from_id(self.host_id).expect("Failed to get host")
+    }
+
+    pub fn input_device(&self) -> Option<&cpal::Device> {
+        self.input_device_registry.get(self.input_device_index)
+    }
+    pub fn output_device(&self) -> Option<&cpal::Device> {
+        self.output_device_registry.get(self.output_device_index)
     }
 }
 
@@ -40,8 +49,12 @@ impl InputDeviceRegistry {
         Self { devices: map }
     }
 
-    pub fn get(&self, name: &str) -> Option<&cpal::Device> {
+    pub fn get_from_name(&self, name: &str) -> Option<&cpal::Device> {
         self.devices.get(name)
+    }
+
+    pub fn get(&self, index: usize) -> Option<&cpal::Device> {
+        self.devices.values().nth(index)
     }
 
     pub fn list(&self) -> Vec<String> {
@@ -65,8 +78,12 @@ impl OutputDeviceRegistry {
         Self { devices: map }
     }
 
-    pub fn get(&self, name: &str) -> Option<&cpal::Device> {
+    pub fn get_from_name(&self, name: &str) -> Option<&cpal::Device> {
         self.devices.get(name)
+    }
+
+    pub fn get(&self, index: usize) -> Option<&cpal::Device> {
+        self.devices.values().nth(index)
     }
 
     pub fn list(&self) -> Vec<String> {

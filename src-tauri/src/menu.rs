@@ -111,8 +111,6 @@ pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let state = app.state();
     let id: &str = event.id.0.as_ref();
 
-    println!("{}", id);
-
     match id {
         "file-open-file" => eprintln!("Not yet implemented"), // TODO
         "file-save-file" => eprintln!("Not yet implemented"), // TODO
