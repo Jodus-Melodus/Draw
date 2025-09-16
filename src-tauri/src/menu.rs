@@ -3,7 +3,10 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::audio_input::{start_audio_input, stop_audio_input};
+use crate::{
+    audio_input::{start_audio_input, stop_audio_input},
+    types::AudioContext,
+};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let open_file = MenuItemBuilder::new("Open File")
@@ -55,6 +58,46 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     file_menu
 }
 
+fn build_device_menu(app: &App<Wry>) -> Submenu<Wry> {
+    let state: tauri::State<'_, AudioContext> = app.state();
+    let input_device_registry = state.input_device_registry.clone();
+    let output_device_registry = state.output_device_registry.clone();
+
+    let input_menu = SubmenuBuilder::new(app, "Input Device").build().unwrap();
+
+    for input_device_name in input_device_registry.list() {
+        let id = input_device_name.replace(" ", "-");
+        let input_device = MenuItemBuilder::new(input_device_name)
+            .id(id)
+            .build(app)
+            .unwrap();
+        input_menu
+            .append(&input_device)
+            .expect("Failed to add item to menu");
+    }
+
+    let output_menu = SubmenuBuilder::new(app, "Output Device").build().unwrap();
+
+    for output_device_name in output_device_registry.list() {
+        let id = output_device_name.replace(" ", "-");
+        let output_device = MenuItemBuilder::new(output_device_name)
+            .id(id)
+            .build(app)
+            .unwrap();
+        output_menu
+            .append(&output_device)
+            .expect("Failed to add item to menu");
+    }
+
+    let device_menu = SubmenuBuilder::new(app, "Devices")
+        .item(&input_menu)
+        .item(&output_menu)
+        .build()
+        .unwrap();
+
+    device_menu
+}
+
 pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let state = app.state();
 
@@ -71,5 +114,9 @@ pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
 
 pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
     let file_menu = build_file_menu(app);
-    MenuBuilder::new(app).items(&[&file_menu]).build().unwrap()
+    let device_menu = build_device_menu(app);
+    MenuBuilder::new(app)
+        .items(&[&file_menu, &device_menu])
+        .build()
+        .unwrap()
 }
