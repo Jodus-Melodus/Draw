@@ -3,40 +3,43 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::audio_input::{start_audio_input, stop_audio_input};
+use crate::{
+    audio_input::{start_audio_input, stop_audio_input},
+    types::AudioContext,
+};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let open_file = MenuItemBuilder::new("Open File")
-        .id("open-file")
+        .id("file-open-file")
         .accelerator("CmdOrCtrl+O")
         .build(app)
         .unwrap();
 
     let save_file = MenuItemBuilder::new("Save")
-        .id("save-file")
+        .id("file-save-file")
         .accelerator("CmdOrCtrl+S")
         .build(app)
         .unwrap();
 
     let save_as_file = MenuItemBuilder::new("Save As")
-        .id("save-as-file")
+        .id("file-save-as-file")
         .accelerator("CmdOrCtrl+Shift+S")
         .build(app)
         .unwrap();
 
     let settings = MenuItemBuilder::new("Settings")
-        .id("settings")
+        .id("file-settings")
         .accelerator("CmdOrCtrl+,")
         .build(app)
         .unwrap();
 
     let start_record = MenuItemBuilder::new("Start Record")
-        .id("start-record")
+        .id("file-start-record")
         .build(app)
         .unwrap();
 
     let stop_record = MenuItemBuilder::new("Stop Record")
-        .id("stop-record")
+        .id("file-stop-record")
         .build(app)
         .unwrap();
 
@@ -55,21 +58,84 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     file_menu
 }
 
-pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
-    let state = app.state();
+fn build_device_menu(app: &App<Wry>) -> Submenu<Wry> {
+    let state: tauri::State<'_, AudioContext> = app.state();
+    let input_device_registry = state.input_device_registry.clone();
+    let output_device_registry = state.output_device_registry.clone();
 
-    match event.id().0.as_str() {
-        "open-file" => todo!(),
-        "save-file" => todo!(),
-        "save-as-file" => todo!(),
-        "settings" => todo!(),
-        "start-record" => start_audio_input(state),
-        "stop-record" => stop_audio_input(state),
-        _ => {}
+    let input_menu = SubmenuBuilder::new(app, "Input Device").build().unwrap();
+
+    for (i, input_device_name) in input_device_registry.list().iter().enumerate() {
+        let id = format!("devices-input-{}", i);
+        let input_device = MenuItemBuilder::new(input_device_name)
+            .id(id)
+            .build(app)
+            .unwrap();
+        input_menu
+            .append(&input_device)
+            .expect("Failed to add item to menu");
     }
+
+    let output_menu = SubmenuBuilder::new(app, "Output Device").build().unwrap();
+
+    for (i, output_device_name) in output_device_registry.list().iter().enumerate() {
+        let id = format!("devices-output-{}", i);
+        let output_device = MenuItemBuilder::new(output_device_name)
+            .id(id)
+            .build(app)
+            .unwrap();
+        output_menu
+            .append(&output_device)
+            .expect("Failed to add item to menu");
+    }
+
+    let device_menu = SubmenuBuilder::new(app, "Devices")
+        .item(&input_menu)
+        .item(&output_menu)
+        .build()
+        .unwrap();
+
+    device_menu
 }
 
 pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
     let file_menu = build_file_menu(app);
-    MenuBuilder::new(app).items(&[&file_menu]).build().unwrap()
+    let device_menu = build_device_menu(app);
+    MenuBuilder::new(app)
+        .items(&[&file_menu, &device_menu])
+        .build()
+        .unwrap()
+}
+
+pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
+    let state = app.state();
+    let id: &str = event.id.0.as_ref();
+
+    match id {
+        "file-open-file" => eprintln!("Not yet implemented"), // TODO
+        "file-save-file" => eprintln!("Not yet implemented"), // TODO
+        "file-save-as-file" => eprintln!("Not yet implemented"), // TODO
+        "file-settings" => eprintln!("Not yet implemented"),  // TODO
+        "file-start-record" => start_audio_input(state),
+        "file-stop-record" => stop_audio_input(state),
+        _ => {
+            if id.starts_with("devices-input") {
+                let parts = id.split("-").collect::<Vec<_>>();
+                let index = parts
+                    .last()
+                    .expect("Failed to get indices")
+                    .parse::<isize>()
+                    .expect("Failed to convert to index");
+            } else if id.starts_with("devices-output") {
+                let parts = id.split("-").collect::<Vec<_>>();
+                let index = parts
+                    .last()
+                    .expect("Failed to get indices")
+                    .parse::<isize>()
+                    .expect("Failed to convert to index");
+            } else {
+                eprintln!("Unknown menu item selected"); // :|
+            }
+        }
+    }
 }

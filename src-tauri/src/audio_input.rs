@@ -24,7 +24,7 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
         }
 
         let device = input_device_registry
-            .get(&devices[0])
+            .get(0)
             .expect("Failed to get input device");
 
         let config = device
@@ -45,7 +45,7 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
         stream.play().expect("Failed to play stream");
 
         while recording.load(Ordering::SeqCst) {
-            std::thread::sleep(std::time::Duration::from_millis(100));
+            std::thread::sleep(std::time::Duration::from_millis(1));
         }
 
         println!("Audio stream stopped.");
