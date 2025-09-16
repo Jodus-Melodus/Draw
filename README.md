@@ -1,2 +1,2 @@
 # Draw
-DAW made in Rust by programmers and musicians, for programmers and musicians
+DAW made in Rust by Developers and Musicians, for Developers and Musicians.
