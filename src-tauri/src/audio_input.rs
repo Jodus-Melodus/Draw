@@ -23,9 +23,11 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
             return;
         }
 
-        let device = input_device_registry
+        let device = input_device_registry // TODO get selected device
             .get(0)
             .expect("Failed to get input device");
+
+        println!("Recording with: {}", device.name().unwrap());
 
         let config = device
             .default_input_config()
@@ -35,7 +37,7 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
             .build_input_stream(
                 &config.into(),
                 move |data: &[f32], _: &cpal::InputCallbackInfo| {
-                    println!("Received {} samples", data.len()); // TODO write the data to a global Arc<ArrayQueue<f32>> for processing
+                    // println!("Received {} samples", data.len()); // TODO write the data to a global Arc<ArrayQueue<f32>> for processing
                 },
                 move |err| eprintln!("Stream error: {}", err),
                 None,
