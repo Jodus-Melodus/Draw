@@ -8,6 +8,7 @@ use cpal::traits::{DeviceTrait, HostTrait};
 #[derive(Clone)]
 pub struct AudioContext {
     pub input_device_registry: Arc<InputDeviceRegistry>,
+    pub output_device_registry: Arc<OutputDeviceRegistry>,
     pub host_id: cpal::HostId,
     pub audio_state: AudioState,
 }
@@ -48,5 +49,29 @@ impl InputDeviceRegistry {
     }
 }
 
+#[derive(Clone)]
+pub struct OutputDeviceRegistry {
+    devices: HashMap<String, cpal::Device>,
+}
+
+impl OutputDeviceRegistry {
+    pub fn new(host: &cpal::Host) -> Self {
+        let mut map = HashMap::new();
+        for device in host.output_devices().expect("No output devices available") {
+            let name = device.name().unwrap_or_else(|_| "Unknown".into());
+            map.insert(name.clone(), device);
+        }
+
+        Self { devices: map }
+    }
+
+    pub fn get(&self, name: &str) -> Option<&cpal::Device> {
+        self.devices.get(name)
+    }
+
+    pub fn list(&self) -> Vec<String> {
+        self.devices.keys().cloned().collect()
+    }
+}
+
 // TODO add host manager
-// TODO add output device registry
