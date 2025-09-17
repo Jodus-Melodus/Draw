@@ -23,4 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-run.sh
+dev.sh
+build.sh
