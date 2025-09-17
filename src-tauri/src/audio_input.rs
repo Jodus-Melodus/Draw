@@ -15,20 +15,13 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
 
     audio_state.recording.store(true, Ordering::SeqCst);
     let recording = audio_state.recording.clone();
+    let device = state
+        .input_device()
+        .expect("Failed to get input device")
+        .clone();
+    println!("Recording with: {}", device.name().unwrap());
 
     thread::spawn(move || {
-        let devices = input_device_registry.list();
-        if devices.is_empty() {
-            eprintln!("No input devices available");
-            return;
-        }
-
-        let device = input_device_registry // TODO get selected device
-            .get(0)
-            .expect("Failed to get input device");
-
-        println!("Recording with: {}", device.name().unwrap());
-
         let config = device
             .default_input_config()
             .expect("Failed to get input config");
@@ -36,7 +29,7 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
         let stream = device
             .build_input_stream(
                 &config.into(),
-                move |data: &[f32], _: &cpal::InputCallbackInfo| {
+                move |_data: &[f32], _: &cpal::InputCallbackInfo| {
                     // println!("Received {} samples", data.len()); // TODO write the data to a global Arc<ArrayQueue<f32>> for processing
                 },
                 move |err| eprintln!("Stream error: {}", err),
