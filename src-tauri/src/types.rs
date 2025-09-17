@@ -2,7 +2,7 @@ use std::{
     collections::HashMap,
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
-        Arc,
+        Arc, Mutex,
     },
 };
 
@@ -36,6 +36,7 @@ impl AudioContext {
 #[derive(Clone)]
 pub struct AudioRecordingState {
     pub recording: Arc<AtomicBool>,
+    pub audio_buffer: Arc<Mutex<Vec<f32>>>,
 }
 
 #[derive(Clone)]
