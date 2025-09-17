@@ -15,7 +15,7 @@ pub struct AudioContext {
     pub input_device_index: Arc<AtomicUsize>,
     pub output_device_index: Arc<AtomicUsize>,
     pub host_id: cpal::HostId,
-    pub audio_state: AudioState,
+    pub audio_state: AudioRecordingState,
 }
 
 impl AudioContext {
@@ -34,7 +34,7 @@ impl AudioContext {
 }
 
 #[derive(Clone)]
-pub struct AudioState {
+pub struct AudioRecordingState {
     pub recording: Arc<AtomicBool>,
 }
 
