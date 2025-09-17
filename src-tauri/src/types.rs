@@ -1,12 +1,58 @@
 use std::{
     collections::HashMap,
+    error::Error,
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
         Arc, Mutex,
     },
+    usize,
 };
 
 use cpal::traits::{DeviceTrait, HostTrait};
+
+pub struct RingBuffer {
+    buffer: [f32; 48000],
+    write_index: usize,
+    read_index: usize,
+    size: usize,
+}
+
+impl RingBuffer {
+    pub fn new() -> Self {
+        RingBuffer {
+            buffer: [0.0; 48000],
+            write_index: 0,
+            read_index: 0,
+            size: 48000,
+        }
+    }
+
+    pub fn write(&mut self, samples: &[f32]) -> usize {
+        let mut written = 0;
+        let available_space = (self.read_index + self.size - self.write_index) % self.size;
+
+        for i in 0..samples.len().min(available_space) {
+            self.buffer[(self.write_index + i) % self.size] = samples[i];
+            written += 1;
+        }
+
+        self.write_index = (self.write_index + written) % self.size;
+        return written;
+    }
+
+    pub fn read(&mut self, output: &mut [f32]) -> usize {
+        let available = (self.write_index + self.size - self.read_index) % self.size;
+        let mut read = 0;
+
+        for i in 0..output.len().min(available) {
+            output[i] = self.buffer[(self.read_index + i) % self.size];
+            read += 1;
+        }
+
+        self.read_index = (self.read_index + read) % self.size;
+        return read;
+    }
+}
 
 #[derive(Clone)]
 pub struct AudioContext {
@@ -36,7 +82,7 @@ impl AudioContext {
 #[derive(Clone)]
 pub struct AudioRecordingState {
     pub recording: Arc<AtomicBool>,
-    pub audio_buffer: Arc<Mutex<Vec<f32>>>,
+    pub audio_buffer: Arc<Mutex<RingBuffer>>,
 }
 
 #[derive(Clone)]
