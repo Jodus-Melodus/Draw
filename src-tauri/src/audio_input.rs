@@ -6,7 +6,6 @@ use crate::types::AudioContext;
 #[tauri::command]
 pub fn start_audio_input(state: tauri::State<AudioContext>) {
     let audio_state = state.audio_state.clone();
-    let input_device_registry = state.input_device_registry.clone();
 
     if audio_state.recording.load(Ordering::SeqCst) {
         println!("Audio stream already running");
@@ -30,7 +29,7 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
             .build_input_stream(
                 &config.into(),
                 move |_data: &[f32], _: &cpal::InputCallbackInfo| {
-                    // println!("Received {} samples", data.len()); // TODO write the data to a global Arc<ArrayQueue<f32>> for processing
+                    // TODO write the data to a global Arc<ArrayQueue<f32>> for processing
                 },
                 move |err| eprintln!("Stream error: {}", err),
                 None,
