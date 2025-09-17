@@ -11,9 +11,8 @@
     "windows": [
       {
         "title": "Draw",
-        "backgroundColor": "#000000",
         "center": true,
-        "titleBarStyle": "Overlay",
+        "titleBarStyle": "Visible",
         "maximized": true
       }
     ],
