@@ -33,8 +33,8 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
             .build_input_stream(
                 &config.into(),
                 move |data: &[f32], _: &cpal::InputCallbackInfo| {
-                    let mut vec = buffer.lock().expect("Failed to lock buffer");
-                    *vec = data.to_vec();
+                    let mut ring_buffer = buffer.lock().expect("Failed to lock buffer");
+                    ring_buffer.write(data);
                 },
                 move |err| eprintln!("Stream error: {}", err),
                 None,
