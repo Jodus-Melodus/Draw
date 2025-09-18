@@ -12,8 +12,7 @@ use tauri::{
 };
 
 use crate::{
-    audio_input::{graph_recording, save_file, start_audio_input, stop_audio_input},
-    types::AudioContext,
+    audio_input::{graph_recording, start_audio_input, stop_audio_input}, audio_output::save_file, types::AudioContext
 };
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {

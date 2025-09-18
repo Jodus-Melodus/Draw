@@ -19,8 +19,8 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
         return;
     }
 
-    audio_state.recording.store(true, Ordering::Relaxed);
     let recording = audio_state.recording.clone();
+    recording.store(true, Ordering::Relaxed);
     let device = state
         .input_device()
         .expect("Failed to get input device")
@@ -102,10 +102,4 @@ pub fn graph_recording(state: tauri::State<AudioContext>) {
     println!("Saved waveform to raw.png");
 }
 
-#[tauri::command]
-pub fn save_file(state: tauri::State<AudioContext>) {
-    let buffer = state.audio_state.clone();
-    let data = buffer.audio_buffer.clone();
-    let audio = data.lock().expect("Failed to lock");
-    save_audio_to_file("raw.wav", &audio.buffer, audio.size as u32).unwrap();
-}
+
