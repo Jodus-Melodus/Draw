@@ -8,7 +8,7 @@ use plotters::{
 };
 use std::{sync::atomic::Ordering, thread};
 
-use crate::types::AudioContext;
+use crate::{audio_output::save_audio_to_file, types::AudioContext};
 
 #[tauri::command]
 pub fn start_audio_input(state: tauri::State<AudioContext>) {
@@ -63,7 +63,7 @@ pub fn stop_audio_input(state: tauri::State<AudioContext>) {
 #[tauri::command]
 pub fn graph_recording(state: tauri::State<AudioContext>) {
     let buffer = state.audio_state.audio_buffer.clone();
-    let image = backend::BitMapBackend::new("raw.png", (1280, 512)).into_drawing_area();
+    let image = backend::BitMapBackend::new("raw.png", (250, 250)).into_drawing_area();
     image.fill(&style::WHITE).unwrap();
 
     let ring_buffer = buffer.lock().expect("Failed to lock buffer");
@@ -100,4 +100,12 @@ pub fn graph_recording(state: tauri::State<AudioContext>) {
 
     image.present().unwrap();
     println!("Saved waveform to raw.png");
+}
+
+#[tauri::command]
+pub fn save_file(state: tauri::State<AudioContext>) {
+    let buffer = state.audio_state.clone();
+    let data = buffer.audio_buffer.clone();
+    let audio = data.lock().expect("Failed to lock");
+    save_audio_to_file("raw.wav", &audio.buffer, audio.size as u32).unwrap();
 }

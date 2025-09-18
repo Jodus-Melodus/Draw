@@ -1,6 +1,7 @@
 use crate::{menu::handle_menu_events, states::build_audio_context};
 
 mod audio_input;
+mod audio_output;
 mod menu;
 mod states;
 mod types;
