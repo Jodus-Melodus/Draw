@@ -1,10 +1,17 @@
 use cpal::traits::{DeviceTrait, StreamTrait};
+use plotters::{
+    backend,
+    chart::ChartBuilder,
+    prelude::{IntoDrawingArea, PathElement},
+    series::LineSeries,
+    style,
+};
 use std::{
-    sync::{atomic::Ordering, Arc, Mutex, MutexGuard},
+    sync::{atomic::Ordering, Arc, Mutex},
     thread,
 };
 
-use crate::types::AudioContext;
+use crate::types::{AudioContext, RingBuffer};
 
 #[tauri::command]
 pub fn start_audio_input(state: tauri::State<AudioContext>) {
@@ -56,6 +63,45 @@ pub fn stop_audio_input(state: tauri::State<AudioContext>) {
     state.audio_state.recording.store(false, Ordering::Relaxed);
 }
 
-// TODO save audio to file
-// TODO read audio from file
-// TODO save stream handle in audiorecording state
+#[tauri::command]
+pub fn graph_recording(state: tauri::State<AudioContext>) {
+    let buffer = state.audio_state.audio_buffer.clone();
+    let image = backend::BitMapBackend::new("raw.png", (640, 480)).into_drawing_area();
+    image.fill(&style::WHITE).unwrap();
+
+    let ring_buffer = buffer.lock().expect("Failed to lock buffer");
+
+    // Peek instead of read so buffer is not emptied
+    let mut data = [0.0; 48000];
+    ring_buffer.peek(&mut data);
+
+    let samples: Vec<(usize, f32)> = data.iter().enumerate().map(|(i, &y)| (i, y)).collect();
+
+    let y_min = samples
+        .iter()
+        .map(|&(_, y)| y)
+        .fold(f32::INFINITY, f32::min);
+    let y_max = samples
+        .iter()
+        .map(|&(_, y)| y)
+        .fold(f32::NEG_INFINITY, f32::max);
+
+    let mut chart = ChartBuilder::on(&image)
+        .caption("Raw audio data", ("sans-serif", 30))
+        .margin(20)
+        .x_label_area_size(30)
+        .y_label_area_size(30)
+        .build_cartesian_2d(0..samples.len(), y_min..y_max)
+        .unwrap();
+
+    chart.configure_mesh().draw().unwrap();
+
+    chart
+        .draw_series(LineSeries::new(samples.clone(), &style::BLUE))
+        .unwrap()
+        .label("waveform")
+        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &style::BLUE));
+
+    image.present().unwrap();
+    println!("Saved waveform to raw.png");
+}
