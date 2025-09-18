@@ -10,12 +10,10 @@ use std::{
 
 use cpal::traits::{DeviceTrait, HostTrait};
 
-#[derive(Debug, Clone, Copy)]
 pub struct RingBuffer {
-    pub buffer: [f32; 48000],
+    buffer: [f32; 48000],
     write_index: usize,
     read_index: usize,
-    pub size: usize,
 }
 
 impl RingBuffer {
@@ -24,49 +22,43 @@ impl RingBuffer {
             buffer: [0.0; 48000],
             write_index: 0,
             read_index: 0,
-            size: 48000,
         }
     }
 
-    // Write samples to the buffer, avoiding full-buffer ambiguity
-    pub fn write(&mut self, samples: &[f32]) -> usize {
-        let mut written = 0;
-        let available_space = (self.read_index + self.size - 1 - self.write_index) % self.size;
+    pub fn write(&mut self, data: &[f32]) {
+        for &sample in data {
+            self.buffer[self.write_index] = sample;
+            self.write_index = (self.write_index + 1) % self.buffer.len();
 
-        for i in 0..samples.len().min(available_space) {
-            self.buffer[(self.write_index + i) % self.size] = samples[i];
-            written += 1;
+            if self.write_index == self.read_index {
+                self.read_index = (self.read_index + 1) % self.buffer.len();
+            }
         }
-
-        self.write_index = (self.write_index + written) % self.size;
-        written
     }
 
-    // Read samples and advance read_index
-    pub fn read(&mut self, output: &mut [f32]) -> usize {
-        let available = (self.write_index + self.size - self.read_index) % self.size;
-        let mut read = 0;
+    pub fn read(&mut self, buffer: &mut [f32]) -> usize {
+        let unread = (self.write_index + self.buffer.len() - self.read_index) % self.buffer.len();
+        let to_read = unread.min(buffer.len());
 
-        for i in 0..output.len().min(available) {
-            output[i] = self.buffer[(self.read_index + i) % self.size];
-            read += 1;
+        for i in 0..to_read {
+            buffer[i] = self.buffer[self.read_index];
+            self.read_index = (self.read_index + 1) % self.buffer.len();
         }
 
-        self.read_index = (self.read_index + read) % self.size;
-        read
+        to_read
     }
 
-    // Peek samples without advancing read_index
-    pub fn peek(&self, output: &mut [f32]) -> usize {
-        let available = (self.write_index + self.size - self.read_index) % self.size;
-        let mut count = 0;
+    pub fn peek(&self, buffer: &mut [f32]) -> usize {
+        let unread = (self.write_index + self.buffer.len() - self.read_index) % self.buffer.len();
+        let to_read = unread.min(buffer.len());
+        let mut index = self.read_index;
 
-        for i in 0..output.len().min(available) {
-            output[i] = self.buffer[(self.read_index + i) % self.size];
-            count += 1;
+        for i in 0..to_read {
+            buffer[i] = self.buffer[self.read_index];
+            index = (index + 1) % self.buffer.len();
         }
 
-        count
+        to_read
     }
 }
 

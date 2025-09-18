@@ -12,8 +12,7 @@ use tauri::{
 };
 
 use crate::{
-    audio_input::{graph_recording, start_audio_input, stop_audio_input},
-    types::AudioContext,
+    audio_input::{graph_recording, start_audio_input, stop_audio_input}, audio_output::save_file, types::AudioContext
 };
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
@@ -56,6 +55,8 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
         .build(app)
         .unwrap();
 
+    let save = MenuItemBuilder::new("Save").id("save").build(app).unwrap();
+
     let file_menu = SubmenuBuilder::new(app, "File")
         .id("file")
         .item(&open_file)
@@ -66,6 +67,7 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
         .item(&start_record)
         .item(&stop_record)
         .item(&graph_recording)
+        .item(&save)
         .quit()
         .build()
         .unwrap();
@@ -145,6 +147,7 @@ pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
         "file-start-record" => start_audio_input(state),
         "file-stop-record" => stop_audio_input(state),
         "graph-builder" => graph_recording(state),
+        "save" => save_file(state),
         _ => {
             if id.starts_with("devices-input") {
                 update_device_index(state.input_device_index.clone(), id);
