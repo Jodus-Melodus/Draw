@@ -6,12 +6,9 @@ use plotters::{
     series::LineSeries,
     style,
 };
-use std::{
-    sync::{atomic::Ordering, Arc, Mutex},
-    thread,
-};
+use std::{sync::atomic::Ordering, thread};
 
-use crate::types::{AudioContext, RingBuffer};
+use crate::types::AudioContext;
 
 #[tauri::command]
 pub fn start_audio_input(state: tauri::State<AudioContext>) {
@@ -66,12 +63,11 @@ pub fn stop_audio_input(state: tauri::State<AudioContext>) {
 #[tauri::command]
 pub fn graph_recording(state: tauri::State<AudioContext>) {
     let buffer = state.audio_state.audio_buffer.clone();
-    let image = backend::BitMapBackend::new("raw.png", (640, 480)).into_drawing_area();
+    let image = backend::BitMapBackend::new("raw.png", (1280, 512)).into_drawing_area();
     image.fill(&style::WHITE).unwrap();
 
     let ring_buffer = buffer.lock().expect("Failed to lock buffer");
 
-    // Peek instead of read so buffer is not emptied
     let mut data = [0.0; 48000];
     ring_buffer.peek(&mut data);
 
@@ -91,7 +87,7 @@ pub fn graph_recording(state: tauri::State<AudioContext>) {
         .margin(20)
         .x_label_area_size(30)
         .y_label_area_size(30)
-        .build_cartesian_2d(0..samples.len(), y_min..y_max)
+        .build_cartesian_2d(0..samples.len(), (y_min * 1.5)..(y_max * 1.5))
         .unwrap();
 
     chart.configure_mesh().draw().unwrap();
