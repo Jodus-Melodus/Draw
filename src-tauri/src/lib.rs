@@ -1,6 +1,6 @@
 use crate::{
     menu::handle_menu_events,
-    states::{StateAudioContext, StateAudioRecording, StateMixer},
+    states::{StateAudioContext, StateAudioRecording, StateMixer}, track::add_track,
 };
 
 mod audio_input;
@@ -8,6 +8,7 @@ mod audio_output;
 mod menu;
 mod states;
 mod types;
+mod track;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -26,6 +27,7 @@ pub fn run() {
         })
         .on_menu_event(|app, event| handle_menu_events(app, &event))
         .plugin(tauri_plugin_opener::init())
+        .invoke_handler(tauri::generate_handler![add_track])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
