@@ -63,36 +63,6 @@ impl RingBuffer {
     }
 }
 
-#[derive(Clone)]
-pub struct AudioContext {
-    pub input_device_registry: Arc<InputDeviceRegistry>,
-    pub output_device_registry: Arc<OutputDeviceRegistry>,
-    pub input_device_index: Arc<AtomicUsize>,
-    pub output_device_index: Arc<AtomicUsize>,
-    pub host_id: cpal::HostId,
-    pub audio_state: AudioRecordingState,
-}
-
-impl AudioContext {
-    pub fn host(&self) -> cpal::Host {
-        cpal::host_from_id(self.host_id).expect("Failed to get host")
-    }
-
-    pub fn input_device(&self) -> Option<&cpal::Device> {
-        self.input_device_registry
-            .get(self.input_device_index.load(Ordering::SeqCst))
-    }
-    pub fn output_device(&self) -> Option<&cpal::Device> {
-        self.output_device_registry
-            .get(self.output_device_index.load(Ordering::SeqCst))
-    }
-}
-
-#[derive(Clone)]
-pub struct AudioRecordingState {
-    pub recording: Arc<AtomicBool>,
-    pub audio_buffer: Arc<Mutex<RingBuffer>>,
-}
 
 #[derive(Clone)]
 pub struct InputDeviceRegistry {
@@ -154,7 +124,7 @@ impl OutputDeviceRegistry {
 
 // TODO add host manager
 
-pub trait TrackAudioSource {
+pub trait TrackAudioSource: Send + Sync {
     fn read(&mut self, buffer: &mut [f32]) -> usize;
     fn write(&mut self, buffer: &[f32]) -> bool;
 }
