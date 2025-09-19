@@ -1,6 +1,7 @@
 use std::{
     collections::HashMap,
     error::Error,
+    fs,
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
         Arc, Mutex,
@@ -152,3 +153,48 @@ impl OutputDeviceRegistry {
 }
 
 // TODO add host manager
+
+pub trait TrackAudioSource {
+    fn read(&mut self, buffer: &mut [f32]) -> usize;
+    fn write(&mut self, buffer: &[f32]) -> bool;
+}
+
+pub struct StreamSource {
+    ring_buffer: RingBuffer,
+}
+
+pub struct FileSource {
+    reader: hound::WavReader<fs::File>,
+    writer: hound::WavWriter<fs::File>,
+}
+
+impl TrackAudioSource for StreamSource {
+    fn read(&mut self, buffer: &mut [f32]) -> usize {
+        self.ring_buffer.read(buffer)
+    }
+
+    fn write(&mut self, buffer: &[f32]) -> bool {
+        false
+    }
+}
+
+impl TrackAudioSource for FileSource {
+    fn read(&mut self, buffer: &mut [f32]) -> usize {
+        for (i, sample) in self.reader.samples::<f32>().take(buffer.len()).enumerate() {
+            buffer[i] = sample.unwrap_or(0.0);
+        }
+        buffer.len()
+    }
+
+    fn write(&mut self, buffer: &[f32]) -> bool {
+        false
+    }
+}
+
+pub struct Track {
+    pub master: bool,
+    pub name: String,
+    pub source: Box<dyn TrackAudioSource + Send>,
+    pub volume: f32,
+    pub pan: f32
+}
