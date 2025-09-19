@@ -12,7 +12,7 @@ use tauri::{
 };
 
 use crate::{
-    audio_input::{graph_recording, start_audio_input, stop_audio_input}, audio_output::save_file, types::AudioContext
+    audio_input::{graph_recording, start_audio_input, stop_audio_input}, audio_output::save_file, states::{StateAudioContext, StateAudioRecording}
 };
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
@@ -76,9 +76,9 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
 }
 
 fn build_device_menu(app: &App<Wry>) -> Submenu<Wry> {
-    let state: tauri::State<'_, AudioContext> = app.state();
-    let input_device_registry = state.input_device_registry.clone();
-    let output_device_registry = state.output_device_registry.clone();
+    let audio_context = app.state::<StateAudioContext>();
+    let input_device_registry = audio_context.input_device_registry.clone();
+    let output_device_registry = audio_context.output_device_registry.clone();
 
     let input_menu = SubmenuBuilder::new(app, "Input Device")
         .id("devices-input-devices")

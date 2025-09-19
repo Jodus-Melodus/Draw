@@ -1,6 +1,7 @@
 use std::{
     collections::HashMap,
     error::Error,
+    fs,
     sync::{
         atomic::{AtomicBool, AtomicUsize, Ordering},
         Arc, Mutex,
@@ -62,36 +63,6 @@ impl RingBuffer {
     }
 }
 
-#[derive(Clone)]
-pub struct AudioContext {
-    pub input_device_registry: Arc<InputDeviceRegistry>,
-    pub output_device_registry: Arc<OutputDeviceRegistry>,
-    pub input_device_index: Arc<AtomicUsize>,
-    pub output_device_index: Arc<AtomicUsize>,
-    pub host_id: cpal::HostId,
-    pub audio_state: AudioRecordingState,
-}
-
-impl AudioContext {
-    pub fn host(&self) -> cpal::Host {
-        cpal::host_from_id(self.host_id).expect("Failed to get host")
-    }
-
-    pub fn input_device(&self) -> Option<&cpal::Device> {
-        self.input_device_registry
-            .get(self.input_device_index.load(Ordering::SeqCst))
-    }
-    pub fn output_device(&self) -> Option<&cpal::Device> {
-        self.output_device_registry
-            .get(self.output_device_index.load(Ordering::SeqCst))
-    }
-}
-
-#[derive(Clone)]
-pub struct AudioRecordingState {
-    pub recording: Arc<AtomicBool>,
-    pub audio_buffer: Arc<Mutex<RingBuffer>>,
-}
 
 #[derive(Clone)]
 pub struct InputDeviceRegistry {
@@ -152,3 +123,84 @@ impl OutputDeviceRegistry {
 }
 
 // TODO add host manager
+
+pub trait TrackAudioSource: Send + Sync {
+    fn read(&mut self, buffer: &mut [f32]) -> usize;
+    fn write(&mut self, buffer: &[f32]) -> bool;
+}
+
+pub struct StreamSource {
+    ring_buffer: RingBuffer,
+}
+
+pub struct FileSource {
+    reader: hound::WavReader<fs::File>,
+    writer: hound::WavWriter<fs::File>,
+}
+
+impl TrackAudioSource for StreamSource {
+    fn read(&mut self, buffer: &mut [f32]) -> usize {
+        self.ring_buffer.read(buffer)
+    }
+
+    fn write(&mut self, buffer: &[f32]) -> bool {
+        false
+    }
+}
+
+impl TrackAudioSource for FileSource {
+    fn read(&mut self, buffer: &mut [f32]) -> usize {
+        for (i, sample) in self.reader.samples::<f32>().take(buffer.len()).enumerate() {
+            buffer[i] = sample.unwrap_or(0.0);
+        }
+        buffer.len()
+    }
+
+    fn write(&mut self, buffer: &[f32]) -> bool {
+        false
+    }
+}
+
+pub struct Track {
+    pub master: bool,
+    pub source: Box<dyn TrackAudioSource + Send>,
+    pub volume: f32,
+    pub pan: f32,
+}
+
+impl Track {
+    pub fn new(master: bool, source: Box<dyn TrackAudioSource + Send>) -> Self {
+        Track {
+            master,
+            source,
+            volume: 100.0,
+            pan: 0.0,
+        }
+    }
+}
+
+pub struct TrackList {
+    tracks: HashMap<String, Track>,
+}
+
+impl TrackList {
+    pub fn new() -> Self {
+        TrackList {
+            tracks: HashMap::new(),
+        }
+    }
+
+    pub fn add_track(&mut self, name: &str, track: Track) {
+        self.tracks.insert(name.into(), track);
+    }
+
+    pub fn remove_track(&mut self, name: &str) {
+        if self.tracks.contains_key(name) {
+            self.tracks.remove(name);
+        }
+    }
+
+    pub fn get_track(&self, name: &str) -> Option<&Track> {
+        self.tracks.get(name)
+    }
+}

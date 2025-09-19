@@ -1,7 +1,7 @@
-use crate::types::AudioContext;
+use crate::states::StateAudioContext;
 
 #[tauri::command]
-pub fn save_file(state: tauri::State<AudioContext>) {
+pub fn save_file(state: tauri::State<StateAudioContext>) {
     let buffer = state.audio_state.clone();
     let data = buffer.audio_buffer.clone();
     let ring_buffer = data.lock().expect("Failed to lock");

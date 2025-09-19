@@ -1,4 +1,7 @@
-use crate::{menu::handle_menu_events, states::build_audio_context};
+use crate::{
+    menu::handle_menu_events,
+    states::{StateAudioContext, StateAudioRecording, StateMixer},
+};
 
 mod audio_input;
 mod audio_output;
@@ -8,10 +11,14 @@ mod types;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let audio_context = build_audio_context(cpal::HostId::Wasapi);
+    let state_audio_context = StateAudioContext::new(cpal::default_host().id());
+    let state_audio_recording = StateAudioRecording::new();
+    let state_mixer = StateMixer::new();
 
     tauri::Builder::default()
-        .manage(audio_context)
+        .manage(state_audio_context)
+        .manage(state_audio_recording)
+        .manage(state_mixer)
         .setup(|app| {
             let menu = menu::build_menus(app);
             app.set_menu(menu)?;

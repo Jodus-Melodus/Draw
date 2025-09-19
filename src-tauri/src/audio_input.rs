@@ -8,10 +8,10 @@ use plotters::{
 };
 use std::{sync::atomic::Ordering, thread};
 
-use crate::{audio_output::save_audio_to_file, types::AudioContext};
+use crate::states::StateAudioContext;
 
 #[tauri::command]
-pub fn start_audio_input(state: tauri::State<AudioContext>) {
+pub fn start_audio_input(state: tauri::State<StateAudioContext>) {
     let audio_state = state.audio_state.clone();
 
     if audio_state.recording.load(Ordering::Relaxed) {
@@ -56,12 +56,12 @@ pub fn start_audio_input(state: tauri::State<AudioContext>) {
 }
 
 #[tauri::command]
-pub fn stop_audio_input(state: tauri::State<AudioContext>) {
+pub fn stop_audio_input(state: tauri::State<StateAudioContext>) {
     state.audio_state.recording.store(false, Ordering::Relaxed);
 }
 
 #[tauri::command]
-pub fn graph_recording(state: tauri::State<AudioContext>) {
+pub fn graph_recording(state: tauri::State<StateAudioContext>) {
     let buffer = state.audio_state.audio_buffer.clone();
     let image = backend::BitMapBackend::new("raw.png", (250, 250)).into_drawing_area();
     image.fill(&style::WHITE).unwrap();
@@ -101,5 +101,3 @@ pub fn graph_recording(state: tauri::State<AudioContext>) {
     image.present().unwrap();
     println!("Saved waveform to raw.png");
 }
-
-
