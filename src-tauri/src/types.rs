@@ -193,8 +193,44 @@ impl TrackAudioSource for FileSource {
 
 pub struct Track {
     pub master: bool,
-    pub name: String,
     pub source: Box<dyn TrackAudioSource + Send>,
     pub volume: f32,
-    pub pan: f32
+    pub pan: f32,
+}
+
+impl Track {
+    pub fn new(master: bool, source: Box<dyn TrackAudioSource + Send>) -> Self {
+        Track {
+            master,
+            source,
+            volume: 100.0,
+            pan: 0.0,
+        }
+    }
+}
+
+pub struct TrackList {
+    tracks: HashMap<String, Track>,
+}
+
+impl TrackList {
+    pub fn new() -> Self {
+        TrackList {
+            tracks: HashMap::new(),
+        }
+    }
+
+    pub fn add_track(&mut self, name: &str, track: Track) {
+        self.tracks.insert(name.into(), track);
+    }
+
+    pub fn remove_track(&mut self, name: &str) {
+        if self.tracks.contains_key(name) {
+            self.tracks.remove(name);
+        }
+    }
+
+    pub fn get_track(&self, name: &str) -> Option<&Track> {
+        self.tracks.get(name)
+    }
 }
