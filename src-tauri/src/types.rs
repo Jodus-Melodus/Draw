@@ -192,7 +192,7 @@ impl Track {
 }
 
 pub struct TrackList {
-    tracks: HashMap<String, Track>,
+    tracks: HashMap<String, Arc<Mutex<Track>>>,
 }
 
 impl TrackList {
@@ -203,7 +203,7 @@ impl TrackList {
     }
 
     pub fn add_track(&mut self, name: &str, track: Track) {
-        self.tracks.insert(name.into(), track);
+        self.tracks.insert(name.into(), Arc::new(Mutex::new(track)));
     }
 
     pub fn remove_track(&mut self, name: &str) {
@@ -212,7 +212,7 @@ impl TrackList {
         }
     }
 
-    pub fn get_track(&self, name: &str) -> Option<&Track> {
+    pub fn get_track(&self, name: &str) -> Option<&Arc<Mutex<Track>>> {
         self.tracks.get(name)
     }
 }
