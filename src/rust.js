@@ -1,5 +1,15 @@
 const { invoke } = window.__TAURI__.core;
 
+/**
+ * @brief add a track
+ * 
+ * Adds a track object to the track list
+ * 
+ * @param e
+ * @returns f
+ * @example
+ * callRust();
+ */
 export async function callRust() {
     try {
         const message = await invoke("add_track", {});
