@@ -63,7 +63,6 @@ impl RingBuffer {
     }
 }
 
-
 #[derive(Clone)]
 pub struct InputDeviceRegistry {
     devices: HashMap<String, cpal::Device>,
@@ -130,7 +129,15 @@ pub trait TrackAudioSource: Send + Sync {
 }
 
 pub struct StreamSource {
-    ring_buffer: RingBuffer,
+    ring_buffer: RingBuffer, // TODO add stream
+}
+
+impl StreamSource {
+    pub fn new() -> Self {
+        StreamSource {
+            ring_buffer: RingBuffer::new(),
+        }
+    }
 }
 
 pub struct FileSource {
@@ -161,17 +168,22 @@ impl TrackAudioSource for FileSource {
     }
 }
 
+pub enum TrackType {
+    MasterIn,
+    MasterOut,
+}
+
 pub struct Track {
-    pub master: bool,
+    pub track_type: TrackType,
     pub source: Box<dyn TrackAudioSource + Send>,
     pub volume: f32,
     pub pan: f32,
 }
 
 impl Track {
-    pub fn new(master: bool, source: Box<dyn TrackAudioSource + Send>) -> Self {
+    pub fn new(track_type: TrackType, source: Box<dyn TrackAudioSource + Send>) -> Self {
         Track {
-            master,
+            track_type,
             source,
             volume: 100.0,
             pan: 0.0,
