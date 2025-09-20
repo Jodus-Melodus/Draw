@@ -14,7 +14,8 @@ mod track;
 pub fn run() {
     let state_audio_context = StateAudioContext::new(cpal::default_host().id());
     let state_audio_recording = StateAudioRecording::new();
-    let state_mixer = StateMixer::new();
+    let master_output_device = state_audio_context.output_device().expect("Failed to get master output device");
+    let state_mixer = StateMixer::new(master_output_device.clone());
 
     tauri::Builder::default()
         .manage(state_audio_context)

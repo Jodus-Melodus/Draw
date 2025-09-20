@@ -3,16 +3,25 @@ use std::sync::{
     Arc, Mutex,
 };
 
-use crate::types::{InputDeviceRegistry, OutputDeviceRegistry, RingBuffer, TrackList};
+use cpal::Device;
+
+use crate::types::{
+    InputDeviceRegistry, OutputDeviceRegistry, RingBuffer, StreamSource, Track, 
+    TrackList, TrackType,
+};
 
 pub struct StateMixer {
     track_list: Arc<Mutex<TrackList>>,
 }
 
 impl StateMixer {
-    pub fn new() -> Self {
+    pub fn new(master_output: Device) -> Self { // TODO get device stream
+        let mut track_list = TrackList::new();
+        let output_track_source = StreamSource::new();
+        let master_out = Track::new(TrackType::MasterOut, Box::new(output_track_source));
+        track_list.add_track("master-out", master_out);
         StateMixer {
-            track_list: Arc::new(Mutex::new(TrackList::new())),
+            track_list: Arc::new(Mutex::new(track_list)),
         }
     }
 }
