@@ -9,6 +9,7 @@ mod menu;
 mod states;
 mod types;
 mod track;
+mod settings;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

@@ -12,7 +12,7 @@ use tauri::{
 };
 
 use crate::{
-    audio_input::{graph_recording, start_audio_input, stop_audio_input}, audio_output::save_file, states::{StateAudioContext, StateAudioRecording}
+    audio_input::{graph_recording, start_audio_input, stop_audio_input}, audio_output::save_file, settings::open_settings, states::{StateAudioContext, StateAudioRecording}
 };
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
@@ -143,7 +143,7 @@ pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
         "file-open-file" => eprintln!("Not yet implemented"), // TODO
         "file-save-file" => eprintln!("Not yet implemented"), // TODO
         "file-save-as-file" => eprintln!("Not yet implemented"), // TODO
-        "file-settings" => eprintln!("Not yet implemented"),  // TODO
+        "file-settings" => open_settings(app),
         "file-start-record" => start_audio_input(state),
         "file-stop-record" => stop_audio_input(state),
         "graph-builder" => graph_recording(state),
