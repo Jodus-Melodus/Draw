@@ -1,14 +1,20 @@
 const { invoke } = window.__TAURI__.core;
+const { WebviewWindow } = window.__TAURI__.window;
+const { listen } = window.__TAURI__.event;
 
 /**
- * @brief add a track
- * 
- * Adds a track object to the track list
- * 
- * @param e
- * @returns f
- * @example
- * callRust();
+ * Opens settings page
+ */
+function openSettings() {
+    new WebviewWindow("settings", {url: "settings.html"});
+}
+
+listen("open-settings", (_event) => {
+    openSettings()
+})
+
+/**
+ * Adds a track to the track list
  */
 export async function callRust() {
     try {

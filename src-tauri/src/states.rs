@@ -6,19 +6,21 @@ use std::sync::{
 use cpal::Device;
 
 use crate::types::{
-    InputDeviceRegistry, OutputDeviceRegistry, RingBuffer, StreamSource, Track, 
-    TrackList, TrackType,
+    InputDeviceRegistry, OutputDeviceRegistry, RingBuffer, StreamSource, Track, TrackList,
+    TrackType,
 };
 
 pub struct StateMixer {
-    track_list: Arc<Mutex<TrackList>>,
+    pub track_list: Arc<Mutex<TrackList>>,
 }
 
 impl StateMixer {
-    pub fn new(master_output: Device) -> Self { // TODO get device stream
+    pub fn new(master_output: Device) -> Self {
         let mut track_list = TrackList::new();
-        let output_track_source = StreamSource::new();
-        let master_out = Track::new(TrackType::MasterOut, Box::new(output_track_source));
+        let master_out = Track::new(
+            TrackType::MasterOut,
+            Box::new(StreamSource::new(master_output)),
+        );
         track_list.add_track("master-out", master_out);
         StateMixer {
             track_list: Arc::new(Mutex::new(track_list)),
@@ -33,16 +35,11 @@ pub struct StateAudioContext {
     pub input_device_index: Arc<AtomicUsize>,
     pub output_device_index: Arc<AtomicUsize>,
     pub host_id: cpal::HostId,
-    pub audio_state: StateAudioRecording,
 }
 
 impl StateAudioContext {
     pub fn new(host_id: cpal::HostId) -> Self {
         let host = cpal::host_from_id(host_id).expect("Failed to create host");
-        let audio_state = StateAudioRecording {
-            recording: Arc::new(AtomicBool::new(false)),
-            audio_buffer: Arc::new(Mutex::new(RingBuffer::new())),
-        };
         let input_device_registry = Arc::new(InputDeviceRegistry::new(&host));
         let output_device_registry = Arc::new(OutputDeviceRegistry::new(&host));
 
@@ -52,7 +49,6 @@ impl StateAudioContext {
             input_device_index: Arc::new(AtomicUsize::new(0)),
             output_device_index: Arc::new(AtomicUsize::new(0)),
             host_id,
-            audio_state,
         }
     }
     pub fn host(&self) -> cpal::Host {

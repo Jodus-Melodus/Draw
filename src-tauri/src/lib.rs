@@ -1,20 +1,24 @@
 use crate::{
     menu::handle_menu_events,
-    states::{StateAudioContext, StateAudioRecording, StateMixer}, track::add_track,
+    states::{StateAudioContext, StateAudioRecording, StateMixer},
+    track::add_track,
 };
 
 mod audio_input;
 mod audio_output;
 mod menu;
+mod settings;
 mod states;
-mod types;
 mod track;
+mod types;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let state_audio_context = StateAudioContext::new(cpal::default_host().id());
     let state_audio_recording = StateAudioRecording::new();
-    let master_output_device = state_audio_context.output_device().expect("Failed to get master output device");
+    let master_output_device = state_audio_context
+        .output_device()
+        .expect("Failed to get master output device");
     let state_mixer = StateMixer::new(master_output_device.clone());
 
     tauri::Builder::default()

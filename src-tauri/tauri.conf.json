@@ -10,9 +10,10 @@
     "withGlobalTauri": true,
     "windows": [
       {
+        "label": "main",
+        "url": "index.html",
         "title": "Draw",
         "center": true,
-        "titleBarStyle": "Visible",
         "maximized": true
       }
     ],

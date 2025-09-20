@@ -1,12 +1,7 @@
 use std::{
     collections::HashMap,
-    error::Error,
     fs,
-    sync::{
-        atomic::{AtomicBool, AtomicUsize, Ordering},
-        Arc, Mutex,
-    },
-    usize,
+    sync::{Arc, Mutex},
 };
 
 use cpal::traits::{DeviceTrait, HostTrait};
@@ -129,13 +124,61 @@ pub trait TrackAudioSource: Send + Sync {
 }
 
 pub struct StreamSource {
-    ring_buffer: RingBuffer, // TODO add stream
+    ring_buffer: Arc<Mutex<RingBuffer>>,
+    stream: cpal::Stream,
 }
 
 impl StreamSource {
-    pub fn new() -> Self {
-        StreamSource {
-            ring_buffer: RingBuffer::new(),
+    pub fn new(device: cpal::Device) -> Self {
+        let ring_buffer = Arc::new(Mutex::new(RingBuffer::new()));
+        let ring_buffer_clone = ring_buffer.clone();
+
+        if device.supports_input() {
+            let config = device
+                .default_input_config()
+                .expect("Failed to get input config");
+
+            let stream = device
+                .build_input_stream(
+                    &config.into(),
+                    move |data: &[f32], _: &cpal::InputCallbackInfo| {
+                        if let Ok(mut rb) = ring_buffer_clone.lock() {
+                            rb.write(data);
+                        }
+                    },
+                    move |err| eprintln!("Stream error: {}", err),
+                    None,
+                )
+                .expect("Failed to create input stream");
+
+            StreamSource {
+                ring_buffer,
+                stream,
+            }
+        } else if device.supports_output() {
+            let config = device
+                .default_output_config()
+                .expect("Failed to get output config");
+
+            let stream = device
+                .build_output_stream(
+                    &config.into(),
+                    move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                        for sample in data.iter_mut() {
+                            *sample = 0.0;
+                        }
+                    },
+                    move |err| eprintln!("Stream error: {}", err),
+                    None,
+                )
+                .expect("Failed to create output stream");
+
+            StreamSource {
+                ring_buffer,
+                stream,
+            }
+        } else {
+            panic!("")
         }
     }
 }
@@ -147,7 +190,11 @@ pub struct FileSource {
 
 impl TrackAudioSource for StreamSource {
     fn read(&mut self, buffer: &mut [f32]) -> usize {
-        self.ring_buffer.read(buffer)
+        if let Ok(mut rb) = self.ring_buffer.lock() {
+            rb.read(buffer)
+        } else {
+            0
+        }
     }
 
     fn write(&mut self, buffer: &[f32]) -> bool {
