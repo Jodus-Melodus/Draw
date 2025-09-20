@@ -12,7 +12,10 @@ use tauri::{
 };
 
 use crate::{
-    audio_input::{graph_recording, start_audio_input, stop_audio_input}, audio_output::save_file, settings::open_settings, states::{StateAudioContext, StateAudioRecording}
+    audio_input::{graph_recording, start_audio_input, stop_audio_input},
+    audio_output::save_file,
+    settings::open_settings,
+    states::{StateAudioContext, StateAudioRecording, StateMixer},
 };
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
@@ -136,7 +139,9 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
 }
 
 pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
-    let state = app.state();
+    let audio_context = app.state::<StateAudioContext>();
+    let audio_recording = app.state::<StateAudioRecording>();
+    let mixer_state = app.state::<StateMixer>();
     let id: &str = event.id.0.as_ref();
 
     match id {
@@ -144,16 +149,16 @@ pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
         "file-save-file" => eprintln!("Not yet implemented"), // TODO
         "file-save-as-file" => eprintln!("Not yet implemented"), // TODO
         "file-settings" => open_settings(app),
-        "file-start-record" => start_audio_input(state),
-        "file-stop-record" => stop_audio_input(state),
-        "graph-builder" => graph_recording(state),
-        "save" => save_file(state),
+        "file-start-record" => start_audio_input(audio_context, audio_recording, mixer_state),
+        "file-stop-record" => stop_audio_input(audio_recording),
+        "graph-builder" => graph_recording(audio_recording),
+        "save" => save_file(audio_recording),
         _ => {
             if id.starts_with("devices-input") {
-                update_device_index(state.input_device_index.clone(), id);
+                update_device_index(audio_context.input_device_index.clone(), id);
                 update_radio_group_menu(app, id);
             } else if id.starts_with("devices-output") {
-                update_device_index(state.output_device_index.clone(), id);
+                update_device_index(audio_context.output_device_index.clone(), id);
                 update_radio_group_menu(app, id);
             } else {
                 eprintln!("Unknown menu item selected"); // :|

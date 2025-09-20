@@ -1,10 +1,9 @@
-use crate::states::StateAudioContext;
+use crate::states::StateAudioRecording;
 
 #[tauri::command]
-pub fn save_file(state: tauri::State<StateAudioContext>) {
-    let buffer = state.audio_state.clone();
-    let data = buffer.audio_buffer.clone();
-    let ring_buffer = data.lock().expect("Failed to lock");
+pub fn save_file(audio_recording: tauri::State<StateAudioRecording>) {
+    let buffer = audio_recording.audio_buffer.clone();
+    let ring_buffer = buffer.lock().expect("Failed to lock");
     let mut ring_buffer_data = [0.0; 48000];
     ring_buffer.peek(&mut ring_buffer_data);
     save_audio_to_file("raw.wav", &ring_buffer_data, ring_buffer_data.len() as u32).unwrap();

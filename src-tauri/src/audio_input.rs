@@ -1,4 +1,3 @@
-use cpal::traits::{DeviceTrait, StreamTrait};
 use plotters::{
     backend,
     chart::ChartBuilder,
@@ -6,63 +5,46 @@ use plotters::{
     series::LineSeries,
     style,
 };
-use std::{sync::atomic::Ordering, thread};
+use std::sync::atomic::Ordering;
 
-use crate::states::StateAudioContext;
+use crate::{
+    states::{StateAudioContext, StateAudioRecording, StateMixer},
+    types::{StreamSource, Track, TrackType},
+};
 
 #[tauri::command]
-pub fn start_audio_input(state: tauri::State<StateAudioContext>) {
-    let audio_state = state.audio_state.clone();
+pub fn start_audio_input(
+    audio_context: tauri::State<StateAudioContext>,
+    audio_recording: tauri::State<StateAudioRecording>,
+    mixer_state: tauri::State<StateMixer>,
+) {
+    let audio_recording = audio_recording.clone();
+    let mixer = mixer_state.clone();
+    let track_list = mixer.track_list.clone();
 
-    if audio_state.recording.load(Ordering::Relaxed) {
+    if audio_recording.recording.load(Ordering::Relaxed) {
         println!("Audio stream already running");
         return;
-    }
+    };
 
-    let recording = audio_state.recording.clone();
+    let recording = audio_recording.recording.clone();
     recording.store(true, Ordering::Relaxed);
-    let device = state
+    let device = audio_context
         .input_device()
         .expect("Failed to get input device")
         .clone();
-    println!("Recording with: {}", device.name().unwrap());
-
-    thread::spawn(move || {
-        let config = device
-            .default_input_config()
-            .expect("Failed to get input config");
-        let buffer = audio_state.audio_buffer.clone();
-
-        let stream = device
-            .build_input_stream(
-                &config.into(),
-                move |data: &[f32], _: &cpal::InputCallbackInfo| {
-                    let mut ring_buffer = buffer.lock().expect("Failed to lock buffer");
-                    ring_buffer.write(data);
-                },
-                move |err| eprintln!("Stream error: {}", err),
-                None,
-            )
-            .expect("Failed to create input stream");
-
-        stream.play().expect("Failed to play stream");
-
-        while recording.load(Ordering::Relaxed) {
-            std::thread::sleep(std::time::Duration::from_millis(1));
-        }
-
-        println!("Audio stream stopped.");
-    });
+    let track = Track::new(TrackType::MasterIn, Box::new(StreamSource::new(device)));
+    // TODO start track stream
 }
 
 #[tauri::command]
-pub fn stop_audio_input(state: tauri::State<StateAudioContext>) {
-    state.audio_state.recording.store(false, Ordering::Relaxed);
+pub fn stop_audio_input(audio_recording: tauri::State<StateAudioRecording>) {
+    audio_recording.recording.store(false, Ordering::Relaxed);
 }
 
 #[tauri::command]
-pub fn graph_recording(state: tauri::State<StateAudioContext>) {
-    let buffer = state.audio_state.audio_buffer.clone();
+pub fn graph_recording(audio_recording: tauri::State<StateAudioRecording>) {
+    let buffer = audio_recording.audio_buffer.clone();
     let image = backend::BitMapBackend::new("raw.png", (250, 250)).into_drawing_area();
     image.fill(&style::WHITE).unwrap();
 
