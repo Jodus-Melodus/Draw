@@ -12,6 +12,7 @@ use tauri::{
 };
 
 use crate::{
+    file::open_file,
     settings::open_settings,
     states::{StateAudioContext, StateMixer},
 };
@@ -136,13 +137,13 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
         .unwrap()
 }
 
-pub fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
+pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let audio_context = app.state::<StateAudioContext>();
-    let _mixer_state = app.state::<StateMixer>();
+    let mixer_state = app.state::<StateMixer>();
     let id: &str = event.id.0.as_ref();
 
     match id {
-        "file-open-file" => eprintln!("Not yet implemented"), // TODO
+        "file-open-file" => open_file(app).await,
         "file-save-file" => eprintln!("Not yet implemented"), // TODO
         "file-save-as-file" => eprintln!("Not yet implemented"), // TODO
         "file-settings" => open_settings(app),

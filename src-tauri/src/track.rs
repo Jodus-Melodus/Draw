@@ -1,7 +1,22 @@
-use std::{collections::HashMap, fs, sync::{atomic::{AtomicBool, Ordering}, Arc, Mutex}, time::Duration};
+use std::{
+    collections::HashMap,
+    fs,
+    io::{BufReader, BufWriter},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc, Mutex,
+    },
+    time::Duration,
+};
 
 use cpal::traits::{DeviceTrait, StreamTrait};
-use plotters::{backend, chart::ChartBuilder, prelude::{IntoDrawingArea, PathElement}, series::LineSeries, style};
+use plotters::{
+    backend,
+    chart::ChartBuilder,
+    prelude::{IntoDrawingArea, PathElement},
+    series::LineSeries,
+    style,
+};
 
 use crate::types::RingBuffer;
 
@@ -101,7 +116,7 @@ impl StreamSource {
         self.recording.store(false, Ordering::Relaxed);
     }
 
-    pub fn save_recording_to_file(&self) {
+    pub fn graph_recording(&self) {
         let buffer = self.ring_buffer.clone();
         let image = backend::BitMapBackend::new("raw.png", (250, 250)).into_drawing_area();
         image.fill(&style::WHITE).unwrap();
@@ -141,11 +156,43 @@ impl StreamSource {
         image.present().unwrap();
         println!("Saved waveform to raw.png");
     }
+
+    pub fn save_to_wav(&mut self, path: &str) {
+        let ring_buffer = self.ring_buffer.clone();
+        let buffer = ring_buffer.lock().expect("Failed to lock buffer");
+        let mut data = [0.0; 48000];
+        buffer.peek(&mut data);
+
+        let spectogram = hound::WavSpec {
+            channels: 1,
+            sample_rate: data.len() as u32,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
+        let mut writer =
+            hound::WavWriter::create(path, spectogram).expect("Failed to create file writer");
+        for sample in data {
+            let s = (sample.clamp(-1.0, 1.0) * i16::MAX as f32) as i16;
+            writer.write_sample(s).expect("Failed to write sample");
+        }
+
+        writer.finalize().expect("Failed to save file");
+    }
 }
 
 pub struct FileSource {
-    reader: hound::WavReader<fs::File>,
-    writer: hound::WavWriter<fs::File>,
+    reader: Option<hound::WavReader<BufReader<fs::File>>>,
+    writer: Option<hound::WavWriter<BufWriter<fs::File>>>,
+}
+
+impl FileSource {
+    pub fn new_input(input_path: &str) -> Self {
+        let reader = hound::WavReader::open(input_path).expect("Failed to create reader");
+        Self {
+            reader: Some(reader),
+            writer: None,
+        }
+    }
 }
 
 impl TrackAudioSource for StreamSource {
@@ -164,10 +211,14 @@ impl TrackAudioSource for StreamSource {
 
 impl TrackAudioSource for FileSource {
     fn read(&mut self, buffer: &mut [f32]) -> usize {
-        for (i, sample) in self.reader.samples::<f32>().take(buffer.len()).enumerate() {
-            buffer[i] = sample.unwrap_or(0.0);
+        if let Some(ref mut input_reader) = &mut self.reader {
+            for (i, sample) in input_reader.samples::<f32>().take(buffer.len()).enumerate() {
+                buffer[i] = sample.unwrap_or(0.0);
+            }
+            buffer.len()
+        } else {
+            0
         }
-        buffer.len()
     }
 
     fn write(&mut self, buffer: &[f32]) -> bool {
@@ -176,6 +227,8 @@ impl TrackAudioSource for FileSource {
 }
 
 pub enum TrackType {
+    In,
+    Out,
     MasterIn,
     MasterOut,
 }
@@ -221,5 +274,9 @@ impl TrackList {
 
     pub fn get_track(&self, name: &str) -> Option<&Arc<Mutex<Track>>> {
         self.tracks.get(name)
+    }
+
+    pub fn track_list(&self) -> Vec<&String> {
+        self.tracks.keys().collect::<Vec<_>>()
     }
 }

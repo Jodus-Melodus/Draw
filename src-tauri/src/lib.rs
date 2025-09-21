@@ -4,8 +4,7 @@ use crate::{
     track::add_track,
 };
 
-mod audio_input;
-mod audio_output;
+mod file;
 mod menu;
 mod settings;
 mod states;
@@ -13,7 +12,7 @@ mod track;
 mod types;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+pub async fn run() {
     let state_audio_context = StateAudioContext::new(cpal::default_host().id());
     let master_output_device = state_audio_context
         .output_device()
@@ -28,8 +27,14 @@ pub fn run() {
             app.set_menu(menu)?;
             Ok(())
         })
-        .on_menu_event(|app, event| handle_menu_events(app, &event))
+        .on_menu_event(|app, event| {
+            let app = app.clone();
+            tauri::async_runtime::spawn(async move {
+                handle_menu_events(&app, &event).await;
+            });
+        })
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![add_track])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
