@@ -1,14 +1,13 @@
 use std::sync::{
-    atomic::{AtomicBool, AtomicUsize, Ordering},
+    atomic::{AtomicUsize, Ordering},
     Arc, Mutex,
 };
 
 use cpal::Device;
 
-use crate::types::{
-    InputDeviceRegistry, OutputDeviceRegistry, RingBuffer, StreamSource, Track, TrackList,
-    TrackType,
-};
+use crate::{track::{StreamSource, Track, TrackList, TrackType}, types::{
+    InputDeviceRegistry, OutputDeviceRegistry
+}};
 
 pub struct StateMixer {
     pub track_list: Arc<Mutex<TrackList>>,
@@ -62,20 +61,5 @@ impl StateAudioContext {
     pub fn output_device(&self) -> Option<&cpal::Device> {
         self.output_device_registry
             .get(self.output_device_index.load(Ordering::SeqCst))
-    }
-}
-
-#[derive(Clone)]
-pub struct StateAudioRecording {
-    pub recording: Arc<AtomicBool>,
-    pub audio_buffer: Arc<Mutex<RingBuffer>>,
-}
-
-impl StateAudioRecording {
-    pub fn new() -> Self {
-        Self {
-            recording: Arc::new(AtomicBool::new(false)),
-            audio_buffer: Arc::new(Mutex::new(RingBuffer::new())),
-        }
     }
 }
