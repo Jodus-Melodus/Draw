@@ -1,6 +1,7 @@
 use std::{
     collections::HashMap,
     fs,
+    io::{BufReader, BufWriter},
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc, Mutex,
@@ -180,8 +181,18 @@ impl StreamSource {
 }
 
 pub struct FileSource {
-    reader: hound::WavReader<fs::File>,
-    writer: hound::WavWriter<fs::File>,
+    reader: Option<hound::WavReader<BufReader<fs::File>>>,
+    writer: Option<hound::WavWriter<BufWriter<fs::File>>>,
+}
+
+impl FileSource {
+    pub fn new_input(input_path: &str) -> Self {
+        let reader = hound::WavReader::open(input_path).expect("Failed to create reader");
+        Self {
+            reader: Some(reader),
+            writer: None,
+        }
+    }
 }
 
 impl TrackAudioSource for StreamSource {
@@ -200,10 +211,14 @@ impl TrackAudioSource for StreamSource {
 
 impl TrackAudioSource for FileSource {
     fn read(&mut self, buffer: &mut [f32]) -> usize {
-        for (i, sample) in self.reader.samples::<f32>().take(buffer.len()).enumerate() {
-            buffer[i] = sample.unwrap_or(0.0);
+        if let Some(ref mut input_reader) = &mut self.reader {
+            for (i, sample) in input_reader.samples::<f32>().take(buffer.len()).enumerate() {
+                buffer[i] = sample.unwrap_or(0.0);
+            }
+            buffer.len()
+        } else {
+            0
         }
-        buffer.len()
     }
 
     fn write(&mut self, buffer: &[f32]) -> bool {
@@ -212,6 +227,8 @@ impl TrackAudioSource for FileSource {
 }
 
 pub enum TrackType {
+    In,
+    Out,
     MasterIn,
     MasterOut,
 }
@@ -257,5 +274,9 @@ impl TrackList {
 
     pub fn get_track(&self, name: &str) -> Option<&Arc<Mutex<Track>>> {
         self.tracks.get(name)
+    }
+
+    pub fn track_list(&self) -> Vec<&String> {
+        self.tracks.keys().collect::<Vec<_>>()
     }
 }
