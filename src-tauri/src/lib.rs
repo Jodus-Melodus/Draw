@@ -4,8 +4,6 @@ use crate::{
     track::add_track,
 };
 
-mod audio_input;
-mod audio_output;
 mod menu;
 mod settings;
 mod states;

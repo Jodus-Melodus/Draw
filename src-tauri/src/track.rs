@@ -1,7 +1,21 @@
-use std::{collections::HashMap, fs, sync::{atomic::{AtomicBool, Ordering}, Arc, Mutex}, time::Duration};
+use std::{
+    collections::HashMap,
+    fs,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc, Mutex,
+    },
+    time::Duration,
+};
 
 use cpal::traits::{DeviceTrait, StreamTrait};
-use plotters::{backend, chart::ChartBuilder, prelude::{IntoDrawingArea, PathElement}, series::LineSeries, style};
+use plotters::{
+    backend,
+    chart::ChartBuilder,
+    prelude::{IntoDrawingArea, PathElement},
+    series::LineSeries,
+    style,
+};
 
 use crate::types::RingBuffer;
 
@@ -101,7 +115,7 @@ impl StreamSource {
         self.recording.store(false, Ordering::Relaxed);
     }
 
-    pub fn save_recording_to_file(&self) {
+    pub fn graph_recording(&self) {
         let buffer = self.ring_buffer.clone();
         let image = backend::BitMapBackend::new("raw.png", (250, 250)).into_drawing_area();
         image.fill(&style::WHITE).unwrap();
@@ -140,6 +154,28 @@ impl StreamSource {
 
         image.present().unwrap();
         println!("Saved waveform to raw.png");
+    }
+
+    pub fn save_to_wav(&mut self, path: &str) {
+        let ring_buffer = self.ring_buffer.clone();
+        let buffer = ring_buffer.lock().expect("Failed to lock buffer");
+        let mut data = [0.0; 48000];
+        buffer.peek(&mut data);
+
+        let spectogram = hound::WavSpec {
+            channels: 1,
+            sample_rate: data.len() as u32,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
+        let mut writer =
+            hound::WavWriter::create(path, spectogram).expect("Failed to create file writer");
+        for sample in data {
+            let s = (sample.clamp(-1.0, 1.0) * i16::MAX as f32) as i16;
+            writer.write_sample(s).expect("Failed to write sample");
+        }
+
+        writer.finalize().expect("Failed to save file");
     }
 }
 
