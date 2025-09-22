@@ -1,16 +1,18 @@
 use std::sync::{
-    atomic::{AtomicUsize, Ordering},
+    atomic::{AtomicU64, AtomicUsize, Ordering},
     Arc, Mutex,
 };
 
 use cpal::Device;
 
-use crate::{track::{StreamSource, Track, TrackList, TrackType}, types::{
-    InputDeviceRegistry, OutputDeviceRegistry
-}};
+use crate::{
+    track::{StreamSource, Track, TrackList, TrackType},
+    types::{InputDeviceRegistry, OutputDeviceRegistry},
+};
 
 pub struct StateMixer {
     pub track_list: Arc<Mutex<TrackList>>,
+    pub cursor: Arc<AtomicU64>,
 }
 
 impl StateMixer {
@@ -23,6 +25,7 @@ impl StateMixer {
         track_list.add_track("master-out", master_out);
         StateMixer {
             track_list: Arc::new(Mutex::new(track_list)),
+            cursor: Arc::new(AtomicU64::new(0)),
         }
     }
 }
