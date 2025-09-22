@@ -10,6 +10,7 @@ use crate::{
     types::{InputDeviceRegistry, OutputDeviceRegistry},
 };
 
+#[derive(Clone)]
 pub struct StateMixer {
     pub track_list: Arc<Mutex<TrackList>>,
     pub cursor: Arc<AtomicU64>,

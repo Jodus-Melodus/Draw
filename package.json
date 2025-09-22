@@ -4,9 +4,29 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "tauri": "tauri"
+    "build": "tsc",
+    "watch": "tsc --watch --preserveWatchOutput",
+    "tauri:dev": "npm run watch -- --preserveWatchOutput & npm run tauri:run",
+    "tauri:run": "npm run build & tauri dev"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2"
-  }
+    "@tauri-apps/cli": "^2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.8.0"
+  },
+  "description": "DAW made in Rust by Developers and Musicians, for Developers and Musicians.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jodus-Melodus/Draw.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jodus-Melodus/Draw/issues"
+  },
+  "homepage": "https://github.com/Jodus-Melodus/Draw#readme"
 }
