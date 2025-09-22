@@ -4,12 +4,12 @@ use tauri::{AppHandle, Manager};
 use tauri_plugin_dialog::DialogExt;
 
 use crate::{
-    states::StateMixer,
+    states,
     track::{FileSource, Track, TrackType},
 };
 
 pub async fn open_file(app_handle: &AppHandle) {
-    let mixer_state = app_handle.state::<StateMixer>();
+    let mixer_state = app_handle.state::<states::StateMixer>();
     let state = mixer_state.clone();
     let file_path = select_file(app_handle).await;
     if let Some(path) = file_path {

@@ -1,5 +1,5 @@
 use std::{
-    collections::HashMap, fs::{self, File}, io::{self, BufReader, BufWriter}, path::PathBuf, sync::{
+    collections::HashMap, fs, io::{BufReader, BufWriter}, path::PathBuf, sync::{
         atomic::{AtomicBool, Ordering},
         Arc, Mutex,
     }, time::Duration
@@ -13,7 +13,6 @@ use plotters::{
     series::LineSeries,
     style,
 };
-use tauri_plugin_dialog::FilePath;
 
 use crate::types::RingBuffer;
 

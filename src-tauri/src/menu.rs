@@ -11,11 +11,7 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::{
-    file::open_file,
-    settings::open_settings,
-    states::{StateAudioContext, StateMixer},
-};
+use crate::{file::open_file, settings::open_settings, states};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let open_file = MenuItemBuilder::new("Open File")
@@ -43,7 +39,7 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
 }
 
 fn build_device_menu(app: &App<Wry>) -> Submenu<Wry> {
-    let audio_context = app.state::<StateAudioContext>();
+    let audio_context = app.state::<states::StateAudioContext>();
     let input_device_registry = audio_context.input_device_registry.clone();
     let output_device_registry = audio_context.output_device_registry.clone();
 
@@ -103,8 +99,8 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
 }
 
 pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
-    let audio_context = app.state::<StateAudioContext>();
-    let _mixer_state = app.state::<StateMixer>();
+    let audio_context = app.state::<states::StateAudioContext>();
+    let _mixer_state = app.state::<states::StateMixer>();
     let id: &str = event.id.0.as_ref();
 
     match id {
