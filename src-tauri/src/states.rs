@@ -1,16 +1,18 @@
 use std::sync::{
-    atomic::{AtomicUsize, Ordering},
+    atomic::{AtomicU64, AtomicUsize, Ordering},
     Arc, Mutex,
 };
 
 use cpal::Device;
 
-use crate::{track::{StreamSource, Track, TrackList, TrackType}, types::{
-    InputDeviceRegistry, OutputDeviceRegistry
-}};
+use crate::{
+    track::{StreamSource, Track, TrackList, TrackType},
+    types::{InputDeviceRegistry, OutputDeviceRegistry},
+};
 
 pub struct StateMixer {
     pub track_list: Arc<Mutex<TrackList>>,
+    pub cursor: Arc<AtomicU64>,
 }
 
 impl StateMixer {
@@ -23,6 +25,7 @@ impl StateMixer {
         track_list.add_track("master-out", master_out);
         StateMixer {
             track_list: Arc::new(Mutex::new(track_list)),
+            cursor: Arc::new(AtomicU64::new(0)),
         }
     }
 }
@@ -33,12 +36,11 @@ pub struct StateAudioContext {
     pub output_device_registry: Arc<OutputDeviceRegistry>,
     pub input_device_index: Arc<AtomicUsize>,
     pub output_device_index: Arc<AtomicUsize>,
-    pub host_id: cpal::HostId,
 }
 
 impl StateAudioContext {
-    pub fn new(host_id: cpal::HostId) -> Self {
-        let host = cpal::host_from_id(host_id).expect("Failed to create host");
+    pub fn new() -> Self {
+        let host = cpal::default_host();
         let input_device_registry = Arc::new(InputDeviceRegistry::new(&host));
         let output_device_registry = Arc::new(OutputDeviceRegistry::new(&host));
 
@@ -47,17 +49,14 @@ impl StateAudioContext {
             output_device_registry,
             input_device_index: Arc::new(AtomicUsize::new(0)),
             output_device_index: Arc::new(AtomicUsize::new(0)),
-            host_id,
         }
-    }
-    pub fn host(&self) -> cpal::Host {
-        cpal::host_from_id(self.host_id).expect("Failed to get host")
     }
 
     pub fn input_device(&self) -> Option<&cpal::Device> {
         self.input_device_registry
             .get(self.input_device_index.load(Ordering::SeqCst))
     }
+
     pub fn output_device(&self) -> Option<&cpal::Device> {
         self.output_device_registry
             .get(self.output_device_index.load(Ordering::SeqCst))

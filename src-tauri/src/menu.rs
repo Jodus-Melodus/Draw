@@ -11,28 +11,12 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::{
-    file::open_file,
-    settings::open_settings,
-    states::{StateAudioContext, StateMixer},
-};
+use crate::{file::open_file, settings::open_settings, states};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let open_file = MenuItemBuilder::new("Open File")
         .id("file-open-file")
         .accelerator("CmdOrCtrl+O")
-        .build(app)
-        .unwrap();
-
-    let save_file = MenuItemBuilder::new("Save")
-        .id("file-save-file")
-        .accelerator("CmdOrCtrl+S")
-        .build(app)
-        .unwrap();
-
-    let save_as_file = MenuItemBuilder::new("Save As")
-        .id("file-save-as-file")
-        .accelerator("CmdOrCtrl+Shift+S")
         .build(app)
         .unwrap();
 
@@ -42,34 +26,11 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
         .build(app)
         .unwrap();
 
-    let start_record = MenuItemBuilder::new("Start Record")
-        .id("file-start-record")
-        .build(app)
-        .unwrap();
-
-    let stop_record = MenuItemBuilder::new("Stop Record")
-        .id("file-stop-record")
-        .build(app)
-        .unwrap();
-
-    let graph_recording = MenuItemBuilder::new("Graph Builder")
-        .id("graph-builder")
-        .build(app)
-        .unwrap();
-
-    let save = MenuItemBuilder::new("Save").id("save").build(app).unwrap();
-
     let file_menu = SubmenuBuilder::new(app, "File")
         .id("file")
         .item(&open_file)
-        .item(&save_file)
-        .item(&save_as_file)
         .separator()
         .item(&settings)
-        .item(&start_record)
-        .item(&stop_record)
-        .item(&graph_recording)
-        .item(&save)
         .quit()
         .build()
         .unwrap();
@@ -78,7 +39,7 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
 }
 
 fn build_device_menu(app: &App<Wry>) -> Submenu<Wry> {
-    let audio_context = app.state::<StateAudioContext>();
+    let audio_context = app.state::<states::StateAudioContext>();
     let input_device_registry = audio_context.input_device_registry.clone();
     let output_device_registry = audio_context.output_device_registry.clone();
 
@@ -138,14 +99,12 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
 }
 
 pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
-    let audio_context = app.state::<StateAudioContext>();
-    let mixer_state = app.state::<StateMixer>();
+    let audio_context = app.state::<states::StateAudioContext>();
+    let _mixer_state = app.state::<states::StateMixer>();
     let id: &str = event.id.0.as_ref();
 
     match id {
         "file-open-file" => open_file(app).await,
-        "file-save-file" => eprintln!("Not yet implemented"), // TODO
-        "file-save-as-file" => eprintln!("Not yet implemented"), // TODO
         "file-settings" => open_settings(app),
         _ => {
             if id.starts_with("devices-input") {
@@ -155,7 +114,7 @@ pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
                 update_device_index(audio_context.output_device_index.clone(), id);
                 update_radio_group_menu(app, id);
             } else {
-                eprintln!("Unknown menu item selected"); // :|
+                eprintln!("Unknown menu item selected");
             }
         }
     }

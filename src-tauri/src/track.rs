@@ -1,12 +1,8 @@
 use std::{
-    collections::HashMap,
-    fs,
-    io::{BufReader, BufWriter},
-    sync::{
+    collections::HashMap, fs, io::{BufReader, BufWriter}, path::PathBuf, sync::{
         atomic::{AtomicBool, Ordering},
         Arc, Mutex,
-    },
-    time::Duration,
+    }, time::Duration
 };
 
 use cpal::traits::{DeviceTrait, StreamTrait};
@@ -186,7 +182,7 @@ pub struct FileSource {
 }
 
 impl FileSource {
-    pub fn new_input(input_path: &str) -> Self {
+    pub fn new_input(input_path: &PathBuf) -> Self {
         let reader = hound::WavReader::open(input_path).expect("Failed to create reader");
         Self {
             reader: Some(reader),
@@ -228,8 +224,6 @@ impl TrackAudioSource for FileSource {
 
 pub enum TrackType {
     In,
-    Out,
-    MasterIn,
     MasterOut,
 }
 
