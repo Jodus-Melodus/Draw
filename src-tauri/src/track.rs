@@ -1,8 +1,13 @@
 use std::{
-    collections::HashMap, fs, io::{BufReader, BufWriter}, path::PathBuf, sync::{
+    collections::HashMap,
+    fs,
+    io::{BufReader, BufWriter},
+    path::PathBuf,
+    sync::{
         atomic::{AtomicBool, Ordering},
         Arc, Mutex,
-    }, time::Duration
+    },
+    time::Duration,
 };
 
 use cpal::traits::{DeviceTrait, StreamTrait};
@@ -13,12 +18,16 @@ use plotters::{
     series::LineSeries,
     style,
 };
+use serde::{Deserialize, Serialize};
 
-use crate::types::RingBuffer;
+use crate::{states::StateMixer, types::RingBuffer};
 
 #[tauri::command]
-pub fn add_track() -> String {
-    format!("Hello world")
+pub fn get_track_list(state: tauri::State<StateMixer>) -> TrackListResponse {
+    let mixer = state.clone();
+    let track_list = mixer.track_list.clone();
+    let list = track_list.lock().expect("Failed to lock list");
+    list.as_response()
 }
 
 pub trait TrackAudioSource: Send + Sync {
@@ -273,4 +282,39 @@ impl TrackList {
     pub fn track_list(&self) -> Vec<&String> {
         self.tracks.keys().collect::<Vec<_>>()
     }
+
+    pub fn as_response(&self) -> TrackListResponse {
+        let mut tracks = Vec::new();
+
+        for (name, track_mutex) in &self.tracks {
+            if let Ok(track) = track_mutex.lock() {
+                let track_type_str = match track.track_type {
+                    TrackType::In => "In",
+                    TrackType::MasterOut => "MasterOut",
+                };
+
+                tracks.push(TrackInfo {
+                    name: name.clone(),
+                    track_type: track_type_str.to_string(),
+                    volume: track.volume,
+                    pan: track.pan,
+                });
+            }
+        }
+
+        TrackListResponse { tracks }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct TrackInfo {
+    pub name: String,
+    pub track_type: String,
+    pub volume: f32,
+    pub pan: f32,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct TrackListResponse {
+    pub tracks: Vec<TrackInfo>,
 }
