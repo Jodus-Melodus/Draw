@@ -13,7 +13,7 @@ mod types;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {
-    let state_audio_context = StateAudioContext::new(cpal::default_host().id());
+    let state_audio_context = StateAudioContext::new();
     let master_output_device = state_audio_context
         .output_device()
         .expect("Failed to get master output device");
