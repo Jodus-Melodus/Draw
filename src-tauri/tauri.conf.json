@@ -4,17 +4,21 @@
   "version": "0.1.0",
   "identifier": "com.jodusmelodus.draw",
   "build": {
-    "frontendDist": "../src"
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
   },
   "app": {
     "withGlobalTauri": true,
     "windows": [
       {
         "label": "main",
-        "url": "index.html",
-        "title": "Draw",
+        "title": "draw",
         "center": true,
-        "maximized": true
+        "maximizable": false,
+        "maximized": true,
+        "resizable": false
       }
     ],
     "security": {
