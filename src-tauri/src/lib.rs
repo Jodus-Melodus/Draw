@@ -1,6 +1,6 @@
 use tauri::{Emitter, Listener, Manager};
 
-use crate::{menu::handle_menu_events, track::get_track_list};
+use crate::menu::handle_menu_events;
 
 mod file;
 mod menu;

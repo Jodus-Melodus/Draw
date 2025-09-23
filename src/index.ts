@@ -1,3 +1,3 @@
-import { getTrackList } from "./rust.js";
+import { getTrackList } from "./backend.js";
 
 getTrackList().then(list => console.log(list.tracks));

@@ -110,5 +110,3 @@ impl OutputDeviceRegistry {
         self.devices.keys().cloned().collect()
     }
 }
-
-// TODO add host manager
