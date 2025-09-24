@@ -262,7 +262,7 @@ impl Track {
         Track {
             track_type,
             source,
-            volume: 100.0,
+            volume: 0.0,
             pan: 0.0,
         }
     }
