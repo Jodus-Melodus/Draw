@@ -30,6 +30,14 @@ pub fn get_track_list(state: tauri::State<StateMixer>) -> TrackListResponse {
     list.as_response()
 }
 
+#[tauri::command]
+pub fn update_track(state: tauri::State<StateMixer>, track_name: String, update: TrackUpdate) {
+    let mixer = state.clone();
+    let track_list = mixer.track_list.clone();
+    let mut list = track_list.lock().expect("Failed to lock list");
+    list.update_track(&track_name, update);
+}
+
 pub trait TrackAudioSource: Send + Sync {
     fn read(&mut self, buffer: &mut [f32]) -> usize;
     fn write(&mut self, buffer: &[f32]) -> bool;
@@ -236,6 +244,12 @@ pub enum TrackType {
     MasterOut,
 }
 
+#[derive(Deserialize)]
+pub enum TrackUpdate {
+    Pan(f32),
+    Volume(f32),
+}
+
 pub struct Track {
     pub track_type: TrackType,
     pub source: Box<dyn TrackAudioSource + Send>,
@@ -275,12 +289,22 @@ impl TrackList {
         }
     }
 
-    pub fn get_track(&self, name: &str) -> Option<&Arc<Mutex<Track>>> {
-        self.tracks.get(name)
+    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<Track>>> {
+        self.tracks.get(name).cloned()
     }
 
     pub fn track_list(&self) -> Vec<&String> {
         self.tracks.keys().collect::<Vec<_>>()
+    }
+
+    pub fn update_track(&mut self, track_name: &str, update: TrackUpdate) {
+        let track_arc = self.get_track(track_name).expect("Track not found");
+        let mut track = track_arc.lock().expect("Failed to lock track");
+
+        match update {
+            TrackUpdate::Pan(pan) => track.pan = pan,
+            TrackUpdate::Volume(vol) => track.volume = vol,
+        }
     }
 
     pub fn as_response(&self) -> TrackListResponse {
