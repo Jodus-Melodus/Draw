@@ -1,8 +1,8 @@
-use crate::menu::handle_menu_events;
+use crate::menus::menu_builders;
 
 mod file;
-mod menu;
-mod settings;
+mod menus;
+mod pages;
 mod states;
 mod track;
 mod types;
@@ -19,21 +19,24 @@ pub async fn run() {
         .manage(state_audio_context)
         .manage(state_mixer)
         .setup(|app| {
-            let menu = menu::build_menus(app);
+            let menu = menu_builders::build_menus(app);
             app.set_menu(menu)?;
             Ok(())
         })
         .on_menu_event(|app, event| {
             let app = app.clone();
             tauri::async_runtime::spawn(async move {
-                handle_menu_events(&app, &event).await;
+                menu_builders::handle_menu_events(&app, &event).await;
             });
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             track::get_track_list,
-            track::update_track
+            track::update_track,
+            menus::project_menu::select_input_stream,
+            menus::project_menu::add_track_stream,
+            states::get_input_stream_device_list
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

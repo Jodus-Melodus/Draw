@@ -10,6 +10,12 @@ use crate::{
     types::{InputDeviceRegistry, OutputDeviceRegistry},
 };
 
+#[tauri::command]
+pub fn get_input_stream_device_list(audio_context: tauri::State<StateAudioContext>) -> Vec<String> {
+    let input_device_registry = audio_context.input_device_registry.clone();
+    input_device_registry.list()
+}
+
 #[derive(Clone)]
 pub struct StateMixer {
     pub track_list: Arc<Mutex<TrackList>>,

@@ -11,15 +11,9 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::{file::open_file, settings::open_settings, states};
+use crate::{menus, pages, states};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
-    let open_file = MenuItemBuilder::new("Open File")
-        .id("file-open-file")
-        .accelerator("CmdOrCtrl+O")
-        .build(app)
-        .unwrap();
-
     let settings = MenuItemBuilder::new("Settings")
         .id("file-settings")
         .accelerator("CmdOrCtrl+,")
@@ -28,14 +22,38 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
 
     let file_menu = SubmenuBuilder::new(app, "File")
         .id("file")
-        .item(&open_file)
-        .separator()
         .item(&settings)
         .quit()
         .build()
         .unwrap();
 
     file_menu
+}
+
+fn build_project_menu(app: &App<Wry>) -> Submenu<Wry> {
+    let add_track_file = MenuItemBuilder::new("File Track")
+        .id("project-add-track-file")
+        .accelerator("CmdOrCtrl+F")
+        .build(app)
+        .unwrap();
+
+    let add_track_stream = MenuItemBuilder::new("Stream Track")
+        .id("project-add-track-stream")
+        .accelerator("CmdOrCtrl+S")
+        .build(app)
+        .unwrap();
+
+    let add_track = SubmenuBuilder::new(app, "Add Track")
+        .id("project-add-track")
+        .items(&[&add_track_file, &add_track_stream])
+        .build()
+        .unwrap();
+
+    let project_menu = SubmenuBuilder::new(app, "Project")
+        .items(&[&add_track])
+        .build()
+        .unwrap();
+    project_menu
 }
 
 fn build_device_menu(app: &App<Wry>) -> Submenu<Wry> {
@@ -91,9 +109,10 @@ fn build_device_menu(app: &App<Wry>) -> Submenu<Wry> {
 
 pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
     let file_menu = build_file_menu(app);
+    let project_menu = build_project_menu(app);
     let device_menu = build_device_menu(app);
     MenuBuilder::new(app)
-        .items(&[&file_menu, &device_menu])
+        .items(&[&file_menu, &project_menu, &device_menu])
         .build()
         .unwrap()
 }
@@ -104,8 +123,9 @@ pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let id: &str = event.id.0.as_ref();
 
     match id {
-        "file-open-file" => open_file(app).await,
-        "file-settings" => open_settings(app),
+        "file-settings" => pages::settings_page::open_settings(app),
+        "project-add-track-file" => menus::project_menu::add_track_file(app).await,
+        "project-add-track-stream" => pages::select_input_stream::open_select_input_stream(app),
         _ => {
             if id.starts_with("devices-input") {
                 update_device_index(audio_context.input_device_index.clone(), id);

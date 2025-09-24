@@ -14,11 +14,11 @@
     "windows": [
       {
         "label": "main",
-        "title": "draw",
+        "title": "Draw",
         "center": true,
-        "maximizable": false,
         "maximized": true,
-        "resizable": false
+        "resizable": false,
+        "url": "index.html"
       }
     ],
     "security": {

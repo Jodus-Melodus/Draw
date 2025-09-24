@@ -24,8 +24,6 @@ pub async fn open_file(app_handle: &AppHandle) {
                 .expect("Failed to get file name"),
             track,
         );
-
-        println!("{:?}", list.track_list());
     } else {
         eprintln!("No file selected");
     }
