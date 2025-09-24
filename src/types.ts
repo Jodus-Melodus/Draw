@@ -9,3 +9,4 @@ export type TrackListResponse = {
     tracks: TrackInfo[];
 };
 
+export type TrackUpdate = | { Pan: number } | { Volume: number };

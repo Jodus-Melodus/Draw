@@ -1,3 +1,7 @@
-import { getTrackList } from "./tracks";
+import { getTrackList, updateTrack } from "./tracks";
 
-getTrackList().then(list => console.log(list.tracks));
+let track_list = await getTrackList();
+console.log(track_list.tracks);
+await updateTrack("master-out", { Volume: 0.0 });
+let track_list2 = await getTrackList();
+console.log(track_list2.tracks);

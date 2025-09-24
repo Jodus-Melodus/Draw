@@ -1,14 +1,28 @@
-import { emit, listen } from "@tauri-apps/api/event";
-import type { TrackListResponse } from "./types.js";
+import type { TrackListResponse, TrackUpdate } from "./types.js";
+import { invoke } from "@tauri-apps/api/core";
 
 /**
- * Request track list from Rust
+ * 
+ * @returns the current track list
  */
-export function getTrackList(): Promise<TrackListResponse> {
-    return new Promise((resolve) => {
-        listen("track-list-response", (event: any) => {
-            resolve(event.payload as TrackListResponse);
+export async function getTrackList(): Promise<TrackListResponse> {
+    const trackList = await invoke<TrackListResponse>("get_track_list");
+    return trackList;
+}
+
+/**
+ * Update a track in the track list
+ * @param trackName the name of the track  you want to update
+ * @param update the update you want to make using the `TrackUpdate` type
+ */
+export async function updateTrack(trackName: string, update: TrackUpdate) {
+    try {
+        await invoke("update_track", {
+            trackName,
+            update,
         });
-        emit("get-track-list");
-    });
+        console.log("Updated track successfully");
+    } catch (err) {
+        console.error("Failed to update track:", err);
+    }
 }

@@ -1,5 +1,3 @@
-use tauri::{Emitter, Listener, Manager};
-
 use crate::menu::handle_menu_events;
 
 mod file;
@@ -19,22 +17,10 @@ pub async fn run() {
 
     tauri::Builder::default()
         .manage(state_audio_context)
-        .manage(state_mixer.clone())
-        .setup(move |app| {
+        .manage(state_mixer)
+        .setup(|app| {
             let menu = menu::build_menus(app);
             app.set_menu(menu)?;
-
-            let main_window = app.get_webview_window("main").unwrap();
-            let mixer = state_mixer.clone();
-            let main_window_clone = main_window.clone();
-            main_window.listen("get-track-list", move |_| {
-                let list = mixer.track_list.lock().unwrap();
-                let response = list.as_response();
-
-                main_window_clone
-                    .emit("track-list-response", response)
-                    .unwrap();
-            });
             Ok(())
         })
         .on_menu_event(|app, event| {
@@ -45,6 +31,10 @@ pub async fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![
+            track::get_track_list,
+            track::update_track
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
