@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "draw",
+        "title": "Draw",
         "center": true,
         "maximizable": false,
         "maximized": true,
