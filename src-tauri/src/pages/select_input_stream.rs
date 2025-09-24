@@ -1,19 +1,19 @@
 use tauri::AppHandle;
 
-pub fn open_settings(app: &AppHandle) {
+pub fn open_select_input_stream(app: &AppHandle) {
     tauri::WebviewWindowBuilder::new(
         app,
-        "settings",
-        tauri::WebviewUrl::App("settings.html".into()),
+        "select-input-stream",
+        tauri::WebviewUrl::App("inputStreams.html".into()),
     )
-    .title("Settings")
+    .title("Select Input Stream")
     .always_on_top(true)
     .center()
     .maximizable(false)
     .menu(tauri::menu::Menu::new(app).unwrap())
     .minimizable(false)
     .resizable(false)
-    .inner_size(800.0, 400.0)
+    .inner_size(400.0, 600.0)
     .skip_taskbar(true)
     .build()
     .unwrap();
