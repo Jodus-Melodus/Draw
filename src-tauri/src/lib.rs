@@ -1,11 +1,11 @@
-use crate::menu::handle_menu_events;
+use crate::menus::menu_builders;
 
 mod file;
-mod menu;
-mod settings;
+mod menus;
 mod states;
 mod track;
 mod types;
+mod pages;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {
@@ -19,14 +19,14 @@ pub async fn run() {
         .manage(state_audio_context)
         .manage(state_mixer)
         .setup(|app| {
-            let menu = menu::build_menus(app);
+            let menu = menu_builders::build_menus(app);
             app.set_menu(menu)?;
             Ok(())
         })
         .on_menu_event(|app, event| {
             let app = app.clone();
             tauri::async_runtime::spawn(async move {
-                handle_menu_events(&app, &event).await;
+                menu_builders::handle_menu_events(&app, &event).await;
             });
         })
         .plugin(tauri_plugin_opener::init())
