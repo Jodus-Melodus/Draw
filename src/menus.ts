@@ -7,3 +7,8 @@ export async function selectInputStreamDeviceIndex(deviceIndex: number) {
 export async function selectInputStreamDevice() {
     await invoke("add_track_stream");
 }
+
+export async function getInputStreamDeviceList(): Promise<string[]> {
+    const list = await invoke<string[]>("get_input_stream_device_list");
+    return list;
+}
