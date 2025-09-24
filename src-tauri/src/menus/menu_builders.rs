@@ -11,9 +11,7 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::{
-    menus::project_menu::{add_track_file, add_track_stream}, pages::settings_page::open_settings, states
-};
+use crate::{menus, pages, states};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let settings = MenuItemBuilder::new("Settings")
@@ -125,9 +123,9 @@ pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let id: &str = event.id.0.as_ref();
 
     match id {
-        "file-settings" => open_settings(app),
-        "project-add-track-file" => add_track_file(app).await,
-        "project-add-track-stream" => add_track_stream(app),
+        "file-settings" => pages::settings_page::open_settings(app),
+        "project-add-track-file" => menus::project_menu::add_track_file(app).await,
+        "project-add-track-stream" => pages::select_input_stream::open_select_input_stream(app),
         _ => {
             if id.starts_with("devices-input") {
                 update_device_index(audio_context.input_device_index.clone(), id);

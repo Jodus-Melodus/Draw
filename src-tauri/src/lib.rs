@@ -2,10 +2,10 @@ use crate::menus::menu_builders;
 
 mod file;
 mod menus;
+mod pages;
 mod states;
 mod track;
 mod types;
-mod pages;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {
@@ -33,7 +33,9 @@ pub async fn run() {
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             track::get_track_list,
-            track::update_track
+            track::update_track,
+            menus::project_menu::select_input_stream,
+            menus::project_menu::add_track_stream
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

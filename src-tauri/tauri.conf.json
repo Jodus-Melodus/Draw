@@ -16,7 +16,6 @@
         "label": "main",
         "title": "Draw",
         "center": true,
-        "maximizable": false,
         "maximized": true,
         "resizable": false,
         "url": "index.html"
