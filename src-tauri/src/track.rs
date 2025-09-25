@@ -272,6 +272,10 @@ impl Track {
             solo: false,
         }
     }
+
+    pub fn change_source(&mut self, new_source: Box<dyn TrackAudioSource + Send>) {
+        self.source = new_source;
+    }
 }
 
 pub struct TrackList {

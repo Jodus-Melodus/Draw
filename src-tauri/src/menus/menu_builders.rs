@@ -11,7 +11,10 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::{menus, pages, states};
+use crate::{
+    menus, pages, states,
+    track::{self, get_track_list},
+};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let settings = MenuItemBuilder::new("Settings")
@@ -96,15 +99,15 @@ pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
         "project-add-track-file" => menus::project_menu::add_track_file(app).await,
         "project-add-track-stream" => pages::select_input_stream::open_select_input_stream(app),
         _ if id.starts_with("file-output-device-") => {
-            update_device_index(audio_context.output_device_index.clone(), id);
+            update_master_output_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app, id);
-            // TODO update master out track
+            update_master_output_device_track(app);
         }
         _ => eprintln!("Unknown menu item selected"),
     }
 }
 
-fn update_device_index(device_index: Arc<AtomicUsize>, id: &str) {
+fn update_master_output_device_index(device_index: Arc<AtomicUsize>, id: &str) {
     let parts = id.split("-").collect::<Vec<_>>();
     let index = parts
         .last()
@@ -112,6 +115,25 @@ fn update_device_index(device_index: Arc<AtomicUsize>, id: &str) {
         .parse::<usize>()
         .expect("Failed to convert to index");
     device_index.store(index, Ordering::SeqCst);
+}
+
+fn update_master_output_device_track(app: &AppHandle) {
+    let mixer = app.state::<states::StateMixer>();
+    let list = mixer.track_list.clone();
+    let track_list = list.lock().expect("Failed to lock list");
+    let master_output_track = track_list
+        .get_track("master-out")
+        .expect("Failed to get master output track")
+        .clone();
+    let mut master_output = master_output_track
+        .lock()
+        .expect("Failed to lock master output");
+    let audio_context = app.state::<states::StateAudioContext>();
+    let new_master_output_device = audio_context
+        .output_device()
+        .expect("Failed to get new master output device"); // TODO change registries to store Arc<>
+    let new_output_source = track::StreamSource::new(new_master_output_device.clone());
+    master_output.change_source(Box::new(new_output_source));
 }
 
 fn update_radio_group_menu(app: &AppHandle, id: &str) {
