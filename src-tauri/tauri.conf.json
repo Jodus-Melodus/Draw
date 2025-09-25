@@ -1,13 +1,13 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "draw",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "identifier": "com.jodusmelodus.draw",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "pnpm build",
-    "frontendDist": "../dist"
+    "frontendDist": "../src/dist"
   },
   "app": {
     "withGlobalTauri": true,
