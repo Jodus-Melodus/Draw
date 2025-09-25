@@ -11,10 +11,7 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::{
-    menus, pages, states,
-    track::{self, get_track_list},
-};
+use crate::{menus, pages, states, track};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let settings = MenuItemBuilder::new("Settings")
@@ -131,7 +128,7 @@ fn update_master_output_device_track(app: &AppHandle) {
     let audio_context = app.state::<states::StateAudioContext>();
     let new_master_output_device = audio_context
         .output_device()
-        .expect("Failed to get new master output device"); // TODO change registries to store Arc<>
+        .expect("Failed to get new master output device");
     let new_output_source = track::StreamSource::new(new_master_output_device.clone());
     master_output.change_source(Box::new(new_output_source));
 }

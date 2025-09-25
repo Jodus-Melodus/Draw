@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     fs,
-    io::{BufReader, BufWriter, StdoutLock},
+    io::{BufReader, BufWriter},
     path::PathBuf,
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -50,7 +50,7 @@ pub struct StreamSource {
 }
 
 impl StreamSource {
-    pub fn new(device: cpal::Device) -> Self {
+    pub fn new(device: Arc<cpal::Device>) -> Self {
         let ring_buffer = Arc::new(Mutex::new(RingBuffer::new()));
         let ring_buffer_clone = ring_buffer.clone();
 
