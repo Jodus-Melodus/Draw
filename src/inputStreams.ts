@@ -1,5 +1,5 @@
-import { getInputStreamDeviceList, selectInputStreamDevice, selectInputStreamDeviceIndex } from "./menus";
-import { getTrackList } from "./tracks";
+import { getInputStreamDeviceList, selectInputStreamDeviceIndex, selectInputStreamDevice } from "./backend/menus";
+import { getTrackList } from "./backend/tracks";
 
 let list = await getInputStreamDeviceList();
 console.log(list);
