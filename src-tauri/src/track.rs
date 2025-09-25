@@ -247,7 +247,7 @@ pub enum TrackType {
 #[derive(Deserialize)]
 pub enum TrackUpdate {
     Pan(f32),
-    Volume(f32),
+    Gain(f32),
     Monitor(bool),
     Solo(bool),
 }
@@ -255,7 +255,7 @@ pub enum TrackUpdate {
 pub struct Track {
     pub track_type: TrackType,
     pub source: Box<dyn TrackAudioSource + Send>,
-    pub volume: f32,
+    pub gain: f32,
     pub pan: f32,
     pub solo: bool,
     pub monitor: bool,
@@ -266,7 +266,7 @@ impl Track {
         Track {
             track_type,
             source,
-            volume: 0.0,
+            gain: 0.0,
             pan: 0.0,
             monitor: false,
             solo: false,
@@ -313,7 +313,7 @@ impl TrackList {
 
         match update {
             TrackUpdate::Pan(pan) => track.pan = pan,
-            TrackUpdate::Volume(vol) => track.volume = vol,
+            TrackUpdate::Gain(gain) => track.gain = gain,
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
         }
@@ -332,7 +332,7 @@ impl TrackList {
                 tracks.push(TrackInfo {
                     name: name.clone(),
                     track_type: track_type_str.to_string(),
-                    volume: track.volume,
+                    gain: track.gain,
                     pan: track.pan,
                 });
             }
@@ -346,7 +346,7 @@ impl TrackList {
 pub struct TrackInfo {
     pub name: String,
     pub track_type: String,
-    pub volume: f32,
+    pub gain: f32,
     pub pan: f32,
 }
 
