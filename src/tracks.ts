@@ -2,7 +2,7 @@ import type { TrackListResponse, TrackUpdate } from "./types.js";
 import { invoke } from "@tauri-apps/api/core";
 
 /**
- * 
+ * Get a list of all the input and output tracks
  * @returns the current track list
  */
 export async function getTrackList(): Promise<TrackListResponse> {

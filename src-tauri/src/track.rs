@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     fs,
-    io::{BufReader, BufWriter},
+    io::{BufReader, BufWriter, StdoutLock},
     path::PathBuf,
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -248,6 +248,8 @@ pub enum TrackType {
 pub enum TrackUpdate {
     Pan(f32),
     Volume(f32),
+    Monitor(bool),
+    Solo(bool),
 }
 
 pub struct Track {
@@ -255,6 +257,8 @@ pub struct Track {
     pub source: Box<dyn TrackAudioSource + Send>,
     pub volume: f32,
     pub pan: f32,
+    pub solo: bool,
+    pub monitor: bool,
 }
 
 impl Track {
@@ -264,6 +268,8 @@ impl Track {
             source,
             volume: 0.0,
             pan: 0.0,
+            monitor: false,
+            solo: false,
         }
     }
 }
@@ -304,6 +310,8 @@ impl TrackList {
         match update {
             TrackUpdate::Pan(pan) => track.pan = pan,
             TrackUpdate::Volume(vol) => track.volume = vol,
+            TrackUpdate::Monitor(monitor) => track.monitor = monitor,
+            TrackUpdate::Solo(solo) => track.solo = solo,
         }
     }
 
