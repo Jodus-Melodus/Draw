@@ -23,7 +23,7 @@ pub struct StateMixer {
 }
 
 impl StateMixer {
-    pub fn new(master_output: Device) -> Self {
+    pub fn new(master_output: Arc<Device>) -> Self {
         let mut track_list = TrackList::new();
         let master_out = Track::new(
             TrackType::MasterOut,
@@ -59,12 +59,12 @@ impl StateAudioContext {
         }
     }
 
-    pub fn input_device(&self) -> Option<&cpal::Device> {
+    pub fn input_device(&self) -> Option<Arc<cpal::Device>> {
         self.input_device_registry
             .get(self.input_device_index.load(Ordering::SeqCst))
     }
 
-    pub fn output_device(&self) -> Option<&cpal::Device> {
+    pub fn output_device(&self) -> Option<Arc<cpal::Device>> {
         self.output_device_registry
             .get(self.output_device_index.load(Ordering::SeqCst))
     }

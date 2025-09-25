@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use cpal::traits::{DeviceTrait, HostTrait};
+use std::{collections::HashMap, sync::Arc};
 
 pub struct RingBuffer {
     buffer: [f32; 48000],
@@ -55,7 +55,7 @@ impl RingBuffer {
 
 #[derive(Clone)]
 pub struct InputDeviceRegistry {
-    devices: HashMap<String, cpal::Device>,
+    devices: HashMap<String, Arc<cpal::Device>>,
 }
 
 impl InputDeviceRegistry {
@@ -63,18 +63,18 @@ impl InputDeviceRegistry {
         let mut map = HashMap::new();
         for device in host.input_devices().expect("No input devices available") {
             let name = device.name().unwrap_or_else(|_| "Unknown".into());
-            map.insert(name.clone(), device);
+            map.insert(name.clone(), Arc::new(device));
         }
 
         Self { devices: map }
     }
 
-    pub fn get_from_name(&self, name: &str) -> Option<&cpal::Device> {
-        self.devices.get(name)
+    pub fn get_from_name(&self, name: &str) -> Option<Arc<cpal::Device>> {
+        self.devices.get(name).cloned()
     }
 
-    pub fn get(&self, index: usize) -> Option<&cpal::Device> {
-        self.devices.values().nth(index)
+    pub fn get(&self, index: usize) -> Option<Arc<cpal::Device>> {
+        self.devices.values().nth(index).cloned()
     }
 
     pub fn list(&self) -> Vec<String> {
@@ -84,7 +84,7 @@ impl InputDeviceRegistry {
 
 #[derive(Clone)]
 pub struct OutputDeviceRegistry {
-    devices: HashMap<String, cpal::Device>,
+    devices: HashMap<String, Arc<cpal::Device>>,
 }
 
 impl OutputDeviceRegistry {
@@ -92,18 +92,18 @@ impl OutputDeviceRegistry {
         let mut map = HashMap::new();
         for device in host.output_devices().expect("No output devices available") {
             let name = device.name().unwrap_or_else(|_| "Unknown".into());
-            map.insert(name.clone(), device);
+            map.insert(name.clone(), Arc::new(device));
         }
 
         Self { devices: map }
     }
 
-    pub fn get_from_name(&self, name: &str) -> Option<&cpal::Device> {
-        self.devices.get(name)
+    pub fn get_from_name(&self, name: &str) -> Option<Arc<cpal::Device>> {
+        self.devices.get(name).cloned()
     }
 
-    pub fn get(&self, index: usize) -> Option<&cpal::Device> {
-        self.devices.values().nth(index)
+    pub fn get(&self, index: usize) -> Option<Arc<cpal::Device>> {
+        self.devices.values().nth(index).cloned()
     }
 
     pub fn list(&self) -> Vec<String> {
