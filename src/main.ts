@@ -1,4 +1,4 @@
-import { getTrackList, updateTrack } from "./tracks";
+import { getTrackList, updateTrack } from "./backend/tracks";
 
 let track_list = await getTrackList();
 console.log(track_list.tracks);
