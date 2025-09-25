@@ -19,7 +19,7 @@ pub fn get_input_stream_device_list(audio_context: tauri::State<StateAudioContex
 #[derive(Clone)]
 pub struct StateMixer {
     pub track_list: Arc<Mutex<TrackList>>,
-    pub cursor: Arc<AtomicU64>,
+    pub playhead: Arc<AtomicU64>,
 }
 
 impl StateMixer {
@@ -32,7 +32,7 @@ impl StateMixer {
         track_list.add_track("master-out", master_out);
         StateMixer {
             track_list: Arc::new(Mutex::new(track_list)),
-            cursor: Arc::new(AtomicU64::new(0)),
+            playhead: Arc::new(AtomicU64::new(0)),
         }
     }
 }
