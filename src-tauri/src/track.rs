@@ -38,9 +38,9 @@ pub fn update_track(state: tauri::State<StateMixer>, track_name: String, update:
     list.update_track(&track_name, update);
 }
 
-pub trait TrackAudioSource: Send + Sync {
-    fn read(&mut self, buffer: &mut [f32]) -> usize;
-    fn write(&mut self, buffer: &[f32]) -> bool;
+pub enum TrackAudioSource {
+    File(FileSource),
+    Stream(StreamSource),
 }
 
 pub struct StreamSource {
@@ -208,37 +208,6 @@ impl FileSource {
     }
 }
 
-impl TrackAudioSource for StreamSource {
-    fn read(&mut self, buffer: &mut [f32]) -> usize {
-        if let Ok(mut rb) = self.ring_buffer.lock() {
-            rb.read(buffer)
-        } else {
-            0
-        }
-    }
-
-    fn write(&mut self, buffer: &[f32]) -> bool {
-        false
-    }
-}
-
-impl TrackAudioSource for FileSource {
-    fn read(&mut self, buffer: &mut [f32]) -> usize {
-        if let Some(ref mut input_reader) = &mut self.reader {
-            for (i, sample) in input_reader.samples::<f32>().take(buffer.len()).enumerate() {
-                buffer[i] = sample.unwrap_or(0.0);
-            }
-            buffer.len()
-        } else {
-            0
-        }
-    }
-
-    fn write(&mut self, buffer: &[f32]) -> bool {
-        false
-    }
-}
-
 pub enum TrackType {
     In,
     MasterOut,
@@ -254,7 +223,7 @@ pub enum TrackUpdate {
 
 pub struct Track {
     pub track_type: TrackType,
-    pub source: Box<dyn TrackAudioSource + Send>,
+    pub source: TrackAudioSource,
     pub gain: f32,
     pub pan: f32,
     pub solo: bool,
@@ -262,7 +231,7 @@ pub struct Track {
 }
 
 impl Track {
-    pub fn new(track_type: TrackType, source: Box<dyn TrackAudioSource + Send>) -> Self {
+    pub fn new(track_type: TrackType, source: TrackAudioSource) -> Self {
         Track {
             track_type,
             source,
@@ -273,7 +242,7 @@ impl Track {
         }
     }
 
-    pub fn change_source(&mut self, new_source: Box<dyn TrackAudioSource + Send>) {
+    pub fn change_source(&mut self, new_source: TrackAudioSource) {
         self.source = new_source;
     }
 }

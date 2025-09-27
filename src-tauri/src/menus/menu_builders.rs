@@ -130,7 +130,7 @@ fn update_master_output_device_track(app: &AppHandle) {
         .output_device()
         .expect("Failed to get new master output device");
     let new_output_source = track::StreamSource::new(new_master_output_device.clone());
-    master_output.change_source(Box::new(new_output_source));
+    master_output.change_source(track::TrackAudioSource::Stream(new_output_source))
 }
 
 fn update_radio_group_menu(app: &AppHandle, id: &str) {

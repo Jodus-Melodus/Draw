@@ -2,11 +2,7 @@ use std::sync::atomic::Ordering;
 
 use tauri::AppHandle;
 
-use crate::{
-    file::open_file,
-    states,
-    track::{StreamSource, Track, TrackType},
-};
+use crate::{file::open_file, states, track};
 
 pub async fn add_track_file(app_handle: &AppHandle) {
     open_file(app_handle).await;
@@ -22,8 +18,11 @@ pub fn add_track_stream(
         .expect("Failed to get input device");
     let list = mixer.track_list.clone();
     let mut track_list = list.lock().expect("Failed to lock track list");
-    let source = StreamSource::new(device.clone());
-    let track = Track::new(TrackType::In, Box::new(source));
+    let source = track::StreamSource::new(device.clone());
+    let track = track::Track::new(
+        track::TrackType::In,
+        track::TrackAudioSource::Stream(source),
+    );
     track_list.add_track("testing-1-2", track);
 }
 
