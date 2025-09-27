@@ -5,7 +5,7 @@ use tauri_plugin_dialog::DialogExt;
 
 use crate::{
     states,
-    track::{FileSource, Track, TrackType},
+    track
 };
 
 pub async fn open_file(app_handle: &AppHandle) {
@@ -15,8 +15,8 @@ pub async fn open_file(app_handle: &AppHandle) {
     if let Some(path) = file_path {
         let track_list = state.track_list.clone();
         let mut list = track_list.lock().expect("Failed to lock track list");
-        let track_source = FileSource::new_input(&path);
-        let track = Track::new(TrackType::In, Box::new(track_source));
+        let track_source = track::FileSource::new_input(&path);
+        let track = track::Track::new(track::TrackType::In, track::TrackAudioSource::File(track_source));
         list.add_track(
             &path
                 .file_name()

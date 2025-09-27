@@ -6,7 +6,7 @@ use std::sync::{
 use cpal::Device;
 
 use crate::{
-    track::{StreamSource, Track, TrackList, TrackType},
+    track,
     types::{InputDeviceRegistry, OutputDeviceRegistry},
 };
 
@@ -18,16 +18,16 @@ pub fn get_input_stream_device_list(audio_context: tauri::State<StateAudioContex
 
 #[derive(Clone)]
 pub struct StateMixer {
-    pub track_list: Arc<Mutex<TrackList>>,
+    pub track_list: Arc<Mutex<track::TrackList>>,
     pub playhead: Arc<AtomicU64>,
 }
 
 impl StateMixer {
     pub fn new(master_output: Arc<Device>) -> Self {
-        let mut track_list = TrackList::new();
-        let master_out = Track::new(
-            TrackType::MasterOut,
-            Box::new(StreamSource::new(master_output)),
+        let mut track_list = track::TrackList::new();
+        let master_out = track::Track::new(
+            track::TrackType::MasterOut,
+            track::TrackAudioSource::Stream(track::StreamSource::new(master_output)),
         );
         track_list.add_track("master-out", master_out);
         StateMixer {
