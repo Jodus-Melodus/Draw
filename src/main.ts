@@ -8,12 +8,36 @@ async function init() {
     console.log(track_list2.tracks);
 }
 
-init();
+init(); {
+  const muteButton = document.querySelector('.channel-mute');
 
-const muteButton = document.querySelector('.mute');
+  if (muteButton) {
+    muteButton.addEventListener('click', () => {
+      muteButton.classList.toggle('active');
+    });
+  }
 
-if (muteButton) {
-  muteButton.addEventListener('click', () => {
-    muteButton.classList.toggle('active');
-  });
-}
+  const soloButton = document.querySelector('.channel-solo');
+
+  if (soloButton) {
+    soloButton.addEventListener('click', () => {
+      soloButton.classList.toggle('active');
+    });
+  }
+
+  const recordButton = document.querySelector('.channel-record');
+
+  if (recordButton) {
+    recordButton.addEventListener('click', () => {
+      recordButton.classList.toggle('active');
+    });
+  }
+
+  const monitorButton = document.querySelector('.channel-monitor');
+
+  if (monitorButton) {
+    monitorButton.addEventListener('click', () => {
+      monitorButton.classList.toggle('active');
+    });
+  }
+};
