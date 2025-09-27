@@ -9,3 +9,11 @@ async function init() {
 }
 
 init();
+
+const muteButton = document.querySelector('.mute');
+
+if (muteButton) {
+  muteButton.addEventListener('click', () => {
+    muteButton.classList.toggle('active');
+  });
+}
