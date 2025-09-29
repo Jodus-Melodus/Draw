@@ -52,22 +52,10 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
 }
 
 fn build_project_menu(app: &App<Wry>) -> Submenu<Wry> {
-    let add_track_file = MenuItemBuilder::new("File Track")
-        .id("project-add-track-file")
-        .accelerator("CmdOrCtrl+F")
-        .build(app)
-        .unwrap();
-
-    let add_track_stream = MenuItemBuilder::new("Stream Track")
-        .id("project-add-track-stream")
-        .accelerator("CmdOrCtrl+S")
-        .build(app)
-        .unwrap();
-
-    let add_track = SubmenuBuilder::new(app, "Add Track")
+    let add_track = MenuItemBuilder::new("Add Track")
+        .accelerator("CmdOrCtrl+A")
         .id("project-add-track")
-        .items(&[&add_track_file, &add_track_stream])
-        .build()
+        .build(app)
         .unwrap();
 
     let project_menu = SubmenuBuilder::new(app, "Project")
@@ -88,13 +76,12 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
 
 pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let audio_context = app.state::<states::StateAudioContext>();
-    let _mixer_state = app.state::<states::StateMixer>();
+    let mixer_state = app.state::<states::StateMixer>();
     let id: &str = event.id.0.as_ref();
 
     match id {
         "file-settings" => pages::settings_page::open_settings(app),
-        "project-add-track-file" => menus::project_menu::add_track_file(app).await,
-        "project-add-track-stream" => pages::select_input_stream::open_select_input_stream(app),
+        "project-add-track" => menus::project_menu::add_empty_track(mixer_state.clone()),
         _ if id.starts_with("file-output-device-") => {
             update_master_output_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app, id);

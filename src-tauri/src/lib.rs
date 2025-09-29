@@ -34,9 +34,8 @@ pub async fn run() {
         .invoke_handler(tauri::generate_handler![
             track::get_track_list,
             track::update_track,
-            menus::project_menu::select_input_stream,
-            menus::project_menu::add_track_stream,
-            states::get_input_stream_device_list
+            states::get_input_stream_device_list,
+            menus::project_menu::add_empty_track
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
