@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use tauri::{AppHandle, Manager};
 use tauri_plugin_dialog::DialogExt;
+use tokio::sync::oneshot;
 
 use crate::{states, track};
 
@@ -9,6 +10,7 @@ pub async fn open_file(app_handle: &AppHandle) {
     let mixer_state = app_handle.state::<states::StateMixer>();
     let state = mixer_state.clone();
     let file_path = select_file(app_handle).await;
+
     if let Some(path) = file_path {
         let track_list = state.track_list.clone();
         let mut list = track_list.lock().expect("Failed to lock track list");
@@ -21,12 +23,24 @@ pub async fn open_file(app_handle: &AppHandle) {
                 .expect("Failed to get file name"),
             track,
         );
+        println!("Added file");
+        println!("{:?}", list.track_list())    ;
     } else {
         eprintln!("No file selected");
     }
 }
 
-async fn select_file(app_handle: &AppHandle) -> Option<PathBuf> {
-    let file_path = app_handle.dialog().file().blocking_pick_file();
-    file_path.map(|p| p.into_path().unwrap_or_default())
+pub async fn select_file(app_handle: &AppHandle) -> Option<PathBuf> {
+    let (tx, rx) = oneshot::channel();
+
+    app_handle
+        .dialog()
+        .file()
+        .set_title("Select a file to open")
+        .add_filter("All files", &["wav"])
+        .pick_file(move |path| {
+            let _ = tx.send(path.map(|p| p.into_path().unwrap_or_default()));
+        });
+
+    rx.await.ok().flatten()
 }
