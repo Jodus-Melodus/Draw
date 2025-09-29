@@ -38,11 +38,6 @@ pub fn update_track(state: tauri::State<StateMixer>, track_name: String, update:
     list.update_track(&track_name, update);
 }
 
-pub enum TrackAudioSource {
-    File(FileSource),
-    Stream(StreamSource),
-}
-
 pub struct StreamSource {
     ring_buffer: Arc<Mutex<RingBuffer>>,
     stream: Arc<cpal::Stream>,
@@ -221,34 +216,36 @@ pub enum TrackUpdate {
     Solo(bool),
 }
 
-pub struct Track {
+pub struct AudioTrack {
     pub track_type: TrackType,
-    pub source: TrackAudioSource,
+    pub stream_source: Option<StreamSource>,
+    pub file_source: Option<FileSource>,
     pub gain: f32,
     pub pan: f32,
     pub solo: bool,
     pub monitor: bool,
 }
 
-impl Track {
-    pub fn new(track_type: TrackType, source: TrackAudioSource) -> Self {
-        Track {
+impl AudioTrack {
+    pub fn new(
+        track_type: TrackType,
+        stream_source: Option<StreamSource>,
+        file_source: Option<FileSource>,
+    ) -> Self {
+        AudioTrack {
             track_type,
-            source,
+            stream_source,
+            file_source,
             gain: 0.0,
             pan: 0.0,
             monitor: false,
             solo: false,
         }
     }
-
-    pub fn change_source(&mut self, new_source: TrackAudioSource) {
-        self.source = new_source;
-    }
 }
 
 pub struct TrackList {
-    tracks: HashMap<String, Arc<Mutex<Track>>>,
+    tracks: HashMap<String, Arc<Mutex<AudioTrack>>>,
 }
 
 impl TrackList {
@@ -258,7 +255,7 @@ impl TrackList {
         }
     }
 
-    pub fn add_track(&mut self, name: &str, track: Track) {
+    pub fn add_track(&mut self, name: &str, track: AudioTrack) {
         self.tracks.insert(name.into(), Arc::new(Mutex::new(track)));
     }
 
@@ -268,7 +265,7 @@ impl TrackList {
         }
     }
 
-    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<Track>>> {
+    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<AudioTrack>>> {
         self.tracks.get(name).cloned()
     }
 

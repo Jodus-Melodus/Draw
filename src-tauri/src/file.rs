@@ -3,10 +3,7 @@ use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_dialog::DialogExt;
 
-use crate::{
-    states,
-    track
-};
+use crate::{states, track};
 
 pub async fn open_file(app_handle: &AppHandle) {
     let mixer_state = app_handle.state::<states::StateMixer>();
@@ -16,7 +13,7 @@ pub async fn open_file(app_handle: &AppHandle) {
         let track_list = state.track_list.clone();
         let mut list = track_list.lock().expect("Failed to lock track list");
         let track_source = track::FileSource::new_input(&path);
-        let track = track::Track::new(track::TrackType::In, track::TrackAudioSource::File(track_source));
+        let track = track::AudioTrack::new(track::TrackType::In, None, Some(track_source));
         list.add_track(
             &path
                 .file_name()
