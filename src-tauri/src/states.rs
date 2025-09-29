@@ -25,7 +25,7 @@ pub struct StateMixer {
 impl StateMixer {
     pub fn new(master_output: Arc<Device>) -> Self {
         let mut track_list = track::TrackList::new();
-        let master_out = track::Track::new(
+        let master_out = track::AudioTrack::new(
             track::TrackType::MasterOut,
             Some(track::StreamSource::new(master_output)),
             None,

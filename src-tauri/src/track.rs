@@ -216,7 +216,7 @@ pub enum TrackUpdate {
     Solo(bool),
 }
 
-pub struct Track {
+pub struct AudioTrack {
     pub track_type: TrackType,
     pub stream_source: Option<StreamSource>,
     pub file_source: Option<FileSource>,
@@ -226,13 +226,13 @@ pub struct Track {
     pub monitor: bool,
 }
 
-impl Track {
+impl AudioTrack {
     pub fn new(
         track_type: TrackType,
         stream_source: Option<StreamSource>,
         file_source: Option<FileSource>,
     ) -> Self {
-        Track {
+        AudioTrack {
             track_type,
             stream_source,
             file_source,
@@ -242,19 +242,10 @@ impl Track {
             solo: false,
         }
     }
-
-    pub fn change_source(
-        &mut self,
-        stream_source: Option<StreamSource>,
-        file_source: Option<FileSource>,
-    ) {
-        self.stream_source = stream_source;
-        self.file_source = file_source;
-    }
 }
 
 pub struct TrackList {
-    tracks: HashMap<String, Arc<Mutex<Track>>>,
+    tracks: HashMap<String, Arc<Mutex<AudioTrack>>>,
 }
 
 impl TrackList {
@@ -264,7 +255,7 @@ impl TrackList {
         }
     }
 
-    pub fn add_track(&mut self, name: &str, track: Track) {
+    pub fn add_track(&mut self, name: &str, track: AudioTrack) {
         self.tracks.insert(name.into(), Arc::new(Mutex::new(track)));
     }
 
@@ -274,7 +265,7 @@ impl TrackList {
         }
     }
 
-    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<Track>>> {
+    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<AudioTrack>>> {
         self.tracks.get(name).cloned()
     }
 

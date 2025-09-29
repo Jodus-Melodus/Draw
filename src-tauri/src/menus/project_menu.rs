@@ -19,7 +19,7 @@ pub fn add_track_stream(
     let list = mixer.track_list.clone();
     let mut track_list = list.lock().expect("Failed to lock track list");
     let source = track::StreamSource::new(device.clone());
-    let track = track::Track::new(track::TrackType::In, Some(source), None);
+    let track = track::AudioTrack::new(track::TrackType::In, Some(source), None);
     track_list.add_track("testing-1-2", track);
 }
 
