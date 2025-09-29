@@ -27,7 +27,8 @@ impl StateMixer {
         let mut track_list = track::TrackList::new();
         let master_out = track::Track::new(
             track::TrackType::MasterOut,
-            track::TrackAudioSource::Stream(track::StreamSource::new(master_output)),
+            Some(track::StreamSource::new(master_output)),
+            None,
         );
         track_list.add_track("master-out", master_out);
         StateMixer {

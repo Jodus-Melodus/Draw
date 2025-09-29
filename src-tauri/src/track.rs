@@ -38,11 +38,6 @@ pub fn update_track(state: tauri::State<StateMixer>, track_name: String, update:
     list.update_track(&track_name, update);
 }
 
-pub enum TrackAudioSource {
-    File(FileSource),
-    Stream(StreamSource),
-}
-
 pub struct StreamSource {
     ring_buffer: Arc<Mutex<RingBuffer>>,
     stream: Arc<cpal::Stream>,
@@ -223,7 +218,8 @@ pub enum TrackUpdate {
 
 pub struct Track {
     pub track_type: TrackType,
-    pub source: TrackAudioSource,
+    pub stream_source: Option<StreamSource>,
+    pub file_source: Option<FileSource>,
     pub gain: f32,
     pub pan: f32,
     pub solo: bool,
@@ -231,10 +227,15 @@ pub struct Track {
 }
 
 impl Track {
-    pub fn new(track_type: TrackType, source: TrackAudioSource) -> Self {
+    pub fn new(
+        track_type: TrackType,
+        stream_source: Option<StreamSource>,
+        file_source: Option<FileSource>,
+    ) -> Self {
         Track {
             track_type,
-            source,
+            stream_source,
+            file_source,
             gain: 0.0,
             pan: 0.0,
             monitor: false,
@@ -242,8 +243,13 @@ impl Track {
         }
     }
 
-    pub fn change_source(&mut self, new_source: TrackAudioSource) {
-        self.source = new_source;
+    pub fn change_source(
+        &mut self,
+        stream_source: Option<StreamSource>,
+        file_source: Option<FileSource>,
+    ) {
+        self.stream_source = stream_source;
+        self.file_source = file_source;
     }
 }
 
