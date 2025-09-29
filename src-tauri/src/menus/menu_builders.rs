@@ -11,9 +11,15 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::{menus, pages, states, track};
+use crate::{file, menus, pages, states, track};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
+    let open_file = MenuItemBuilder::new("Open file")
+        .id("file-open-file")
+        .accelerator("CmdOrCtrl+O")
+        .build(app)
+        .unwrap();
+
     let settings = MenuItemBuilder::new("Settings")
         .id("file-settings")
         .accelerator("CmdOrCtrl+,")
@@ -43,6 +49,8 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
 
     let file_menu = SubmenuBuilder::new(app, "File")
         .id("file")
+        .items(&[&open_file])
+        .separator()
         .items(&[&settings, &output_menu])
         .quit()
         .build()
@@ -80,6 +88,7 @@ pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let id: &str = event.id.0.as_ref();
 
     match id {
+        "file-open-file" => file::open_file(app).await,
         "file-settings" => pages::settings_page::open_settings(app),
         "project-add-track" => menus::project_menu::add_empty_track(mixer_state.clone()),
         _ if id.starts_with("file-output-device-") => {
