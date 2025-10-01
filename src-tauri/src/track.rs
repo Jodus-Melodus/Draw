@@ -196,7 +196,7 @@ pub struct FileSource {
 
 impl FileSource {
     pub fn new_input(input_path: &PathBuf) -> Self {
-        let reader = hound::WavReader::open(input_path).expect("Failed to create reader");
+        let reader = hound::WavReader::open(input_path).expect("Failed to create reader"); // TODO use absolute path
         Self {
             path: input_path.to_path_buf(),
             reader: Some(reader),
@@ -247,6 +247,20 @@ impl AudioTrack {
             pan: 0.0,
             monitor: false,
             solo: false,
+        }
+    }
+
+    pub fn from_raw(raw_audio_track: AudioTrackRaw) -> Self {
+        AudioTrack {
+            track_type: raw_audio_track.track_type,
+            stream_source: None,
+            file_source: Some(FileSource::new_input(&PathBuf::from(
+                raw_audio_track.file_source_path,
+            ))),
+            gain: raw_audio_track.gain,
+            pan: raw_audio_track.pan,
+            solo: raw_audio_track.solo,
+            monitor: raw_audio_track.monitor,
         }
     }
 
@@ -316,6 +330,19 @@ impl TrackList {
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
         }
+    }
+
+    pub fn from_raw(raw_track_list: HashMap<String, AudioTrackRaw>) -> Self {
+        let mut tracks = HashMap::new();
+
+        for (track_name, raw_track) in raw_track_list {
+            tracks.insert(
+                track_name,
+                Arc::new(Mutex::new(AudioTrack::from_raw(raw_track))),
+            );
+        }
+
+        TrackList { tracks }
     }
 
     pub fn to_raw(&self) -> HashMap<String, AudioTrackRaw> {

@@ -72,8 +72,14 @@ fn build_project_menu(app: &App<Wry>) -> Submenu<Wry> {
         .build(app)
         .unwrap();
 
+    let load_project = MenuItemBuilder::new("Open project")
+        .accelerator("CmdOrCtrl+O")
+        .id("project-open-project")
+        .build(app)
+        .unwrap();
+
     let project_menu = SubmenuBuilder::new(app, "Project")
-        .items(&[&add_track, &save_project])
+        .items(&[&add_track, &save_project, &load_project])
         .build()
         .unwrap();
     project_menu
@@ -98,6 +104,7 @@ pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
         "file-settings" => pages::settings_page::open_settings(app),
         "project-add-track" => menus::project_menu::add_empty_track(mixer_state.clone()),
         "project-save-project" => project::save_project(app),
+        "project-open-project" => project::load_project(app),
         _ if id.starts_with("file-output-device-") => {
             update_master_output_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app, id);
