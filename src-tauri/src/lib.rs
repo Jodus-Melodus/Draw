@@ -6,6 +6,7 @@ mod pages;
 mod states;
 mod track;
 mod types;
+mod project;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {

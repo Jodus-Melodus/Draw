@@ -11,7 +11,7 @@ use tauri::{
     App, AppHandle, Manager, Wry,
 };
 
-use crate::{file, menus, pages, states, track};
+use crate::{file, menus, pages, project, states, track};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let open_file = MenuItemBuilder::new("Open file")
@@ -66,8 +66,14 @@ fn build_project_menu(app: &App<Wry>) -> Submenu<Wry> {
         .build(app)
         .unwrap();
 
+    let save_project = MenuItemBuilder::new("Save project")
+        .accelerator("CmdOrCtrl+S")
+        .id("project-save-project")
+        .build(app)
+        .unwrap();
+
     let project_menu = SubmenuBuilder::new(app, "Project")
-        .items(&[&add_track])
+        .items(&[&add_track, &save_project])
         .build()
         .unwrap();
     project_menu
@@ -91,6 +97,7 @@ pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
         "file-open-file" => file::open_files(app).await,
         "file-settings" => pages::settings_page::open_settings(app),
         "project-add-track" => menus::project_menu::add_empty_track(mixer_state.clone()),
+        "project-save-project" => project::save_project(app),
         _ if id.starts_with("file-output-device-") => {
             update_master_output_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app, id);

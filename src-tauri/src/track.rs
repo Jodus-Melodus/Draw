@@ -189,6 +189,7 @@ impl StreamSource {
 }
 
 pub struct FileSource {
+    path: PathBuf,
     reader: Option<hound::WavReader<BufReader<fs::File>>>,
     writer: Option<hound::WavWriter<BufWriter<fs::File>>>,
 }
@@ -197,12 +198,18 @@ impl FileSource {
     pub fn new_input(input_path: &PathBuf) -> Self {
         let reader = hound::WavReader::open(input_path).expect("Failed to create reader");
         Self {
+            path: input_path.to_path_buf(),
             reader: Some(reader),
             writer: None,
         }
     }
+
+    pub fn get_path(&self) -> String {
+        self.path.to_string_lossy().to_string()
+    }
 }
 
+#[derive(Clone, Copy, bincode::Encode, bincode::Decode)]
 pub enum TrackType {
     In,
     MasterOut,
@@ -242,6 +249,32 @@ impl AudioTrack {
             solo: false,
         }
     }
+
+    pub fn to_raw(&self) -> AudioTrackRaw {
+        AudioTrackRaw {
+            track_type: self.track_type,
+            file_source_path: if let Some(file_source) = &self.file_source {
+                file_source.get_path()
+            } else {
+                String::new()
+            },
+            gain: self.gain,
+            pan: self.pan,
+            solo: self.solo,
+            monitor: self.monitor,
+        }
+    }
+}
+
+// TODO save stream also
+#[derive(bincode::Encode, bincode::Decode)]
+pub struct AudioTrackRaw {
+    track_type: TrackType,
+    file_source_path: String,
+    gain: f32,
+    pan: f32,
+    solo: bool,
+    monitor: bool,
 }
 
 pub struct TrackList {
@@ -283,6 +316,18 @@ impl TrackList {
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
         }
+    }
+
+    pub fn to_raw(&self) -> HashMap<String, AudioTrackRaw> {
+        let mut map = HashMap::new();
+
+        for (key, value) in &self.tracks {
+            let v = value.clone();
+            let val = v.lock().expect("Failed to lock track");
+            map.insert(key.to_string(), val.to_raw());
+        }
+
+        map
     }
 
     pub fn as_response(&self) -> TrackListResponse {
