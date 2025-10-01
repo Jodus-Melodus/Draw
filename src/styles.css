@@ -1,7 +1,7 @@
 /* project-window*/
 .project-window {
   width: 100%;
-  height: 460px; 
+  height: 400px; 
 
   position: relative;
   
@@ -182,7 +182,7 @@
 /* mix-console */
 .mix-console {
   width: 100%;
-  height: 460px; 
+  height: 320px; 
 
   position: relative;
   
@@ -194,8 +194,8 @@
 
 /* channel-strip */
 .channel-strip {
-  width: 150px;
-  height: 450px;
+  width: 100px;
+  height: 300px;
   background-color: #c0c0c0;  
   position: relative;
   top: 0%;
@@ -206,57 +206,57 @@
 
 /* meters */
 .meterR {
-  width: 30px;
-  height: 225px;
+  width: 15%;
+  height: 50%;
   background-image: linear-gradient(0deg, #54aef7 40%, yellow,  red 100%);
   position: absolute;
-  top: 75px;
-  left: 112px; 
+  top: 17%;
+  left: 60%; 
   border: 1px solid black;
 }
 
 .meterL {
-  width: 30px;
-  height: 225px;
+  width: 15%;
+  height: 50%;
   background-image: linear-gradient(0deg, #54aef7 40%, yellow, red 100%);
   position: absolute;
-  top: 75px;
-  left: 79px;  
+  top: 17%;
+  left: 80%;  
   border: 1px solid black;
 }
 
 .metergain {
-  width: 60px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 30px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 15px;
 
   position: absolute;
-  top: 68.95%;
-  left: 53.5%;
+  top: 70%;
+  left: 55%;
    
   border: 2px solid rgb(83, 83, 83);
 }
 
 /* buttons & pan */
 .channel-mute {
-  width: 65px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 20px;            /* height */
+  height: 5%;          /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
 
-  position: absolute;
-  top: 2.2%;
-  left: 3.5%;
+  position: relative;
+  top: 1%;
+  left: 4%;
   
   border: 2px solid rgb(83, 83, 83);
 
@@ -271,18 +271,18 @@
 }
 
 .channel-solo {
-  width: 65px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 20px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
 
   position: absolute;
-  top: 2.2%;
-  left: 50%;
+  top: 1%;
+  left: 53%;
   
   border: 2px solid rgb(83, 83, 83);
 
@@ -297,18 +297,18 @@
 }
 
 .channel-pan {
-  width: 135px;
+  width: 89%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 20px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
 
   position: absolute;
-  top: 7.8%;
-  left: 3.5%;
+  top: 8%;
+  left: 4%;
 
   border: 2px solid rgb(83, 83, 83);
 
@@ -319,21 +319,20 @@
 
 /* fader */
 .fader {
-  width: 20px;
-  height: 225px;
+  width: 15%;
+  height: 50%;
   background-color: #dddddd;
 
   position: absolute;
-  top: 5.5%;
-  left: -15%;
+  top: 17%;
+  left: 15%;
 
   border-radius: 10px;
-  margin: 50px;
 }
 
 .fader-thumb {
-  width: 30px;
-  height: 20px;
+  width: 175%;
+  height: 30%;
 
   background-color: #ffffff;
   
@@ -350,37 +349,37 @@
 }
 
 .fadergain {
-  width: 60px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 30px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 15px;
 
   position: absolute;
-  top: 68.95%;
-  left: 3.5%; 
+  top: 70%;
+  left: 4%; 
 
   border: 2px solid rgb(83, 83, 83);
 }
 
 /* monitor & record */
 .channel-record {
-  width: 60px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 30px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   font-size: 14px;
 
   position: absolute;
-  top: 77.8%;
-  left: 3.5%;
+  top: 77%;
+  left: 4%;
 
   border: 2px solid rgb(83, 83, 83);
 
@@ -394,23 +393,23 @@
 }
 
 .channel-record-icon {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 }
 
 .channel-monitor {
-  width: 60px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 30px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   font-size: 14px;
 
   position: absolute;
-  top: 77.8%;
-  left: 53.5%;
+  top: 77%;
+  left: 55%;
 
   border: 2px solid rgb(83, 83, 83);
 
@@ -424,24 +423,25 @@
 }
 
 .channel-monitor-icon {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 }
 
 /* channel name */
 .channel-name {
-  width: 141px;
+  width: 95%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 50px;            /* height */
+  height: 12%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 18px;
 
   position: absolute;
-  top: 87.8%;
+  top: 86%;
+  left: -2%;
 
   border: 5px solid rgb(116, 116, 116);
   border-radius: 10px;
