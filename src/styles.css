@@ -93,6 +93,11 @@
   transition: background-color 0.2s ease
 }
 
+.track-record-icon {
+  width: 15px;
+  height: 15px;
+}
+
 .track-monitor {
   width: 30px;
   display: flex;           /* use to align */
@@ -113,6 +118,11 @@
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease
+}
+
+.track-monitor-icon {
+  width: 15px;
+  height: 15px;
 }
 
 /* mix-console */
@@ -254,7 +264,7 @@
 }
 
 /* fader */
-.channel-fader {
+.fader {
   width: 20px;
   height: 225px;
   background-color: #dddddd;
@@ -267,7 +277,7 @@
   margin: 50px;
 }
 
-.thumb {
+.fader-thumb {
   width: 30px;
   height: 20px;
 
@@ -303,6 +313,7 @@
   border: 2px solid rgb(83, 83, 83);
 }
 
+/* monitor & record */
 .channel-record {
   width: 60px;
   display: flex;           /* use to align */
@@ -328,7 +339,11 @@
   background-color: #eb2323;
 }
 
-/* monitor & record */
+.channel-record-icon {
+  width: 20px;
+  height: 20px;
+}
+
 .channel-monitor {
   width: 60px;
   display: flex;           /* use to align */
@@ -352,6 +367,11 @@
 
 .channel-monitor.active {
   background-color: #ffa033;
+}
+
+.channel-monitor-icon {
+  width: 20px;
+  height: 20px;
 }
 
 /* channel name */
