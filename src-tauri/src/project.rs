@@ -21,8 +21,8 @@ pub fn save_project(app_handle: &AppHandle) {
 
                     let mixer_state_path = path.join("mixer_state.mix");
                     let mixer_state = app.state::<states::StateMixer>().inner().clone();
-                    let encoded_mixer =
-                        bincode::encode_to_vec(&mixer_state.to_raw(), config).unwrap();
+                    let raw_state_mixer = states::StateMixerRaw::from(mixer_state);
+                    let encoded_mixer = bincode::encode_to_vec(&raw_state_mixer, config).unwrap();
                     let mut file = File::create(&mixer_state_path).expect(&format!(
                         "Failed to create file {}",
                         mixer_state_path.display()
@@ -61,12 +61,12 @@ pub fn load_project(app_handle: &AppHandle) {
                         ));
                     let (decoded_mixer, _len): (states::StateMixerRaw, usize) =
                         bincode::decode_from_slice(&mixer_state_buffer, config).unwrap();
-
+                    let new_state_mixer = states::StateMixer::from(decoded_mixer);
                     // let state_mixer = app.state::<states::StateMixer>();
                     // let mut inner_mixer_state = state_mixer.inner().clone();
                     // *inner_mixer_state = states::StateMixer::from_raw(decoded_mixer);
 
-                    app.manage(states::StateMixer::from_raw(decoded_mixer));
+                    app.manage(new_state_mixer);
                 }
             }
         });

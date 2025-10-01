@@ -24,6 +24,15 @@ pub struct StateMixerRaw {
     track_list: HashMap<String, track::AudioTrackRaw>,
 }
 
+impl From<StateMixer> for StateMixerRaw {
+    fn from(value: StateMixer) -> Self {
+        let track_list = value.track_list.lock().expect("Failed to lock track list");
+        StateMixerRaw {
+            track_list: track_list.to_raw(),
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct StateMixer {
     pub track_list: Arc<Mutex<track::TrackList>>,
@@ -44,20 +53,14 @@ impl StateMixer {
             playhead: Arc::new(AtomicU64::new(0)),
         }
     }
+}
 
-    pub fn from_raw(raw_state_mixer: StateMixerRaw) -> Self {
-        let track_list = raw_state_mixer.track_list;
+impl From<StateMixerRaw> for StateMixer {
+    fn from(value: StateMixerRaw) -> Self {
+        let track_list = value.track_list;
         StateMixer {
             track_list: Arc::new(Mutex::new(track::TrackList::from_raw(track_list))),
             playhead: Arc::new(AtomicU64::new(0)),
-        }
-    }
-
-    pub fn to_raw(&self) -> StateMixerRaw {
-        let list = self.track_list.lock().expect("Failed to lock track list");
-
-        StateMixerRaw {
-            track_list: list.to_raw(),
         }
     }
 }

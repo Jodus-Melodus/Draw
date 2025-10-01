@@ -249,33 +249,20 @@ impl AudioTrack {
             solo: false,
         }
     }
+}
 
-    pub fn from_raw(raw_audio_track: AudioTrackRaw) -> Self {
+impl From<AudioTrackRaw> for AudioTrack {
+    fn from(value: AudioTrackRaw) -> Self {
         AudioTrack {
-            track_type: raw_audio_track.track_type,
+            track_type: value.track_type,
             stream_source: None,
             file_source: Some(FileSource::new_input(&PathBuf::from(
-                raw_audio_track.file_source_path,
+                value.file_source_path,
             ))),
-            gain: raw_audio_track.gain,
-            pan: raw_audio_track.pan,
-            solo: raw_audio_track.solo,
-            monitor: raw_audio_track.monitor,
-        }
-    }
-
-    pub fn to_raw(&self) -> AudioTrackRaw {
-        AudioTrackRaw {
-            track_type: self.track_type,
-            file_source_path: if let Some(file_source) = &self.file_source {
-                file_source.get_path()
-            } else {
-                String::new()
-            },
-            gain: self.gain,
-            pan: self.pan,
-            solo: self.solo,
-            monitor: self.monitor,
+            gain: value.gain,
+            pan: value.pan,
+            solo: value.solo,
+            monitor: value.monitor,
         }
     }
 }
@@ -289,6 +276,23 @@ pub struct AudioTrackRaw {
     pan: f32,
     solo: bool,
     monitor: bool,
+}
+
+impl From<&AudioTrack> for AudioTrackRaw {
+    fn from(value: &AudioTrack) -> Self {
+        AudioTrackRaw {
+            track_type: value.track_type,
+            file_source_path: if let Some(file_source) = &value.file_source {
+                file_source.get_path()
+            } else {
+                String::new()
+            },
+            gain: value.gain,
+            pan: value.pan,
+            solo: value.solo,
+            monitor: value.monitor,
+        }
+    }
 }
 
 pub struct TrackList {
@@ -338,7 +342,7 @@ impl TrackList {
         for (track_name, raw_track) in raw_track_list {
             tracks.insert(
                 track_name,
-                Arc::new(Mutex::new(AudioTrack::from_raw(raw_track))),
+                Arc::new(Mutex::new(AudioTrack::from(raw_track))),
             );
         }
 
@@ -346,15 +350,13 @@ impl TrackList {
     }
 
     pub fn to_raw(&self) -> HashMap<String, AudioTrackRaw> {
-        let mut map = HashMap::new();
-
-        for (key, value) in &self.tracks {
-            let v = value.clone();
-            let val = v.lock().expect("Failed to lock track");
-            map.insert(key.to_string(), val.to_raw());
-        }
-
-        map
+        self.tracks
+            .iter()
+            .map(|(key, value)| {
+                let audio_track = value.lock().expect("Failed to lock track");
+                (key.clone(), AudioTrackRaw::from(&*audio_track))
+            })
+            .collect()
     }
 
     pub fn as_response(&self) -> TrackListResponse {
