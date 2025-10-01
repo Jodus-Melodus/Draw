@@ -88,7 +88,7 @@ pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let id: &str = event.id.0.as_ref();
 
     match id {
-        "file-open-file" => file::open_file(app).await,
+        "file-open-file" => file::open_files(app).await,
         "file-settings" => pages::settings_page::open_settings(app),
         "project-add-track" => menus::project_menu::add_empty_track(mixer_state.clone()),
         _ if id.starts_with("file-output-device-") => {
