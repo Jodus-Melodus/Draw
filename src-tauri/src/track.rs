@@ -189,20 +189,27 @@ impl StreamSource {
 }
 
 pub struct FileSource {
+    path: PathBuf,
     reader: Option<hound::WavReader<BufReader<fs::File>>>,
     writer: Option<hound::WavWriter<BufWriter<fs::File>>>,
 }
 
 impl FileSource {
     pub fn new_input(input_path: &PathBuf) -> Self {
-        let reader = hound::WavReader::open(input_path).expect("Failed to create reader");
+        let reader = hound::WavReader::open(input_path).expect("Failed to create reader"); // TODO use absolute path
         Self {
+            path: input_path.to_path_buf(),
             reader: Some(reader),
             writer: None,
         }
     }
+
+    pub fn get_path(&self) -> String {
+        self.path.to_string_lossy().to_string()
+    }
 }
 
+#[derive(Clone, Copy, bincode::Encode, bincode::Decode)]
 pub enum TrackType {
     In,
     MasterOut,
@@ -240,6 +247,52 @@ impl AudioTrack {
             pan: 0.0,
             monitor: false,
             solo: false,
+        }
+    }
+}
+
+impl From<AudioTrackRaw> for AudioTrack {
+    fn from(value: AudioTrackRaw) -> Self {
+        AudioTrack {
+            track_type: value.track_type,
+            stream_source: None,
+            file_source: if let Some(file_source_path) = value.file_source_path {
+                Some(FileSource::new_input(&PathBuf::from(file_source_path)))
+            } else {
+                None
+            },
+            gain: value.gain,
+            pan: value.pan,
+            solo: value.solo,
+            monitor: value.monitor,
+        }
+    }
+}
+
+// TODO save stream also
+#[derive(bincode::Encode, bincode::Decode)]
+pub struct AudioTrackRaw {
+    track_type: TrackType,
+    file_source_path: Option<String>,
+    gain: f32,
+    pan: f32,
+    solo: bool,
+    monitor: bool,
+}
+
+impl From<&AudioTrack> for AudioTrackRaw {
+    fn from(value: &AudioTrack) -> Self {
+        AudioTrackRaw {
+            track_type: value.track_type,
+            file_source_path: if let Some(file_source) = &value.file_source {
+                Some(file_source.get_path())
+            } else {
+                None
+            },
+            gain: value.gain,
+            pan: value.pan,
+            solo: value.solo,
+            monitor: value.monitor,
         }
     }
 }
@@ -283,6 +336,29 @@ impl TrackList {
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
         }
+    }
+
+    pub fn from_raw(raw_track_list: HashMap<String, AudioTrackRaw>) -> Self {
+        let mut tracks = HashMap::new();
+
+        for (track_name, raw_track) in raw_track_list {
+            tracks.insert(
+                track_name,
+                Arc::new(Mutex::new(AudioTrack::from(raw_track))),
+            );
+        }
+
+        TrackList { tracks }
+    }
+
+    pub fn to_raw(&self) -> HashMap<String, AudioTrackRaw> {
+        self.tracks
+            .iter()
+            .map(|(key, value)| {
+                let audio_track = value.lock().expect("Failed to lock track");
+                (key.clone(), AudioTrackRaw::from(&*audio_track))
+            })
+            .collect()
     }
 
     pub fn as_response(&self) -> TrackListResponse {

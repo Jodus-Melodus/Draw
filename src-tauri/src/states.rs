@@ -1,6 +1,9 @@
-use std::sync::{
-    atomic::{AtomicU64, AtomicUsize, Ordering},
-    Arc, Mutex,
+use std::{
+    collections::HashMap,
+    sync::{
+        atomic::{AtomicU64, AtomicUsize, Ordering},
+        Arc, Mutex,
+    },
 };
 
 use cpal::Device;
@@ -14,6 +17,20 @@ use crate::{
 pub fn get_input_stream_device_list(audio_context: tauri::State<StateAudioContext>) -> Vec<String> {
     let input_device_registry = audio_context.input_device_registry.clone();
     input_device_registry.list()
+}
+
+#[derive(bincode::Encode, bincode::Decode)]
+pub struct StateMixerRaw {
+    track_list: HashMap<String, track::AudioTrackRaw>,
+}
+
+impl From<StateMixer> for StateMixerRaw {
+    fn from(value: StateMixer) -> Self {
+        let track_list = value.track_list.lock().expect("Failed to lock track list");
+        StateMixerRaw {
+            track_list: track_list.to_raw(),
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -33,6 +50,16 @@ impl StateMixer {
         track_list.add_track("master-out", master_out);
         StateMixer {
             track_list: Arc::new(Mutex::new(track_list)),
+            playhead: Arc::new(AtomicU64::new(0)),
+        }
+    }
+}
+
+impl From<StateMixerRaw> for StateMixer {
+    fn from(value: StateMixerRaw) -> Self {
+        let track_list = value.track_list;
+        StateMixer {
+            track_list: Arc::new(Mutex::new(track::TrackList::from_raw(track_list))),
             playhead: Arc::new(AtomicU64::new(0)),
         }
     }
