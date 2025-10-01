@@ -1,31 +1,33 @@
 import { getTrackList, updateTrack } from "./backend/tracks";
 
 async function init() {
-  const muteButton = document.querySelector('.channel-mute');
+  const muteButton = document.querySelector('.channel-mute, ,track-mute');
+  const soloButton = document.querySelector('.channel-solo, .track-solo');
+  const recordButton = document.querySelector('.channel-record, .track-record');
+  const monitorButton = document.querySelector('.channel-monitor, .track-monitor');
 
   if (muteButton) {
     muteButton.addEventListener('click', () => {
-      muteButton.classList.toggle('active');
+      muteButton.classList.add('active');
+      soloButton?.classList.remove('active');
+      soloButton?.classList.add('inactive');
+
     });
   }
-
-  const soloButton = document.querySelector('.channel-solo');
 
   if (soloButton) {
     soloButton.addEventListener('click', () => {
-      soloButton.classList.toggle('active');
+      soloButton.classList.add('active');
+      muteButton?.classList.remove('active');
+      muteButton?.classList.add('inactive');
     });
   }
-
-  const recordButton = document.querySelector('.channel-record');
 
   if (recordButton) {
     recordButton.addEventListener('click', () => {
       recordButton.classList.toggle('active');
     });
   }
-
-  const monitorButton = document.querySelector('.channel-monitor');
 
   if (monitorButton) {
     monitorButton.addEventListener('click', () => {

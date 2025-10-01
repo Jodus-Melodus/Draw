@@ -1,7 +1,7 @@
 /* project-window*/
 .project-window {
   width: 100%;
-  height: 460px; 
+  height: 400px; 
 
   position: relative;
   
@@ -11,20 +11,74 @@
   border-radius: 15px;
 }
 
-.track-name {
+/* add-track */
+.add-track {
+  width: 20px;
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 20px;            /* height */
+
+  position: relative;
+  left: 5px;
+  top: 5px;
+  
+  background-color: rgb(72, 72, 72);
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+
+  border: 2px solid rgb(153, 153, 153);
+}
+
+.vertical-divider {
+  width: 2px;
+  height: 98%;
+
+  position: absolute;
+  left: 170px;
+  top: 5px;
+
+  background-color: #c0c0c0;
+}
+
+.horizontal-divider {
+  width: 160px;
+  height: 2px;
+
+  position: relative;
+  left: 5px;
+  top: 10px;
+
+  background-color: #c0c0c0;
+}
+
+.track {
   width: 150px;
   height: 50px;
 
   position: relative;
   left: 5px;
-  top: 5px;
+  top: 15px;
 
   font-size: 20px;
   
   background-color: #c0c0c0;
+  color: white;
 
   border: 5px solid rgb(153, 153, 153);
   border-radius: 10px;
+}
+
+.track-name {
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+
+  position: relative;
+  top: 0px;
+
+  color: white;
+  font-size: 20px;
 }
 
 .track-mute {
@@ -93,6 +147,11 @@
   transition: background-color 0.2s ease
 }
 
+.track-record-icon {
+  width: 15px;
+  height: 15px;
+}
+
 .track-monitor {
   width: 30px;
   display: flex;           /* use to align */
@@ -115,10 +174,15 @@
   transition: background-color 0.2s ease
 }
 
+.track-monitor-icon {
+  width: 15px;
+  height: 15px;
+}
+
 /* mix-console */
 .mix-console {
   width: 100%;
-  height: 460px; 
+  height: 310px; 
 
   position: relative;
   
@@ -130,8 +194,8 @@
 
 /* channel-strip */
 .channel-strip {
-  width: 150px;
-  height: 450px;
+  width: 100px;
+  height: 300px;
   background-color: #c0c0c0;  
   position: relative;
   top: 0%;
@@ -142,57 +206,57 @@
 
 /* meters */
 .meterR {
-  width: 30px;
-  height: 225px;
+  width: 15%;
+  height: 50%;
   background-image: linear-gradient(0deg, #54aef7 40%, yellow,  red 100%);
   position: absolute;
-  top: 75px;
-  left: 112px; 
+  top: 17%;
+  left: 60%; 
   border: 1px solid black;
 }
 
 .meterL {
-  width: 30px;
-  height: 225px;
+  width: 15%;
+  height: 50%;
   background-image: linear-gradient(0deg, #54aef7 40%, yellow, red 100%);
   position: absolute;
-  top: 75px;
-  left: 79px;  
+  top: 17%;
+  left: 80%;  
   border: 1px solid black;
 }
 
 .metergain {
-  width: 60px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 30px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 15px;
 
   position: absolute;
-  top: 68.95%;
-  left: 53.5%;
+  top: 70%;
+  left: 55%;
    
   border: 2px solid rgb(83, 83, 83);
 }
 
 /* buttons & pan */
 .channel-mute {
-  width: 65px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 20px;            /* height */
+  height: 5%;          /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
 
-  position: absolute;
-  top: 2.2%;
-  left: 3.5%;
+  position: relative;
+  top: 1%;
+  left: 4%;
   
   border: 2px solid rgb(83, 83, 83);
 
@@ -207,18 +271,18 @@
 }
 
 .channel-solo {
-  width: 65px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 20px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
 
   position: absolute;
-  top: 2.2%;
-  left: 50%;
+  top: 1%;
+  left: 53%;
   
   border: 2px solid rgb(83, 83, 83);
 
@@ -233,18 +297,18 @@
 }
 
 .channel-pan {
-  width: 135px;
+  width: 89%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 20px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
 
   position: absolute;
-  top: 7.8%;
-  left: 3.5%;
+  top: 8%;
+  left: 4%;
 
   border: 2px solid rgb(83, 83, 83);
 
@@ -254,22 +318,21 @@
 }
 
 /* fader */
-.channel-fader {
-  width: 20px;
-  height: 225px;
+.fader {
+  width: 15%;
+  height: 50%;
   background-color: #dddddd;
 
   position: absolute;
-  top: 5.5%;
-  left: -15%;
+  top: 17%;
+  left: 15%;
 
   border-radius: 10px;
-  margin: 50px;
 }
 
-.thumb {
-  width: 30px;
-  height: 20px;
+.fader-thumb {
+  width: 175%;
+  height: 30%;
 
   background-color: #ffffff;
   
@@ -285,37 +348,60 @@
   transition: background-color 0.2s ease;
 }
 
+.fader-thumb-body {
+  width: 98%;
+  height: 80%;
+
+  background-color: rgb(153, 153, 153);
+
+  position: relative;
+  top: 10%;
+  left: 1%;
+}
+
+.fader-thumb-notch {
+  width: 90%;
+  height: 2%;
+
+  background-color: black;
+
+  position: relative;
+  top: 50%;
+  left: 5%;
+}
+
 .fadergain {
-  width: 60px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 30px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 15px;
 
   position: absolute;
-  top: 68.95%;
-  left: 3.5%; 
+  top: 70%;
+  left: 4%; 
 
   border: 2px solid rgb(83, 83, 83);
 }
 
+/* monitor & record */
 .channel-record {
-  width: 60px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 30px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   font-size: 14px;
 
   position: absolute;
-  top: 77.8%;
-  left: 3.5%;
+  top: 77%;
+  left: 4%;
 
   border: 2px solid rgb(83, 83, 83);
 
@@ -328,20 +414,24 @@
   background-color: #eb2323;
 }
 
-/* monitor & record */
+.channel-record-icon {
+  width: 15px;
+  height: 15px;
+}
+
 .channel-monitor {
-  width: 60px;
+  width: 40%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 30px;            /* height */
+  height: 5%;            /* height */
 
   background-color: rgb(153, 153, 153);
   font-size: 14px;
 
   position: absolute;
-  top: 77.8%;
-  left: 53.5%;
+  top: 77%;
+  left: 55%;
 
   border: 2px solid rgb(83, 83, 83);
 
@@ -354,20 +444,26 @@
   background-color: #ffa033;
 }
 
+.channel-monitor-icon {
+  width: 15px;
+  height: 15px;
+}
+
 /* channel name */
 .channel-name {
-  width: 141px;
+  width: 95%;
   display: flex;           /* use to align */
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
-  height: 50px;            /* height */
+  height: 12%;            /* height */
 
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 18px;
 
   position: absolute;
-  top: 87.8%;
+  top: 86%;
+  left: -2%;
 
   border: 5px solid rgb(116, 116, 116);
   border-radius: 10px;
