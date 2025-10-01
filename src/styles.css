@@ -70,6 +70,17 @@
   border-radius: 10px;
 }
 
+.track-name {
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+
+  position: relative;
+  top: 0px;
+
+  color: white;
+  font-size: 20px;
+}
+
 .track-mute {
   width: 30px;
   display: flex;           /* use to align */
