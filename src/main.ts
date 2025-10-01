@@ -1,45 +1,45 @@
-import { getTrackList, updateTrack } from "./backend/tracks";
+import { getTrackList } from "./backend/tracks";
 
-async function init() {
-  const muteButton = document.querySelector('.channel-mute, ,track-mute');
-  const soloButton = document.querySelector('.channel-solo, .track-solo');
-  const recordButton = document.querySelector('.channel-record, .track-record');
-  const monitorButton = document.querySelector('.channel-monitor, .track-monitor');
+var trackList;
 
-  if (muteButton) {
-    muteButton.addEventListener('click', () => {
-      muteButton.classList.add('active');
-      soloButton?.classList.remove('active');
-      soloButton?.classList.add('inactive');
+async function updateTrackList() {
+  const trackContainer = document.getElementById("mix-console");
+  const trackTemplate = document.getElementById("track-template") as HTMLTemplateElement;
 
+  if (trackContainer && trackTemplate) {
+    // clear track containers children
+    trackContainer.replaceChildren();
+    const clone = trackTemplate.content.cloneNode(true) as DocumentFragment;
+    trackList = await getTrackList();
+
+    trackList.tracks.forEach(track => {
+      // Populate template
+      (clone.querySelector(".meterR") as HTMLElement).textContent = ""; // FIXME null when add track
+      (clone.querySelector(".meterL") as HTMLElement).textContent = "";
+      (clone.querySelector(".metergain") as HTMLElement).textContent = "";
+      (clone.querySelector(".channel-mute") as HTMLElement).textContent = "";
+      (clone.querySelector(".channel-solo") as HTMLElement).textContent = track.solo ? "true" : "false";
+      (clone.querySelector(".channel-pan") as HTMLElement).textContent = track.pan.toPrecision(2);
+      (clone.querySelector(".fadergain") as HTMLElement).textContent = track.gain.toPrecision(2);
+      (clone.querySelector(".channel-name") as HTMLElement).textContent = track.name;
+
+      // Add behavior
+      // TODO get buttons with query selectors
+      // TODO update other buttons
+
+      // Example
+      // (clone.querySelector(".channel-mute") as HTMLElement).addEventListener("click", () => {});
+
+      trackContainer.appendChild(clone);
     });
   }
-
-  if (soloButton) {
-    soloButton.addEventListener('click', () => {
-      soloButton.classList.add('active');
-      muteButton?.classList.remove('active');
-      muteButton?.classList.add('inactive');
-    });
-  }
-
-  if (recordButton) {
-    recordButton.addEventListener('click', () => {
-      recordButton.classList.toggle('active');
-    });
-  }
-
-  if (monitorButton) {
-    monitorButton.addEventListener('click', () => {
-      monitorButton.classList.toggle('active');
-    });
-  }
-
-  let track_list = await getTrackList();
-  console.log(track_list.tracks);
-  await updateTrack("master-out", { Gain: 0.0 });
-  let track_list2 = await getTrackList();
-  console.log(track_list2.tracks);
 }
 
-init(); 
+
+async function init() { }
+
+setInterval(() => {
+  updateTrackList();
+}, 1000);
+
+init();

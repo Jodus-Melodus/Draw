@@ -9,6 +9,44 @@
   <link rel='stylesheet' type='text/css' media='screen' href='styles.css'>
 </head>
 
+<template id="track-template">
+  <div class="channel-strip">
+  
+    <!-- meters -->
+    <div class="meters">
+      <div class="meterR"></div>
+      <div class="meterL"></div>
+      <div class="metergain"></div>
+    </div>
+  
+    <!-- buttons & pan -->
+    <div class="channel-mute"></div>
+    <div class="channel-solo"></div>
+    <div class="channel-pan"></div>
+  
+    <!-- fader -->
+    <div class="fader">
+      <div class="fader-thumb">
+        <div class="fader-thumb-body">
+          <div class="fader-thumb-notch"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fadergain"></div>
+  
+    <!-- monitor & record -->
+    <div class="channel-record">
+      <img src="record_icon.png" class="channel-record-icon" />
+    </div>
+    <div class="channel-monitor">
+      <img src="monitor_icon.png" class="channel-monitor-icon" />
+    </div>
+  
+    <!-- channel name  -->
+    <div class="channel-name"></div>
+  </div>
+</template>
+
 <body>
   <div class="project-window">
     <div class="add-track">+</div>
@@ -26,42 +64,8 @@
       </div>
     </div>
   </div>
-  <div class="mix-console">
-    <div class="channel-strip">
-
-      <!-- meters -->
-      <div class="meters">
-        <div class="meterR"></div>
-        <div class="meterL"></div>
-        <div class="metergain">0.00</div>
-      </div>
-
-      <!-- buttons & pan -->
-      <div class="channel-mute">M</div>
-      <div class="channel-solo">S</div>
-      <div class="channel-pan">C</div>
-
-      <!-- fader -->
-      <div class="fader">
-        <div class="fader-thumb">
-          <div class="fader-thumb-body">
-            <div class="fader-thumb-notch"></div>
-          </div>
-        </div>
-      </div>
-      <div class="fadergain">0.00</div>
-
-      <!-- monitor & record -->
-      <div class="channel-record">
-        <img src="record_icon.png" class="channel-record-icon" />
-      </div>
-      <div class="channel-monitor">
-        <img src="monitor_icon.png" class="channel-monitor-icon" />
-      </div>
-
-      <!-- channel name  -->
-      <div class="channel-name">Audio 1</div>
-    </div>
+  <div class="mix-console" id="mix-console">
+    
   </div>
 
 </body>
