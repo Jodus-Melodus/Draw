@@ -256,9 +256,11 @@ impl From<AudioTrackRaw> for AudioTrack {
         AudioTrack {
             track_type: value.track_type,
             stream_source: None,
-            file_source: Some(FileSource::new_input(&PathBuf::from(
-                value.file_source_path,
-            ))),
+            file_source: if let Some(file_source_path) = value.file_source_path {
+                Some(FileSource::new_input(&PathBuf::from(file_source_path)))
+            } else {
+                None
+            },
             gain: value.gain,
             pan: value.pan,
             solo: value.solo,
@@ -271,7 +273,7 @@ impl From<AudioTrackRaw> for AudioTrack {
 #[derive(bincode::Encode, bincode::Decode)]
 pub struct AudioTrackRaw {
     track_type: TrackType,
-    file_source_path: String,
+    file_source_path: Option<String>,
     gain: f32,
     pan: f32,
     solo: bool,
@@ -283,9 +285,9 @@ impl From<&AudioTrack> for AudioTrackRaw {
         AudioTrackRaw {
             track_type: value.track_type,
             file_source_path: if let Some(file_source) = &value.file_source {
-                file_source.get_path()
+                Some(file_source.get_path())
             } else {
-                String::new()
+                None
             },
             gain: value.gain,
             pan: value.pan,
