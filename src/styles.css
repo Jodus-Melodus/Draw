@@ -11,17 +11,60 @@
   border-radius: 15px;
 }
 
-.track-name {
+/* add-track */
+.add-track {
+  width: 20px;
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 20px;            /* height */
+
+  position: relative;
+  left: 5px;
+  top: 5px;
+  
+  background-color: rgb(72, 72, 72);
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+
+  border: 2px solid rgb(153, 153, 153);
+}
+
+.vertical-divider {
+  width: 2px;
+  height: 98%;
+
+  position: absolute;
+  left: 170px;
+  top: 5px;
+
+  background-color: #c0c0c0;
+}
+
+.horizontal-divider {
+  width: 160px;
+  height: 2px;
+
+  position: relative;
+  left: 5px;
+  top: 10px;
+
+  background-color: #c0c0c0;
+}
+
+.track {
   width: 150px;
   height: 50px;
 
   position: relative;
   left: 5px;
-  top: 5px;
+  top: 15px;
 
   font-size: 20px;
   
   background-color: #c0c0c0;
+  color: white;
 
   border: 5px solid rgb(153, 153, 153);
   border-radius: 10px;
