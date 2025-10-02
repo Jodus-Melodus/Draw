@@ -1,4 +1,4 @@
-import { getTrackList } from "./backend/tracks";
+import { addEmptyTrack, getTrackList } from "./backend/tracks";
 import { TrackInfo } from "./backend/types";
 
 var trackList;
@@ -9,10 +9,10 @@ async function updateTrackList() {
 
   if (trackContainer && trackTemplate) {
     trackContainer.replaceChildren();
-    const newTrack = trackTemplate.content.cloneNode(true) as DocumentFragment;
     trackList = await getTrackList();
-
+    
     trackList.tracks.forEach(track => {
+      const newTrack = trackTemplate.content.cloneNode(true) as DocumentFragment;
       addNewTrack(newTrack, track, trackContainer);
     });
   }
@@ -23,13 +23,9 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
   const channelSoloButton = newTrack.querySelector(".channel-solo") as HTMLElement;
   const channelRecordButton = newTrack.querySelector(".channel-record") as HTMLElement;
   const channelMonitorButton = newTrack.querySelector(".channel-monitor") as HTMLElement;
-  // TODO Temporary place holder
-  (newTrack.querySelector(".meterR") as HTMLElement).textContent = "";
-  (newTrack.querySelector(".meterL") as HTMLElement).textContent = "";
-  (newTrack.querySelector(".metergain") as HTMLElement).textContent = "";
-  (newTrack.querySelector(".channel-pan") as HTMLElement).textContent = track.pan.toPrecision(2);
-  (newTrack.querySelector(".fadergain") as HTMLElement).textContent = track.gain.toPrecision(2);
-  (newTrack.querySelector(".channel-name") as HTMLElement).textContent = track.name;
+  const channelName = newTrack.querySelector(".channel-name") as HTMLElement;
+
+  channelName.textContent = track.name;
 
   channelMuteButton.addEventListener("click", () => {
     if (channelMuteButton.classList.contains("active")) {
@@ -61,11 +57,19 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
     } else {
       channelMonitorButton.classList.add("active");
     }
-  }); trackContainer.appendChild(newTrack);
+  });
+  
+  trackContainer.appendChild(newTrack);
 }
 
 async function init() {
   updateTrackList();
+
+  const addTrackButton = document.querySelector(".add-track") as HTMLElement;
+  addTrackButton.addEventListener("click", () => {
+    addEmptyTrack();
+    updateTrackList();
+  });
 }
 
 init();

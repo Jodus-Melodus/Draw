@@ -26,3 +26,13 @@ export async function updateTrack(trackName: string, update: TrackUpdate) {
         console.error("Failed to update track:", err);
     }
 }
+/**
+ * Add an empty track to the track list
+ */
+export async function addEmptyTrack() {
+    try {
+        await invoke("add_empty_track");
+    } catch (err) {
+        console.error("Failed to add an empty track:", err);
+    }
+}
