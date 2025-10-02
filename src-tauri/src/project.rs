@@ -3,7 +3,7 @@ use std::{
     io::{Read, Write},
 };
 
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
 use crate::states;
@@ -36,6 +36,7 @@ pub fn save_project(app_handle: &AppHandle) {
         });
 }
 
+#[tauri::command]
 pub fn load_project(app_handle: &AppHandle) {
     let app = app_handle.clone();
 
@@ -67,6 +68,11 @@ pub fn load_project(app_handle: &AppHandle) {
                     // *inner_mixer_state = states::StateMixer::from_raw(decoded_mixer);
 
                     app.manage(new_state_mixer);
+
+                    let window = app
+                        .get_webview_window("main")
+                        .expect("Failed to get main window");
+                    window.emit("updated-track-list", ()).unwrap();
                 }
             }
         });

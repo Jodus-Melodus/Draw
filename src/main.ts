@@ -1,3 +1,4 @@
+import { listen } from "@tauri-apps/api/event";
 import { addEmptyTrack, getTrackList } from "./backend/tracks";
 import { TrackInfo } from "./backend/types";
 
@@ -124,6 +125,10 @@ async function init() {
     addEmptyTrack();
     updateTrackList();
   });
+
+  await listen("updated-track-list", (_) => {
+    updateTrackList();
+  })
 }
 
 init();

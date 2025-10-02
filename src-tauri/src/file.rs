@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
 use crate::{states, track};
@@ -28,7 +28,7 @@ pub async fn open_files(app_handle: &AppHandle) {
                         .to_str()
                     {
                         match extention {
-                            "wav" => add_file_track(mixer_state.clone(), path.clone()),
+                            "wav" => add_file_track(&app, mixer_state.clone(), path.clone()),
                             _ => eprintln!("Unsuppored file extention: {}", extention),
                         }
                     }
@@ -39,7 +39,7 @@ pub async fn open_files(app_handle: &AppHandle) {
         });
 }
 
-fn add_file_track(state: states::StateMixer, path: PathBuf) {
+fn add_file_track(app_handle: &AppHandle, state: states::StateMixer, path: PathBuf) {
     let track_list = state.track_list.clone();
     let mut list = track_list.lock().expect("Failed to lock track list");
     let track_source = track::FileSource::new_input(&path);
@@ -51,6 +51,11 @@ fn add_file_track(state: states::StateMixer, path: PathBuf) {
             .expect("Failed to get file name"),
         track,
     );
+
+    let window = app_handle
+        .get_webview_window("main")
+        .expect("Failed to get main window");
+    window.emit("updated-track-list", ()).unwrap();
 
     println!("{:?}", list.track_list());
 }
