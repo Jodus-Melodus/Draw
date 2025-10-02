@@ -61,6 +61,4 @@ fn add_file_track(
         .get_webview_window("main")
         .expect("Failed to get main window");
     window.emit("updated-track-list", ()).unwrap();
-
-    println!("{:?}", list.track_list());
 }

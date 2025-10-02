@@ -166,7 +166,6 @@ impl StreamSource {
             .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &style::BLUE));
 
         image.present().unwrap();
-        println!("Saved waveform to raw.png");
     }
 
     pub fn save_to_wav(&mut self, path: &str) {
