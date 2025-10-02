@@ -96,13 +96,13 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
 
 pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
     let audio_context = app.state::<states::StateAudioContext>();
-    let mixer_state = app.state::<states::StateMixer>();
+    let state_mixer_guard = app.state::<states::StateMixerGuard>();
     let id: &str = event.id.0.as_ref();
 
     match id {
         "file-open-file" => file::open_files(app).await,
         "file-settings" => pages::settings_page::open_settings(app),
-        "project-add-track" => menus::project_menu::add_empty_track(mixer_state.clone()),
+        "project-add-track" => menus::project_menu::add_empty_track(state_mixer_guard),
         "project-save-project" => project::save_project(app),
         "project-open-project" => project::load_project(app),
         _ if id.starts_with("file-output-device-") => {
@@ -125,8 +125,9 @@ fn update_master_output_device_index(device_index: Arc<AtomicUsize>, id: &str) {
 }
 
 fn update_master_output_device_track(app: &AppHandle) {
-    let mixer = app.state::<states::StateMixer>();
-    let list = mixer.track_list.clone();
+    let state_mixer_guard = app.state::<states::StateMixerGuard>();
+    let state_mixer = state_mixer_guard.0.lock().unwrap();
+    let list = state_mixer.track_list.clone();
     let track_list = list.lock().expect("Failed to lock list");
     let master_output_track = track_list
         .get_track("master-out")

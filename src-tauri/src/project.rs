@@ -3,7 +3,7 @@ use std::{
     io::{Read, Write},
 };
 
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
 use crate::states;
@@ -20,9 +20,11 @@ pub fn save_project(app_handle: &AppHandle) {
                     let config = bincode::config::standard();
 
                     let mixer_state_path = path.join("mixer_state.mix");
-                    let mixer_state = app.state::<states::StateMixer>().inner().clone();
-                    let raw_state_mixer = states::StateMixerRaw::from(mixer_state);
+                    let state_mixer_guard = app.state::<states::StateMixerGuard>();
+                    let mixer_guard = state_mixer_guard.0.lock().unwrap();
+                    let raw_state_mixer = states::StateMixerRaw::from(mixer_guard.clone());
                     let encoded_mixer = bincode::encode_to_vec(&raw_state_mixer, config).unwrap();
+
                     let mut file = File::create(&mixer_state_path).expect(&format!(
                         "Failed to create file {}",
                         mixer_state_path.display()
@@ -36,6 +38,7 @@ pub fn save_project(app_handle: &AppHandle) {
         });
 }
 
+#[tauri::command]
 pub fn load_project(app_handle: &AppHandle) {
     let app = app_handle.clone();
 
@@ -62,11 +65,14 @@ pub fn load_project(app_handle: &AppHandle) {
                     let (decoded_mixer, _len): (states::StateMixerRaw, usize) =
                         bincode::decode_from_slice(&mixer_state_buffer, config).unwrap();
                     let new_state_mixer = states::StateMixer::from(decoded_mixer);
-                    // let state_mixer = app.state::<states::StateMixer>();
-                    // let mut inner_mixer_state = state_mixer.inner().clone();
-                    // *inner_mixer_state = states::StateMixer::from_raw(decoded_mixer);
+                    let state_mixer = app.state::<states::StateMixerGuard>();
+                    let mut guard = state_mixer.0.lock().unwrap();
+                    *guard = new_state_mixer;
 
-                    app.manage(new_state_mixer);
+                    let window = app
+                        .get_webview_window("main")
+                        .expect("Failed to get main window");
+                    window.emit("updated-track-list", ()).unwrap();
                 }
             }
         });

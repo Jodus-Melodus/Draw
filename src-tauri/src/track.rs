@@ -20,20 +20,24 @@ use plotters::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::{states::StateMixer, types::RingBuffer};
+use crate::{states, types::RingBuffer};
 
 #[tauri::command]
-pub fn get_track_list(state: tauri::State<StateMixer>) -> TrackListResponse {
-    let mixer = state.clone();
-    let track_list = mixer.track_list.clone();
+pub fn get_track_list(state: tauri::State<states::StateMixerGuard>) -> TrackListResponse {
+    let state_mixer = state.0.lock().unwrap();
+    let track_list = state_mixer.track_list.clone();
     let list = track_list.lock().expect("Failed to lock list");
     list.as_response()
 }
 
 #[tauri::command]
-pub fn update_track(state: tauri::State<StateMixer>, track_name: String, update: TrackUpdate) {
-    let mixer = state.clone();
-    let track_list = mixer.track_list.clone();
+pub fn update_track(
+    state: tauri::State<states::StateMixerGuard>,
+    track_name: String,
+    update: TrackUpdate,
+) {
+    let state_mixer = state.0.lock().unwrap();
+    let track_list = state_mixer.track_list.clone();
     let mut list = track_list.lock().expect("Failed to lock list");
     list.update_track(&track_name, update);
 }
@@ -162,7 +166,6 @@ impl StreamSource {
             .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &style::BLUE));
 
         image.present().unwrap();
-        println!("Saved waveform to raw.png");
     }
 
     pub fn save_to_wav(&mut self, path: &str) {

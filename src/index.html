@@ -9,7 +9,7 @@
   <link rel='stylesheet' type='text/css' media='screen' href='styles.css'>
 </head>
 
-<template id="track-template">
+<template id="channel-track-template">
   <div class="channel-strip">
   
     <!-- meters -->
@@ -47,26 +47,28 @@
   </div>
 </template>
 
+<template id="track-template">
+  <div class="track">
+    <div class="track-name"></div>
+    <div class="track-mute">M</div>
+    <div class="track-solo">S</div>
+    <div class="track-record">
+      <img src="assets/record_icon.png" class="track-record-icon" />
+    </div>
+    <div class="track-monitor">
+      <img src="assets/monitor_icon.png" class="track-monitor-icon" />
+    </div>
+  </div>
+</template>
+
 <body>
   <div class="project-window">
     <div class="add-track">+</div>
     <div class="vertical-divider"></div>
     <div class="horizontal-divider"></div>
-    <div class="track">
-      <div class="track-name">Audio 1</div>
-      <div class="track-mute">M</div>
-      <div class="track-solo">S</div>
-      <div class="track-record">
-        <img src="assets/record_icon.png" class="track-record-icon" />
-      </div>
-      <div class="track-monitor">
-        <img src="assets/monitor_icon.png" class="track-monitor-icon" />
-      </div>
-    </div>
+    <div id="track-list"></div>
   </div>
-  <div class="mix-console" id="mix-console">
-    
-  </div>
+  <div class="mix-console" id="mix-console"></div>
 
 </body>
 

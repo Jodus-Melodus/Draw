@@ -1,45 +1,134 @@
-import { getTrackList } from "./backend/tracks";
+import { listen } from "@tauri-apps/api/event";
+import { addEmptyTrack, getTrackList } from "./backend/tracks";
+import { TrackInfo } from "./backend/types";
 
 var trackList;
 
 async function updateTrackList() {
-  const trackContainer = document.getElementById("mix-console");
+  const channelTrackContainer = document.getElementById("mix-console");
+  const trackContainer = document.getElementById("track-list");
+  const channelTrackTemplate = document.getElementById("channel-track-template") as HTMLTemplateElement;
   const trackTemplate = document.getElementById("track-template") as HTMLTemplateElement;
 
-  if (trackContainer && trackTemplate) {
-    // clear track containers children
+  if (channelTrackContainer && channelTrackTemplate && trackContainer && trackTemplate) {
+    channelTrackContainer.replaceChildren();
     trackContainer.replaceChildren();
-    const clone = trackTemplate.content.cloneNode(true) as DocumentFragment;
     trackList = await getTrackList();
 
     trackList.tracks.forEach(track => {
-      // Populate template
-      (clone.querySelector(".meterR") as HTMLElement).textContent = ""; // FIXME null when add track
-      (clone.querySelector(".meterL") as HTMLElement).textContent = "";
-      (clone.querySelector(".metergain") as HTMLElement).textContent = "";
-      (clone.querySelector(".channel-mute") as HTMLElement).textContent = "";
-      (clone.querySelector(".channel-solo") as HTMLElement).textContent = track.solo ? "true" : "false";
-      (clone.querySelector(".channel-pan") as HTMLElement).textContent = track.pan.toPrecision(2);
-      (clone.querySelector(".fadergain") as HTMLElement).textContent = track.gain.toPrecision(2);
-      (clone.querySelector(".channel-name") as HTMLElement).textContent = track.name;
+      const newChannelTrack = channelTrackTemplate.content.cloneNode(true) as DocumentFragment;
+      const newTrack = trackTemplate.content.cloneNode(true) as DocumentFragment;
 
-      // Add behavior
-      // TODO get buttons with query selectors
-      // TODO update other buttons
-
-      // Example
-      // (clone.querySelector(".channel-mute") as HTMLElement).addEventListener("click", () => {});
-
-      trackContainer.appendChild(clone);
+      addNewChannelTrack(newChannelTrack, track, channelTrackContainer);
+      addNewTrack(newTrack, track, trackContainer);
     });
   }
 }
 
+function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContainer: HTMLElement) {
+  const trackName = newTrack.querySelector(".track-name") as HTMLElement;
+  const trackMuteButton = newTrack.querySelector(".track-mute") as HTMLElement;
+  const trackSoloButton = newTrack.querySelector(".track-solo") as HTMLElement;
+  const trackRecordButton = newTrack.querySelector(".track-record") as HTMLElement;
+  const trackMonitorButton = newTrack.querySelector(".track-monitor") as HTMLElement;
 
-async function init() { }
+  trackName.textContent = track.name;
 
-setInterval(() => {
+  trackMuteButton.addEventListener("click", () => {
+    console.log("click");
+    if (trackMuteButton.classList.contains("active")) {
+      trackMuteButton.classList.remove("active");
+    } else {
+      trackMuteButton.classList.add("active");
+    }
+  });
+
+  trackSoloButton.addEventListener("click", () => {
+    console.log("click");
+    if (trackSoloButton.classList.contains("active")) {
+      trackSoloButton.classList.remove("active");
+    } else {
+      trackSoloButton.classList.add("active");
+    }
+  });
+
+  trackRecordButton.addEventListener("click", () => {
+    console.log("click");
+    if (trackRecordButton.classList.contains("active")) {
+      trackRecordButton.classList.remove("active");
+    } else {
+      trackRecordButton.classList.add("active");
+    }
+  });
+
+  trackMonitorButton.addEventListener("click", () => {
+    console.log("click");
+    if (trackMonitorButton.classList.contains("active")) {
+      trackMonitorButton.classList.remove("active");
+    } else {
+      trackMonitorButton.classList.add("active");
+    }
+  });
+
+  trackContainer.appendChild(newTrack);
+}
+
+function addNewChannelTrack(newTrack: DocumentFragment, track: TrackInfo, trackContainer: HTMLElement) {
+  const channelMuteButton = newTrack.querySelector(".channel-mute") as HTMLElement;
+  const channelSoloButton = newTrack.querySelector(".channel-solo") as HTMLElement;
+  const channelRecordButton = newTrack.querySelector(".channel-record") as HTMLElement;
+  const channelMonitorButton = newTrack.querySelector(".channel-monitor") as HTMLElement;
+  const channelName = newTrack.querySelector(".channel-name") as HTMLElement;
+
+  channelName.textContent = track.name;
+
+  channelMuteButton.addEventListener("click", () => {
+    if (channelMuteButton.classList.contains("active")) {
+      channelMuteButton.classList.remove("active");
+    } else {
+      channelMuteButton.classList.add("active");
+    }
+  });
+
+  channelSoloButton.addEventListener("click", () => {
+    if (channelSoloButton.classList.contains("active")) {
+      channelSoloButton.classList.remove("active");
+    } else {
+      channelSoloButton.classList.add("active");
+    }
+  });
+
+  channelRecordButton.addEventListener("click", () => {
+    if (channelRecordButton.classList.contains("active")) {
+      channelRecordButton.classList.remove("active");
+    } else {
+      channelRecordButton.classList.add("active");
+    }
+  });
+
+  channelMonitorButton.addEventListener("click", () => {
+    if (channelMonitorButton.classList.contains("active")) {
+      channelMonitorButton.classList.remove("active");
+    } else {
+      channelMonitorButton.classList.add("active");
+    }
+  });
+
+  trackContainer.appendChild(newTrack);
+}
+
+async function init() {
   updateTrackList();
-}, 1000);
+
+  const addTrackButton = document.querySelector(".add-track") as HTMLElement;
+  addTrackButton.addEventListener("click", () => {
+    addEmptyTrack();
+    updateTrackList();
+  });
+
+  await listen("updated-track-list", (_) => {
+    updateTrackList();
+  })
+}
 
 init();
