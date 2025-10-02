@@ -4,21 +4,75 @@ import { TrackInfo } from "./backend/types";
 var trackList;
 
 async function updateTrackList() {
-  const trackContainer = document.getElementById("mix-console");
+  const channelTrackContainer = document.getElementById("mix-console");
+  const trackContainer = document.getElementById("track-list");
+  const channelTrackTemplate = document.getElementById("channel-track-template") as HTMLTemplateElement;
   const trackTemplate = document.getElementById("track-template") as HTMLTemplateElement;
 
-  if (trackContainer && trackTemplate) {
+  if (channelTrackContainer && channelTrackTemplate && trackContainer && trackTemplate) {
+    channelTrackContainer.replaceChildren();
     trackContainer.replaceChildren();
     trackList = await getTrackList();
-    
+
     trackList.tracks.forEach(track => {
+      const newChannelTrack = channelTrackTemplate.content.cloneNode(true) as DocumentFragment;
       const newTrack = trackTemplate.content.cloneNode(true) as DocumentFragment;
+
+      addNewChannelTrack(newChannelTrack, track, channelTrackContainer);
       addNewTrack(newTrack, track, trackContainer);
     });
   }
 }
 
 function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContainer: HTMLElement) {
+  const trackName = newTrack.querySelector(".track-name") as HTMLElement;
+  const trackMuteButton = newTrack.querySelector(".track-mute") as HTMLElement;
+  const trackSoloButton = newTrack.querySelector(".track-solo") as HTMLElement;
+  const trackRecordButton = newTrack.querySelector(".track-record") as HTMLElement;
+  const trackMonitorButton = newTrack.querySelector(".track-monitor") as HTMLElement;
+
+  trackName.textContent = track.name;
+
+  trackMuteButton.addEventListener("click", () => {
+    console.log("click");
+    if (trackMuteButton.classList.contains("active")) {
+      trackMuteButton.classList.remove("active");
+    } else {
+      trackMuteButton.classList.add("active");
+    }
+  });
+
+  trackSoloButton.addEventListener("click", () => {
+    console.log("click");
+    if (trackSoloButton.classList.contains("active")) {
+      trackSoloButton.classList.remove("active");
+    } else {
+      trackSoloButton.classList.add("active");
+    }
+  });
+
+  trackRecordButton.addEventListener("click", () => {
+    console.log("click");
+    if (trackRecordButton.classList.contains("active")) {
+      trackRecordButton.classList.remove("active");
+    } else {
+      trackRecordButton.classList.add("active");
+    }
+  });
+
+  trackMonitorButton.addEventListener("click", () => {
+    console.log("click");
+    if (trackMonitorButton.classList.contains("active")) {
+      trackMonitorButton.classList.remove("active");
+    } else {
+      trackMonitorButton.classList.add("active");
+    }
+  });
+
+  trackContainer.appendChild(newTrack);
+}
+
+function addNewChannelTrack(newTrack: DocumentFragment, track: TrackInfo, trackContainer: HTMLElement) {
   const channelMuteButton = newTrack.querySelector(".channel-mute") as HTMLElement;
   const channelSoloButton = newTrack.querySelector(".channel-solo") as HTMLElement;
   const channelRecordButton = newTrack.querySelector(".channel-record") as HTMLElement;
@@ -58,7 +112,7 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
       channelMonitorButton.classList.add("active");
     }
   });
-  
+
   trackContainer.appendChild(newTrack);
 }
 
