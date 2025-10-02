@@ -1,12 +1,14 @@
+use std::sync::Mutex;
+
 use crate::menus::menu_builders;
 
 mod file;
 mod menus;
 mod pages;
+mod project;
 mod states;
 mod track;
 mod types;
-mod project;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {
@@ -14,11 +16,13 @@ pub async fn run() {
     let master_output_device = state_audio_context
         .output_device()
         .expect("Failed to get master output device");
-    let state_mixer = states::StateMixer::new(master_output_device.clone());
+    let state_mixer_guard = states::StateMixerGuard(Mutex::new(states::StateMixer::new(
+        master_output_device.clone(),
+    )));
 
     tauri::Builder::default()
         .manage(state_audio_context)
-        .manage(state_mixer)
+        .manage(state_mixer_guard)
         .setup(|app| {
             let menu = menu_builders::build_menus(app);
             app.set_menu(menu)?;

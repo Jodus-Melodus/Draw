@@ -33,6 +33,8 @@ impl From<StateMixer> for StateMixerRaw {
     }
 }
 
+pub struct StateMixerGuard(pub Mutex<StateMixer>);
+
 #[derive(Clone)]
 pub struct StateMixer {
     pub track_list: Arc<Mutex<track::TrackList>>,

@@ -7,7 +7,6 @@ use crate::{states, track};
 
 pub async fn open_files(app_handle: &AppHandle) {
     let app = app_handle.clone();
-    let mixer_state = app.state::<states::StateMixer>().inner().clone();
 
     app.dialog()
         .file()
@@ -21,6 +20,7 @@ pub async fn open_files(app_handle: &AppHandle) {
             });
 
             if let Some(paths) = file_paths {
+                let state_mixer_guard = app.state::<states::StateMixerGuard>();
                 for path in paths {
                     if let Some(extention) = path
                         .extension()
@@ -28,7 +28,7 @@ pub async fn open_files(app_handle: &AppHandle) {
                         .to_str()
                     {
                         match extention {
-                            "wav" => add_file_track(&app, mixer_state.clone(), path.clone()),
+                            "wav" => add_file_track(&app, state_mixer_guard.clone(), path.clone()),
                             _ => eprintln!("Unsuppored file extention: {}", extention),
                         }
                     }
@@ -39,8 +39,13 @@ pub async fn open_files(app_handle: &AppHandle) {
         });
 }
 
-fn add_file_track(app_handle: &AppHandle, state: states::StateMixer, path: PathBuf) {
-    let track_list = state.track_list.clone();
+fn add_file_track(
+    app_handle: &AppHandle,
+    state_mixer_guard: tauri::State<states::StateMixerGuard>,
+    path: PathBuf,
+) {
+    let state_mixer = state_mixer_guard.0.lock().unwrap();
+    let track_list = state_mixer.track_list.clone();
     let mut list = track_list.lock().expect("Failed to lock track list");
     let track_source = track::FileSource::new_input(&path);
     let track = track::AudioTrack::new(track::TrackType::In, None, Some(track_source));
