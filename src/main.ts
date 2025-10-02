@@ -1,4 +1,5 @@
 import { getTrackList } from "./backend/tracks";
+import { TrackInfo } from "./backend/types";
 
 var trackList;
 
@@ -7,39 +8,64 @@ async function updateTrackList() {
   const trackTemplate = document.getElementById("track-template") as HTMLTemplateElement;
 
   if (trackContainer && trackTemplate) {
-    // clear track containers children
     trackContainer.replaceChildren();
-    const clone = trackTemplate.content.cloneNode(true) as DocumentFragment;
+    const newTrack = trackTemplate.content.cloneNode(true) as DocumentFragment;
     trackList = await getTrackList();
 
     trackList.tracks.forEach(track => {
-      // Populate template
-      (clone.querySelector(".meterR") as HTMLElement).textContent = ""; // FIXME null when add track
-      (clone.querySelector(".meterL") as HTMLElement).textContent = "";
-      (clone.querySelector(".metergain") as HTMLElement).textContent = "";
-      (clone.querySelector(".channel-mute") as HTMLElement).textContent = "";
-      (clone.querySelector(".channel-solo") as HTMLElement).textContent = track.solo ? "true" : "false";
-      (clone.querySelector(".channel-pan") as HTMLElement).textContent = track.pan.toPrecision(2);
-      (clone.querySelector(".fadergain") as HTMLElement).textContent = track.gain.toPrecision(2);
-      (clone.querySelector(".channel-name") as HTMLElement).textContent = track.name;
-
-      // Add behavior
-      // TODO get buttons with query selectors
-      // TODO update other buttons
-
-      // Example
-      // (clone.querySelector(".channel-mute") as HTMLElement).addEventListener("click", () => {});
-
-      trackContainer.appendChild(clone);
+      addNewTrack(newTrack, track, trackContainer);
     });
   }
 }
 
+function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContainer: HTMLElement) {
+  const channelMuteButton = newTrack.querySelector(".channel-mute") as HTMLElement;
+  const channelSoloButton = newTrack.querySelector(".channel-solo") as HTMLElement;
+  const channelRecordButton = newTrack.querySelector(".channel-record") as HTMLElement;
+  const channelMonitorButton = newTrack.querySelector(".channel-monitor") as HTMLElement;
+  // TODO Temporary place holder
+  (newTrack.querySelector(".meterR") as HTMLElement).textContent = "";
+  (newTrack.querySelector(".meterL") as HTMLElement).textContent = "";
+  (newTrack.querySelector(".metergain") as HTMLElement).textContent = "";
+  (newTrack.querySelector(".channel-pan") as HTMLElement).textContent = track.pan.toPrecision(2);
+  (newTrack.querySelector(".fadergain") as HTMLElement).textContent = track.gain.toPrecision(2);
+  (newTrack.querySelector(".channel-name") as HTMLElement).textContent = track.name;
 
-async function init() { }
+  channelMuteButton.addEventListener("click", () => {
+    if (channelMuteButton.classList.contains("active")) {
+      channelMuteButton.classList.remove("active");
+    } else {
+      channelMuteButton.classList.add("active");
+    }
+  });
 
-setInterval(() => {
+  channelSoloButton.addEventListener("click", () => {
+    if (channelSoloButton.classList.contains("active")) {
+      channelSoloButton.classList.remove("active");
+    } else {
+      channelSoloButton.classList.add("active");
+    }
+  });
+
+  channelRecordButton.addEventListener("click", () => {
+    if (channelRecordButton.classList.contains("active")) {
+      channelRecordButton.classList.remove("active");
+    } else {
+      channelRecordButton.classList.add("active");
+    }
+  });
+
+  channelMonitorButton.addEventListener("click", () => {
+    if (channelMonitorButton.classList.contains("active")) {
+      channelMonitorButton.classList.remove("active");
+    } else {
+      channelMonitorButton.classList.add("active");
+    }
+  }); trackContainer.appendChild(newTrack);
+}
+
+async function init() {
   updateTrackList();
-}, 1000);
+}
 
 init();
