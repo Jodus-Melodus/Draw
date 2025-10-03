@@ -40,6 +40,7 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
       trackMuteButton.classList.remove("active");
     } else {
       trackMuteButton.classList.add("active");
+      trackSoloButton.classList.remove("active");
     }
   });
 
@@ -49,6 +50,7 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
       trackSoloButton.classList.remove("active");
     } else {
       trackSoloButton.classList.add("active");
+      trackMuteButton.classList.remove("active");
     }
   });
 
@@ -87,6 +89,7 @@ function addNewChannelTrack(newTrack: DocumentFragment, track: TrackInfo, trackC
       channelMuteButton.classList.remove("active");
     } else {
       channelMuteButton.classList.add("active");
+      channelSoloButton.classList.remove("active");
     }
   });
 
@@ -95,6 +98,7 @@ function addNewChannelTrack(newTrack: DocumentFragment, track: TrackInfo, trackC
       channelSoloButton.classList.remove("active");
     } else {
       channelSoloButton.classList.add("active");
+      channelMuteButton.classList.remove("active");
     }
   });
 
