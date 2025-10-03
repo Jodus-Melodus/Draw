@@ -16,8 +16,10 @@ async function updateTrackList() {
     trackList = await getTrackList();
 
     trackList.tracks.forEach(track => {
+      const newChannelTrack = channelTrackTemplate.content.cloneNode(true) as DocumentFragment;
       const newTrack = trackTemplate.content.cloneNode(true) as DocumentFragment;
 
+      addNewChannelTrack(newChannelTrack, track, channelTrackContainer);
       addNewTrack(newTrack, track, trackContainer);
     });
   }
@@ -30,25 +32,15 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
   const trackRecordButton = newTrack.querySelector(".track-record") as HTMLElement;
   const trackMonitorButton = newTrack.querySelector(".track-monitor") as HTMLElement;
 
-  const channelName = newTrack.querySelector(".channel-name") as HTMLElement;
-  const channelMuteButton = newTrack.querySelector(".channel-mute") as HTMLElement;
-  const channelSoloButton = newTrack.querySelector(".channel-solo") as HTMLElement;
-  const channelRecordButton = newTrack.querySelector(".channel-record") as HTMLElement;
-  const channelMonitorButton = newTrack.querySelector(".channel-monitor") as HTMLElement;
-
   trackName.textContent = track.name;
-  channelName.textContent = track.name; //not needed?
 
   trackMuteButton.addEventListener("click", () => {
     console.log("click");
     if (trackMuteButton.classList.contains("active")) {
       trackMuteButton.classList.remove("active");
-      channelMuteButton.classList.remove("active");
     } else {
       trackMuteButton.classList.add("active");
       trackSoloButton.classList.remove("active");
-      channelMuteButton.classList.add("active");
-      channelSoloButton.classList.remove("active");
     }
   });
 
@@ -56,12 +48,9 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
     console.log("click");
     if (trackSoloButton.classList.contains("active")) {
       trackSoloButton.classList.remove("active");
-      channelSoloButton.classList.remove("active");
     } else {
       trackSoloButton.classList.add("active");
       trackMuteButton.classList.remove("active");
-      channelSoloButton.classList.add("active");
-      channelMuteButton.classList.remove("active");
     }
   });
 
@@ -69,10 +58,8 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
     console.log("click");
     if (trackRecordButton.classList.contains("active")) {
       trackRecordButton.classList.remove("active");
-      channelRecordButton.classList.remove("active");
     } else {
       trackRecordButton.classList.add("active");
-      channelRecordButton.classList.add("active");
     }
   });
 
@@ -80,9 +67,53 @@ function addNewTrack(newTrack: DocumentFragment, track: TrackInfo, trackContaine
     console.log("click");
     if (trackMonitorButton.classList.contains("active")) {
       trackMonitorButton.classList.remove("active");
-      channelMonitorButton.classList.remove("active");
     } else {
       trackMonitorButton.classList.add("active");
+    }
+  });
+
+  trackContainer.appendChild(newTrack);
+}
+
+function addNewChannelTrack(newTrack: DocumentFragment, track: TrackInfo, trackContainer: HTMLElement) {
+  const channelMuteButton = newTrack.querySelector(".channel-mute") as HTMLElement;
+  const channelSoloButton = newTrack.querySelector(".channel-solo") as HTMLElement;
+  const channelRecordButton = newTrack.querySelector(".channel-record") as HTMLElement;
+  const channelMonitorButton = newTrack.querySelector(".channel-monitor") as HTMLElement;
+  const channelName = newTrack.querySelector(".channel-name") as HTMLElement;
+
+  channelName.textContent = track.name;
+
+  channelMuteButton.addEventListener("click", () => {
+    if (channelMuteButton.classList.contains("active")) {
+      channelMuteButton.classList.remove("active");
+    } else {
+      channelMuteButton.classList.add("active");
+      channelSoloButton.classList.remove("active");
+    }
+  });
+
+  channelSoloButton.addEventListener("click", () => {
+    if (channelSoloButton.classList.contains("active")) {
+      channelSoloButton.classList.remove("active");
+    } else {
+      channelSoloButton.classList.add("active");
+      channelMuteButton.classList.remove("active");
+    }
+  });
+
+  channelRecordButton.addEventListener("click", () => {
+    if (channelRecordButton.classList.contains("active")) {
+      channelRecordButton.classList.remove("active");
+    } else {
+      channelRecordButton.classList.add("active");
+    }
+  });
+
+  channelMonitorButton.addEventListener("click", () => {
+    if (channelMonitorButton.classList.contains("active")) {
+      channelMonitorButton.classList.remove("active");
+    } else {
       channelMonitorButton.classList.add("active");
     }
   });
