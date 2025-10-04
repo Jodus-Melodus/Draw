@@ -7,6 +7,8 @@
   <title>Draw</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
   <link rel='stylesheet' type='text/css' media='screen' href='styles.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='channel-strip.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='track.css'>
 </head>
 
 <template id="channel-track-template">
@@ -62,14 +64,16 @@
 </template>
 
 <body>
+  <!-- project-window -->
   <div class="project-window">
     <div class="add-track">+</div>
     <div class="vertical-divider"></div>
     <div class="horizontal-divider"></div>
     <div id="track-list"></div>
   </div>
-  <div class="mix-console" id="mix-console"></div>
 
+  <!-- mix-console -->
+  <div class="mix-console" id="mix-console"></div>
 </body>
 
 <script type="module" src='main.ts'></script>
