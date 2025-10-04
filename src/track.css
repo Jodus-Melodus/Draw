@@ -123,3 +123,21 @@
   width: 15px;
   height: 15px;
 }
+
+.track-mute.active {
+  background-color: #ffd633;
+  color: black;
+}
+
+.track-solo.active {
+  background-color: #e75b3c;
+  color: black;
+}
+
+.track-record.active {
+  background-color: #eb2323;
+}
+
+.track-monitor.active {
+  background-color: #ffa033;
+}
