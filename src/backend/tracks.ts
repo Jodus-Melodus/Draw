@@ -57,7 +57,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     channelName.textContent = track.name;
 
     trackMuteButton.addEventListener("click", () => {
-        if (trackMuteButton.classList.contains("active")) {
+        var active = trackMuteButton.classList.contains("active");
+        if (active) {
             trackMuteButton.classList.remove("active");
             channelMuteButton.classList.remove("active");
         } else {
@@ -69,7 +70,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     });
 
     trackSoloButton.addEventListener("click", () => {
-        if (trackSoloButton.classList.contains("active")) {
+        var active = trackSoloButton.classList.contains("active");
+        if (active) {
             trackSoloButton.classList.remove("active");
             channelSoloButton.classList.remove("active");
         } else {
@@ -81,7 +83,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     });
 
     trackRecordButton.addEventListener("click", () => {
-        if (trackRecordButton.classList.contains("active")) {
+        var active = trackRecordButton.classList.contains("active");
+        if (active) {
             trackRecordButton.classList.remove("active");
             channelRecordButton.classList.remove("active");
         } else {
@@ -91,7 +94,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     });
 
     trackMonitorButton.addEventListener("click", () => {
-        if (trackMonitorButton.classList.contains("active")) {
+        var active = trackMonitorButton.classList.contains("active");
+        if (active) {
             trackMonitorButton.classList.remove("active");
             channelMonitorButton.classList.remove("active");
         } else {
@@ -101,7 +105,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     });
 
     channelMuteButton.addEventListener("click", () => {
-        if (trackMuteButton.classList.contains("active")) {
+        var active = trackMuteButton.classList.contains("active");
+        if (active) {
             trackMuteButton.classList.remove("active");
             channelMuteButton.classList.remove("active");
         } else {
@@ -113,7 +118,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     });
 
     channelSoloButton.addEventListener("click", () => {
-        if (trackSoloButton.classList.contains("active")) {
+        var active = trackSoloButton.classList.contains("active");
+        if (active) {
             trackSoloButton.classList.remove("active");
             channelSoloButton.classList.remove("active");
         } else {
@@ -125,7 +131,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     });
 
     channelRecordButton.addEventListener("click", () => {
-        if (trackRecordButton.classList.contains("active")) {
+        var active = trackRecordButton.classList.contains("active");
+        if (active) {
             trackRecordButton.classList.remove("active");
             channelRecordButton.classList.remove("active");
         } else {
@@ -135,7 +142,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     });
 
     channelMonitorButton.addEventListener("click", () => {
-        if (trackMonitorButton.classList.contains("active")) {
+        var active = trackMonitorButton.classList.contains("active");
+        if (active) {
             trackMonitorButton.classList.remove("active");
             channelMonitorButton.classList.remove("active");
         } else {
