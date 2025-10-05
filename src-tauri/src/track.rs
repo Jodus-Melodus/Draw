@@ -224,6 +224,8 @@ pub enum TrackUpdate {
     Gain(f32),
     Monitor(bool),
     Solo(bool),
+    Mute(bool),
+    Record(bool),
 }
 
 pub struct AudioTrack {
@@ -234,6 +236,7 @@ pub struct AudioTrack {
     pub pan: f32,
     pub solo: bool,
     pub monitor: bool,
+    pub mute: bool,
 }
 
 impl AudioTrack {
@@ -250,6 +253,7 @@ impl AudioTrack {
             pan: 0.0,
             monitor: false,
             solo: false,
+            mute: false,
         }
     }
 }
@@ -268,6 +272,7 @@ impl From<AudioTrackRaw> for AudioTrack {
             pan: value.pan,
             solo: value.solo,
             monitor: value.monitor,
+            mute: value.mute,
         }
     }
 }
@@ -281,6 +286,7 @@ pub struct AudioTrackRaw {
     pan: f32,
     solo: bool,
     monitor: bool,
+    mute: bool,
 }
 
 impl From<&AudioTrack> for AudioTrackRaw {
@@ -296,6 +302,7 @@ impl From<&AudioTrack> for AudioTrackRaw {
             pan: value.pan,
             solo: value.solo,
             monitor: value.monitor,
+            mute: value.mute,
         }
     }
 }
@@ -338,6 +345,8 @@ impl TrackList {
             TrackUpdate::Gain(gain) => track.gain = gain,
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
+            TrackUpdate::Mute(mute) => track.mute = mute,
+            TrackUpdate::Record(record) => todo!(),
         }
     }
 
@@ -374,11 +383,22 @@ impl TrackList {
                     TrackType::MasterOut => "MasterOut",
                 };
 
+                let record = if let Some(recording) = &track.stream_source {
+                    let r = recording.recording.clone();
+                    r.load(Ordering::Relaxed)
+                } else {
+                    false
+                };
+
                 tracks.push(TrackInfo {
                     name: name.clone(),
                     track_type: track_type_str.to_string(),
                     gain: track.gain,
                     pan: track.pan,
+                    monitor: track.monitor,
+                    mute: track.mute,
+                    solo: track.solo,
+                    record,
                 });
             }
         }
@@ -393,6 +413,10 @@ pub struct TrackInfo {
     pub track_type: String,
     pub gain: f32,
     pub pan: f32,
+    pub monitor: bool,
+    pub solo: bool,
+    pub mute: bool,
+    pub record: bool,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
