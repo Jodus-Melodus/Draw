@@ -3,7 +3,7 @@ import { addEmptyTrack, addNewTrack, getTrackList } from "./backend/tracks";
 
 var trackList;
 
-async function updateTrackList() {
+export async function updateTrackList() {
   const channelTrackContainer = document.getElementById("mix-console");
   const trackContainer = document.getElementById("track-list");
   const channelTrackTemplate = document.getElementById("channel-track-template") as HTMLTemplateElement;

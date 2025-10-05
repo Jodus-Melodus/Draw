@@ -1,14 +1,21 @@
 export type TrackInfo = {
     name: string;
-    track_type: string;
+    trackType: string;
     gain: number;
     pan: number;
     monitor: boolean,
-    solo: boolean
+    solo: boolean,
+    mute: boolean,
+    record: boolean
 };
 
 export type TrackListResponse = {
     tracks: TrackInfo[];
 };
 
-export type TrackUpdate = | { Pan: number } | { Gain: number } | { Monitor: boolean } | { Solo: boolean };
+export type TrackUpdate = | { Pan: number }
+    | { Gain: number }
+    | { Monitor: boolean }
+    | { Solo: boolean }
+    | { Mute: boolean }
+    | { Record: boolean };
