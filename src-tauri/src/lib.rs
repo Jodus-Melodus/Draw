@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use crate::menus::menu_builders;
 
@@ -16,9 +16,9 @@ pub async fn run() {
     let master_output_device = state_audio_context
         .output_device()
         .expect("Failed to get master output device");
-    let state_mixer_guard = states::StateMixerGuard(Mutex::new(states::StateMixer::new(
+    let state_mixer_guard = states::StateMixerGuard(Arc::new(Mutex::new(states::StateMixer::new(
         master_output_device.clone(),
-    )));
+    ))));
 
     tauri::Builder::default()
         .manage(state_audio_context)
@@ -39,7 +39,6 @@ pub async fn run() {
         .invoke_handler(tauri::generate_handler![
             track::get_track_list,
             track::update_track,
-            states::get_input_stream_device_list,
             menus::project_menu::add_empty_track
         ])
         .run(tauri::generate_context!())

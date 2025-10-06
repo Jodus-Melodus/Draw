@@ -56,7 +56,8 @@
 /* mix-console */
 .mix-console {
   width: 100%;
-  height: 310px; 
+  height: 310px;
+  display: flex;
 
   position: relative;
   

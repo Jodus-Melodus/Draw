@@ -1,4 +1,3 @@
-import { updateTrackList } from "../main.js";
 import type { TrackInfo, TrackListResponse, TrackUpdate } from "./types.js";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -26,13 +25,6 @@ export async function updateTrack(trackName: string, update: TrackUpdate) {
     } catch (err) {
         console.error("Failed to update track:", err);
     }
-
-    let tracks = await getTrackList();
-    tracks.tracks.forEach(track => {
-        console.log(track);
-    });
-
-    updateTrackList();
 }
 /**
  * Add an empty track to the track list
@@ -64,9 +56,38 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     trackName.textContent = track.name;
     channelName.textContent = track.name;
 
+    // Initialize button active states from server-side track state
+    if (track.mute) {
+        trackMuteButton.classList.add("active");
+        channelMuteButton.classList.add("active");
+    }
+
+    if (track.solo) {
+        trackSoloButton.classList.add("active");
+        channelSoloButton.classList.add("active");
+    }
+
+    if (track.record) {
+        trackRecordButton.classList.add("active");
+        channelRecordButton.classList.add("active");
+    }
+
+    if (track.monitor) {
+        trackMonitorButton.classList.add("active");
+        channelMonitorButton.classList.add("active");
+    }
+
     trackMuteButton.addEventListener("click", async () => {
-        var active = trackMuteButton.classList.contains("active");
-        if (active) {
+        const active = trackMuteButton.classList.contains("active");
+        const newState = !active;
+        try {
+            await updateTrack(track.name, { Mute: newState });
+        } catch (err) {
+            console.error("Failed to update track:", err);
+            return;
+        }
+
+        if (!newState) {
             trackMuteButton.classList.remove("active");
             channelMuteButton.classList.remove("active");
         } else {
@@ -75,13 +96,19 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
             channelMuteButton.classList.add("active");
             channelSoloButton.classList.remove("active");
         }
-
-        await updateTrack(track.name, { Mute: !active });
     });
 
     trackSoloButton.addEventListener("click", async () => {
-        var active = trackSoloButton.classList.contains("active");
-        if (active) {
+        const active = trackSoloButton.classList.contains("active");
+        const newState = !active;
+        try {
+            await updateTrack(track.name, { Solo: newState });
+        } catch (err) {
+            console.error("Failed to update track:", err);
+            return;
+        }
+
+        if (!newState) {
             trackSoloButton.classList.remove("active");
             channelSoloButton.classList.remove("active");
         } else {
@@ -90,39 +117,57 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
             channelSoloButton.classList.add("active");
             channelMuteButton.classList.remove("active");
         }
-
-        await updateTrack(track.name, { Solo: !active });
     });
 
     trackRecordButton.addEventListener("click", async () => {
-        var active = trackRecordButton.classList.contains("active");
-        if (active) {
+        const active = trackRecordButton.classList.contains("active");
+        const newState = !active;
+        try {
+            await updateTrack(track.name, { Record: newState });
+        } catch (err) {
+            console.error("Failed to update track:", err);
+            return;
+        }
+
+        if (!newState) {
             trackRecordButton.classList.remove("active");
             channelRecordButton.classList.remove("active");
         } else {
             trackRecordButton.classList.add("active");
             channelRecordButton.classList.add("active");
         }
-
-        await updateTrack(track.name, { Record: !active });
     });
 
     trackMonitorButton.addEventListener("click", async () => {
-        var active = trackMonitorButton.classList.contains("active");
-        if (active) {
+        const active = trackMonitorButton.classList.contains("active");
+        const newState = !active;
+        try {
+            await updateTrack(track.name, { Monitor: newState });
+        } catch (err) {
+            console.error("Failed to update track:", err);
+            return;
+        }
+
+        if (!newState) {
             trackMonitorButton.classList.remove("active");
             channelMonitorButton.classList.remove("active");
         } else {
             trackMonitorButton.classList.add("active");
             channelMonitorButton.classList.add("active");
         }
-
-        await updateTrack(track.name, { Monitor: !active });
     });
 
     channelMuteButton.addEventListener("click", async () => {
-        var active = trackMuteButton.classList.contains("active");
-        if (active) {
+        const active = trackMuteButton.classList.contains("active");
+        const newState = !active;
+        try {
+            await updateTrack(track.name, { Mute: newState });
+        } catch (err) {
+            console.error("Failed to update track:", err);
+            return;
+        }
+
+        if (!newState) {
             trackMuteButton.classList.remove("active");
             channelMuteButton.classList.remove("active");
         } else {
@@ -131,13 +176,19 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
             channelMuteButton.classList.add("active");
             channelSoloButton.classList.remove("active");
         }
-
-        await updateTrack(track.name, { Mute: !active });
     });
 
     channelSoloButton.addEventListener("click", async () => {
-        var active = trackSoloButton.classList.contains("active");
-        if (active) {
+        const active = trackSoloButton.classList.contains("active");
+        const newState = !active;
+        try {
+            await updateTrack(track.name, { Solo: newState });
+        } catch (err) {
+            console.error("Failed to update track:", err);
+            return;
+        }
+
+        if (!newState) {
             trackSoloButton.classList.remove("active");
             channelSoloButton.classList.remove("active");
         } else {
@@ -146,34 +197,44 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
             channelSoloButton.classList.add("active");
             channelMuteButton.classList.remove("active");
         }
-
-        await updateTrack(track.name, { Solo: !active });
     });
 
     channelRecordButton.addEventListener("click", async () => {
-        var active = trackRecordButton.classList.contains("active");
-        if (active) {
+        const active = trackRecordButton.classList.contains("active");
+        const newState = !active;
+        try {
+            await updateTrack(track.name, { Record: newState });
+        } catch (err) {
+            console.error("Failed to update track:", err);
+            return;
+        }
+
+        if (!newState) {
             trackRecordButton.classList.remove("active");
             channelRecordButton.classList.remove("active");
         } else {
             trackRecordButton.classList.add("active");
             channelRecordButton.classList.add("active");
         }
-
-        await updateTrack(track.name, { Record: !active });
     });
 
     channelMonitorButton.addEventListener("click", async () => {
-        var active = trackMonitorButton.classList.contains("active");
-        if (active) {
+        const active = trackMonitorButton.classList.contains("active");
+        const newState = !active;
+        try {
+            await updateTrack(track.name, { Monitor: newState });
+        } catch (err) {
+            console.error("Failed to update track:", err);
+            return;
+        }
+
+        if (!newState) {
             trackMonitorButton.classList.remove("active");
             channelMonitorButton.classList.remove("active");
         } else {
             trackMonitorButton.classList.add("active");
             channelMonitorButton.classList.add("active");
         }
-
-        await updateTrack(track.name, { Monitor: !active });
     });
 
     trackContainer.appendChild(newTrack);
