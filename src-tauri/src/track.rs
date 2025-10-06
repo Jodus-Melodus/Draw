@@ -41,7 +41,10 @@ pub fn update_track(
     update: TrackUpdate,
 ) -> Result<(), String> {
     let state_mixer = state.0.lock().map_err(|_| "Failed to lock state mixer")?;
-    let mut list = state_mixer.track_list.lock().map_err(|_| "Failed to lock track list")?;
+    let mut list = state_mixer
+        .track_list
+        .lock()
+        .map_err(|_| "Failed to lock track list")?;
     list.update_track(&track_name, update);
     Ok(())
 }
@@ -337,7 +340,9 @@ impl TrackList {
     }
 
     pub fn track_list(&self) -> Vec<&String> {
-        self.tracks.keys().collect::<Vec<_>>()
+        let mut track_names = self.tracks.keys().collect::<Vec<_>>();
+        track_names.sort();
+        track_names
     }
 
     pub fn update_track(&mut self, track_name: &str, update: TrackUpdate) {
@@ -406,6 +411,8 @@ impl TrackList {
                 });
             }
         }
+
+        tracks.sort_by(|a, b| a.name.cmp(&b.name));
 
         TrackListResponse { tracks }
     }
