@@ -23,11 +23,15 @@ use serde::{Deserialize, Serialize};
 use crate::{states, types::RingBuffer};
 
 #[tauri::command]
-pub fn get_track_list(state: tauri::State<states::StateMixerGuard>) -> TrackListResponse {
-    let state_mixer = state.0.lock().unwrap();
-    let track_list = state_mixer.track_list.clone();
-    let list = track_list.lock().expect("Failed to lock list");
-    list.as_response()
+pub fn get_track_list(
+    state: tauri::State<states::StateMixerGuard>,
+) -> Result<TrackListResponse, String> {
+    let state_mixer = state.0.lock().map_err(|_| "Failed to lock state mixer")?;
+    let list = state_mixer
+        .track_list
+        .lock()
+        .map_err(|_| "Failed to lock track list")?;
+    Ok(list.as_response())
 }
 
 #[tauri::command]
@@ -35,11 +39,11 @@ pub fn update_track(
     state: tauri::State<states::StateMixerGuard>,
     track_name: String,
     update: TrackUpdate,
-) {
-    let state_mixer = state.0.lock().unwrap();
-    let track_list = state_mixer.track_list.clone();
-    let mut list = track_list.lock().expect("Failed to lock list");
+) -> Result<(), String> {
+    let state_mixer = state.0.lock().map_err(|_| "Failed to lock state mixer")?;
+    let mut list = state_mixer.track_list.lock().map_err(|_| "Failed to lock track list")?;
     list.update_track(&track_name, update);
+    Ok(())
 }
 
 pub struct StreamSource {

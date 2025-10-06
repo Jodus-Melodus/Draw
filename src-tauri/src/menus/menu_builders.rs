@@ -8,7 +8,7 @@ use tauri::{
         CheckMenuItemBuilder, Menu, MenuBuilder, MenuEvent, MenuItemBuilder, MenuItemKind, Submenu,
         SubmenuBuilder,
     },
-    App, AppHandle, Manager, Wry,
+    App, AppHandle, Emitter, Manager, Wry,
 };
 
 use crate::{file, menus, pages, project, states, track};
@@ -94,21 +94,27 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
         .unwrap()
 }
 
-pub async fn handle_menu_events(app: &AppHandle, event: &MenuEvent) {
-    let audio_context = app.state::<states::StateAudioContext>();
-    let state_mixer_guard = app.state::<states::StateMixerGuard>();
+pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
+    let audio_context = app_handle.state::<states::StateAudioContext>();
+    let state_mixer_guard = app_handle.state::<states::StateMixerGuard>();
     let id: &str = event.id.0.as_ref();
 
     match id {
-        "file-open-file" => file::open_files(app).await,
-        "file-settings" => pages::settings_page::open_settings(app),
-        "project-add-track" => menus::project_menu::add_empty_track(state_mixer_guard),
-        "project-save-project" => project::save_project(app),
-        "project-open-project" => project::load_project(app),
+        "file-open-file" => file::open_files(app_handle).await,
+        "file-settings" => pages::settings_page::open_settings(app_handle),
+        "project-add-track" => {
+            menus::project_menu::add_empty_track(state_mixer_guard).unwrap();
+            let window = app_handle
+                .get_webview_window("main")
+                .expect("Failed to get main window");
+            window.emit("updated-track-list", ()).unwrap();
+        }
+        "project-save-project" => project::save_project(app_handle),
+        "project-open-project" => project::load_project(app_handle),
         _ if id.starts_with("file-output-device-") => {
             update_master_output_device_index(audio_context.output_device_index.clone(), id);
-            update_radio_group_menu(app, id);
-            update_master_output_device_track(app);
+            update_radio_group_menu(app_handle, id);
+            update_master_output_device_track(app_handle);
         }
         _ => eprintln!("Unknown menu item selected"),
     }

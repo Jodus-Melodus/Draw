@@ -62,7 +62,7 @@ pub fn load_project(app_handle: &AppHandle) {
                             "Failed to read file {}",
                             mixer_state_path.display()
                         ));
-                    let (decoded_mixer, _len): (states::StateMixerRaw, usize) =
+                    let (decoded_mixer, _): (states::StateMixerRaw, usize) =
                         bincode::decode_from_slice(&mixer_state_buffer, config).unwrap();
                     let new_state_mixer = states::StateMixer::from(decoded_mixer);
                     let state_mixer = app.state::<states::StateMixerGuard>();
