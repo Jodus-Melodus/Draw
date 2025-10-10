@@ -107,14 +107,14 @@ impl StreamSource {
                 recording: Arc::new(AtomicBool::new(false)),
             }
         } else {
-            panic!("")
+            panic!("Device does not support input or output.")
         }
     }
 
     pub fn start_thread(&mut self) {
         let stream = self.stream.clone();
         let recording = self.recording.clone();
-
+        println!("Started recording");
         recording.store(true, Ordering::Relaxed);
 
         std::thread::spawn(move || {
@@ -132,6 +132,7 @@ impl StreamSource {
     }
 
     pub fn stop_thread(&mut self) {
+        println!("Stopped recording");
         self.recording.store(false, Ordering::Relaxed);
     }
 
@@ -355,7 +356,14 @@ impl TrackList {
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
             TrackUpdate::Mute(mute) => track.mute = mute,
-            TrackUpdate::Record(record) => todo!(),
+            TrackUpdate::Record(record) => {
+                if let Some(stream) = &mut track.stream_source {
+                    match record {
+                        true => stream.start_thread(),
+                        false => stream.stop_thread(),
+                    }
+                }
+            }
         }
     }
 
