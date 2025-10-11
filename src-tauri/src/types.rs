@@ -1,8 +1,10 @@
 use cpal::traits::{DeviceTrait, HostTrait};
 use std::{collections::HashMap, sync::Arc};
 
+pub const RINGBUFFER_SIZE: usize = 960 * 50;
+
 pub struct RingBuffer {
-    buffer: [f32; 48000],
+    buffer: [f32; RINGBUFFER_SIZE],
     write_index: usize,
     read_index: usize,
 }
@@ -10,7 +12,7 @@ pub struct RingBuffer {
 impl RingBuffer {
     pub fn new() -> Self {
         RingBuffer {
-            buffer: [0.0; 48000],
+            buffer: [0.0; RINGBUFFER_SIZE],
             write_index: 0,
             read_index: 0,
         }
