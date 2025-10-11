@@ -71,22 +71,15 @@ impl StreamSource {
                 .build_input_stream(
                     &config.into(),
                     move |data: &[f32], _: &cpal::InputCallbackInfo| {
-                        // Write into ring buffer while holding the lock, but do NOT hold
-                        // the lock while emitting to the frontend. Copy the samples out
-                        // into a small Vec and emit that after releasing the lock.
                         let mut samples_to_emit: Option<Vec<f32>> = None;
 
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
-                            // Copy samples for emit
                             samples_to_emit = Some(data.to_vec());
                         }
 
-                        // Emit outside the lock
                         if let Some(samples) = samples_to_emit {
-                            // Emit the array of f32 samples to the frontend. Use
-                            // serde-friendly types (Vec<f32>) which Tauri will serialize.
-                            if let Err(e) = window.emit("audio_sample", samples) {
+                            if let Err(e) = window.emit("audio-samples", samples) {
                                 eprintln!("Failed to emit audio sample: {:?}", e);
                             }
                         }
@@ -129,16 +122,6 @@ impl StreamSource {
         }
     }
 
-    pub fn get_audio_samples(&self) -> Result<Vec<f32>, String> {
-        let rb = self
-            .ring_buffer
-            .lock()
-            .map_err(|_| "Failed to lock ring buffer")?;
-        let mut buffer = Vec::new();
-        rb.peek(&mut buffer);
-        Ok(buffer)
-    }
-
     pub fn start_thread(&mut self) {
         let stream = self.stream.clone();
         let recording = self.recording.clone();
@@ -162,7 +145,7 @@ impl StreamSource {
     pub fn stop_thread(&mut self) {
         println!("Stopped recording");
         self.recording.store(false, Ordering::Relaxed);
-        // self.save_to_wav("testing.wav"); // TODO
+        // TODO save to wav
     }
 
     pub fn graph_recording(&self) {
@@ -452,19 +435,6 @@ impl TrackList {
         tracks.sort_by(|a, b| a.name.cmp(&b.name));
 
         TrackListResponse { tracks }
-    }
-
-    pub fn get_audio_samples(&self, track_name: String) -> Result<Vec<f32>, String> {
-        if let Some(track) = self.get_track(&track_name) {
-            let audio_track = track.lock().map_err(|_| "Failed to lock track")?;
-            if let Some(stream) = &audio_track.stream_source {
-                stream.get_audio_samples()
-            } else {
-                Err(format!("Track has no stream"))
-            }
-        } else {
-            Err(format!("No such track"))
-        }
     }
 }
 
