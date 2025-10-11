@@ -32,6 +32,12 @@ async function init() {
   await listen("updated-track-list", (_) => {
     updateTrackList();
   })
+
+  await listen("audio-samples", (_) => {
+    // handle audio samples
+    // display wave form or gain
+    console.log("Received audio");
+  })
 }
 
 init();

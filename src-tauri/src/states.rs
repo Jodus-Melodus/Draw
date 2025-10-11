@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     sync::{
-        atomic::{AtomicU64, AtomicUsize, Ordering},
+        atomic::{AtomicUsize, Ordering},
         Arc, Mutex,
     },
 };
@@ -32,21 +32,19 @@ pub struct StateMixerGuard(pub Arc<Mutex<StateMixer>>);
 #[derive(Clone)]
 pub struct StateMixer {
     pub track_list: Arc<Mutex<track::TrackList>>,
-    pub playhead: Arc<AtomicU64>,
 }
 
 impl StateMixer {
-    pub fn new(master_output: Arc<Device>) -> Self {
+    pub fn new(app: &tauri::AppHandle, master_output: Arc<Device>) -> Self {
         let mut track_list = track::TrackList::new();
         let master_out = track::AudioTrack::new(
             track::TrackType::MasterOut,
-            Some(track::StreamSource::new(master_output)),
+            Some(track::StreamSource::new(app, master_output)),
             None,
         );
         track_list.add_track("master-out", master_out);
         StateMixer {
             track_list: Arc::new(Mutex::new(track_list)),
-            playhead: Arc::new(AtomicU64::new(0)),
         }
     }
 }
@@ -56,7 +54,6 @@ impl From<StateMixerRaw> for StateMixer {
         let track_list = value.track_list;
         StateMixer {
             track_list: Arc::new(Mutex::new(track::TrackList::from_raw(track_list))),
-            playhead: Arc::new(AtomicU64::new(0)),
         }
     }
 }

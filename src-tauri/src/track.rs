@@ -19,6 +19,7 @@ use plotters::{
     style,
 };
 use serde::{Deserialize, Serialize};
+use tauri::{Emitter, Manager};
 
 use crate::{states, types::RingBuffer};
 
@@ -56,9 +57,10 @@ pub struct StreamSource {
 }
 
 impl StreamSource {
-    pub fn new(device: Arc<cpal::Device>) -> Self {
+    pub fn new(app: &tauri::AppHandle, device: Arc<cpal::Device>) -> Self {
         let ring_buffer = Arc::new(Mutex::new(RingBuffer::new()));
         let ring_buffer_clone = ring_buffer.clone();
+        let window = app.get_webview_window("main").unwrap();
 
         if device.supports_input() {
             let config = device
@@ -69,8 +71,17 @@ impl StreamSource {
                 .build_input_stream(
                     &config.into(),
                     move |data: &[f32], _: &cpal::InputCallbackInfo| {
+                        let mut samples_to_emit: Option<Vec<f32>> = None;
+
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
+                            samples_to_emit = Some(data.to_vec());
+                        }
+
+                        if let Some(samples) = samples_to_emit {
+                            if let Err(e) = window.emit("audio-samples", samples) {
+                                eprintln!("Failed to emit audio sample: {:?}", e);
+                            }
                         }
                     },
                     move |err| eprintln!("Stream error: {}", err),
@@ -114,14 +125,14 @@ impl StreamSource {
     pub fn start_thread(&mut self) {
         let stream = self.stream.clone();
         let recording = self.recording.clone();
+        if let Err(e) = stream.play() {
+            eprintln!("Failed to play stream: {}", e);
+        }
         println!("Started recording");
         recording.store(true, Ordering::Relaxed);
 
         std::thread::spawn(move || {
             while recording.load(Ordering::Relaxed) {
-                if let Err(e) = stream.play() {
-                    eprintln!("Failed to play stream: {}", e);
-                }
                 std::thread::sleep(Duration::from_millis(100));
             }
 
@@ -134,6 +145,7 @@ impl StreamSource {
     pub fn stop_thread(&mut self) {
         println!("Stopped recording");
         self.recording.store(false, Ordering::Relaxed);
+        // TODO save to wav
     }
 
     pub fn graph_recording(&self) {

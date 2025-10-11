@@ -1,5 +1,7 @@
 use std::sync::{Arc, Mutex};
 
+use tauri::Manager;
+
 use crate::menus::menu_builders;
 
 mod file;
@@ -16,16 +18,19 @@ pub async fn run() {
     let master_output_device = state_audio_context
         .output_device()
         .expect("Failed to get master output device");
-    let state_mixer_guard = states::StateMixerGuard(Arc::new(Mutex::new(states::StateMixer::new(
-        master_output_device.clone(),
-    ))));
 
     tauri::Builder::default()
         .manage(state_audio_context)
-        .manage(state_mixer_guard)
-        .setup(|app| {
+        .setup(move |app| {
+            // build and set menu
             let menu = menu_builders::build_menus(app);
             app.set_menu(menu)?;
+
+            // create the StateMixer now that we have an `app` available
+            let state_mixer = states::StateMixer::new(&app.handle(), master_output_device.clone());
+            let state_mixer_guard = states::StateMixerGuard(Arc::new(Mutex::new(state_mixer)));
+            app.handle().manage(state_mixer_guard);
+
             Ok(())
         })
         .on_menu_event(|app, event| {
