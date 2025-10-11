@@ -21,7 +21,7 @@ use plotters::{
 use serde::{Deserialize, Serialize};
 use tauri::{Emitter, Manager};
 
-use crate::{states, types::RingBuffer};
+use crate::{states, types::{RingBuffer, RINGBUFFER_SIZE}};
 
 #[tauri::command]
 pub fn get_track_list(
@@ -155,7 +155,7 @@ impl StreamSource {
 
         let ring_buffer = buffer.lock().expect("Failed to lock buffer");
 
-        let mut data = [0.0; 48000];
+        let mut data = [0.0; RINGBUFFER_SIZE];
         ring_buffer.peek(&mut data);
 
         let samples: Vec<(usize, f32)> = data.iter().enumerate().map(|(i, &y)| (i, y)).collect();
@@ -191,7 +191,7 @@ impl StreamSource {
     pub fn save_to_wav(&mut self, path: &str) {
         let ring_buffer = self.ring_buffer.clone();
         let buffer = ring_buffer.lock().expect("Failed to lock buffer");
-        let mut data = [0.0; 48000];
+        let mut data = [0.0; RINGBUFFER_SIZE];
         buffer.peek(&mut data);
 
         let spectogram = hound::WavSpec {
