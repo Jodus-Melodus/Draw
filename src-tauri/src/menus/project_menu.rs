@@ -4,6 +4,7 @@ use crate::{states, track};
 pub fn add_empty_track(
     mixer: tauri::State<states::StateMixerGuard>,
     audio: tauri::State<states::StateAudioContext>,
+    app: tauri::AppHandle,
 ) -> Result<(), String> {
     let state_mixer = mixer.0.lock().map_err(|_| "Failed to lock state mixer")?;
     let audio_context = audio.clone();
@@ -13,6 +14,7 @@ pub fn add_empty_track(
     let track = track::AudioTrack::new(
         track::TrackType::In,
         Some(track::StreamSource::new(
+            &app,
             audio_context.input_device().unwrap(),
         )),
         None,

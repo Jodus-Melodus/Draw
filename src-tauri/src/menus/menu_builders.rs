@@ -103,7 +103,12 @@ pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
         "file-open-file" => file::open_files(app_handle).await,
         "file-settings" => pages::settings_page::open_settings(app_handle),
         "project-add-track" => {
-            menus::project_menu::add_empty_track(state_mixer_guard, audio_context).unwrap();
+            menus::project_menu::add_empty_track(
+                state_mixer_guard,
+                audio_context,
+                app_handle.clone(),
+            )
+            .unwrap();
             let window = app_handle
                 .get_webview_window("main")
                 .expect("Failed to get main window");
@@ -146,7 +151,7 @@ fn update_master_output_device_track(app: &AppHandle) {
     let new_master_output_device = audio_context
         .output_device()
         .expect("Failed to get new master output device");
-    let new_output_source = track::StreamSource::new(new_master_output_device.clone());
+    let new_output_source = track::StreamSource::new(app, new_master_output_device.clone());
     master_output.stream_source = Some(new_output_source);
 }
 

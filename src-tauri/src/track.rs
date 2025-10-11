@@ -19,6 +19,7 @@ use plotters::{
     style,
 };
 use serde::{Deserialize, Serialize};
+use tauri::{Emitter, Manager};
 
 use crate::{states, types::RingBuffer};
 
@@ -56,24 +57,38 @@ pub struct StreamSource {
 }
 
 impl StreamSource {
-    pub fn new(device: Arc<cpal::Device>) -> Self {
-        println!("helloo");
+    pub fn new(app: &tauri::AppHandle, device: Arc<cpal::Device>) -> Self {
         let ring_buffer = Arc::new(Mutex::new(RingBuffer::new()));
         let ring_buffer_clone = ring_buffer.clone();
+        let window = app.get_webview_window("main").unwrap();
 
         if device.supports_input() {
             let config = device
                 .default_input_config()
                 .expect("Failed to get input config");
 
-            println!("Created input track");
-
             let stream = device
                 .build_input_stream(
                     &config.into(),
                     move |data: &[f32], _: &cpal::InputCallbackInfo| {
+                        // Write into ring buffer while holding the lock, but do NOT hold
+                        // the lock while emitting to the frontend. Copy the samples out
+                        // into a small Vec and emit that after releasing the lock.
+                        let mut samples_to_emit: Option<Vec<f32>> = None;
+
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
+                            // Copy samples for emit
+                            samples_to_emit = Some(data.to_vec());
+                        }
+
+                        // Emit outside the lock
+                        if let Some(samples) = samples_to_emit {
+                            // Emit the array of f32 samples to the frontend. Use
+                            // serde-friendly types (Vec<f32>) which Tauri will serialize.
+                            if let Err(e) = window.emit("audio_sample", samples) {
+                                eprintln!("Failed to emit audio sample: {:?}", e);
+                            }
                         }
                     },
                     move |err| eprintln!("Stream error: {}", err),
@@ -135,7 +150,6 @@ impl StreamSource {
 
         std::thread::spawn(move || {
             while recording.load(Ordering::Relaxed) {
-                println!("Hi");
                 std::thread::sleep(Duration::from_millis(100));
             }
 
@@ -148,6 +162,7 @@ impl StreamSource {
     pub fn stop_thread(&mut self) {
         println!("Stopped recording");
         self.recording.store(false, Ordering::Relaxed);
+        // self.save_to_wav("testing.wav"); // TODO
     }
 
     pub fn graph_recording(&self) {
