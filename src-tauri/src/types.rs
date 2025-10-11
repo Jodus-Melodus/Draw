@@ -45,7 +45,7 @@ impl RingBuffer {
         let mut index = self.read_index;
 
         for i in 0..to_read {
-            buffer[i] = self.buffer[self.read_index];
+            buffer[i] = self.buffer[index];
             index = (index + 1) % self.buffer.len();
         }
 

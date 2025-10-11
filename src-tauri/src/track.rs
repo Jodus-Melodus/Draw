@@ -57,6 +57,7 @@ pub struct StreamSource {
 
 impl StreamSource {
     pub fn new(device: Arc<cpal::Device>) -> Self {
+        println!("helloo");
         let ring_buffer = Arc::new(Mutex::new(RingBuffer::new()));
         let ring_buffer_clone = ring_buffer.clone();
 
@@ -64,6 +65,8 @@ impl StreamSource {
             let config = device
                 .default_input_config()
                 .expect("Failed to get input config");
+
+            println!("Created input track");
 
             let stream = device
                 .build_input_stream(
@@ -111,17 +114,28 @@ impl StreamSource {
         }
     }
 
+    pub fn get_audio_samples(&self) -> Result<Vec<f32>, String> {
+        let rb = self
+            .ring_buffer
+            .lock()
+            .map_err(|_| "Failed to lock ring buffer")?;
+        let mut buffer = Vec::new();
+        rb.peek(&mut buffer);
+        Ok(buffer)
+    }
+
     pub fn start_thread(&mut self) {
         let stream = self.stream.clone();
         let recording = self.recording.clone();
+        if let Err(e) = stream.play() {
+            eprintln!("Failed to play stream: {}", e);
+        }
         println!("Started recording");
         recording.store(true, Ordering::Relaxed);
 
         std::thread::spawn(move || {
             while recording.load(Ordering::Relaxed) {
-                if let Err(e) = stream.play() {
-                    eprintln!("Failed to play stream: {}", e);
-                }
+                println!("Hi");
                 std::thread::sleep(Duration::from_millis(100));
             }
 
@@ -423,6 +437,19 @@ impl TrackList {
         tracks.sort_by(|a, b| a.name.cmp(&b.name));
 
         TrackListResponse { tracks }
+    }
+
+    pub fn get_audio_samples(&self, track_name: String) -> Result<Vec<f32>, String> {
+        if let Some(track) = self.get_track(&track_name) {
+            let audio_track = track.lock().map_err(|_| "Failed to lock track")?;
+            if let Some(stream) = &audio_track.stream_source {
+                stream.get_audio_samples()
+            } else {
+                Err(format!("Track has no stream"))
+            }
+        } else {
+            Err(format!("No such track"))
+        }
     }
 }
 

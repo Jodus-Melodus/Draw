@@ -103,7 +103,7 @@ pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
         "file-open-file" => file::open_files(app_handle).await,
         "file-settings" => pages::settings_page::open_settings(app_handle),
         "project-add-track" => {
-            menus::project_menu::add_empty_track(state_mixer_guard).unwrap();
+            menus::project_menu::add_empty_track(state_mixer_guard, audio_context).unwrap();
             let window = app_handle
                 .get_webview_window("main")
                 .expect("Failed to get main window");
