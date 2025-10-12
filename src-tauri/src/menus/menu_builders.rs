@@ -1,7 +1,9 @@
-use std::sync::{
-    atomic::{AtomicUsize, Ordering},
-    Arc,
-};
+use std::
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc,
+    }
+;
 
 use tauri::{
     menu::{
@@ -28,6 +30,7 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
 
     let audio_context = app.state::<states::StateAudioContext>();
     let output_device_registry = audio_context.output_device_registry.clone();
+    let input_device_registry = audio_context.input_device_registry.clone();
 
     let output_menu = SubmenuBuilder::new(app, "Output Device")
         .id("file-output-devices")
@@ -47,11 +50,29 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
             .expect("Failed to add item to menu");
     }
 
+    let input_menu = SubmenuBuilder::new(app, "Input Device")
+        .id("file-input-devices")
+        .build()
+        .unwrap();
+
+    for (i, input_device_name) in input_device_registry.list().iter().enumerate() {
+        let id = format!("file-input-device-{}", i);
+        let input_device = CheckMenuItemBuilder::new(input_device_name)
+            .id(id)
+            .checked(i == 0)
+            .build(app)
+            .unwrap();
+
+        input_menu
+            .append(&input_device)
+            .expect("Failed to add item to menu");
+    }
+
     let file_menu = SubmenuBuilder::new(app, "File")
         .id("file")
         .items(&[&open_file])
         .separator()
-        .items(&[&settings, &output_menu])
+        .items(&[&settings, &output_menu, &input_menu])
         .quit()
         .build()
         .unwrap();
@@ -117,15 +138,19 @@ pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
         "project-save-project" => project::save_project(app_handle),
         "project-open-project" => project::load_project(app_handle),
         _ if id.starts_with("file-output-device-") => {
-            update_master_output_device_index(audio_context.output_device_index.clone(), id);
+            update_master_io_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app_handle, id);
             update_master_output_device_track(app_handle);
+        }
+        _ if id.starts_with("file-input-device-") => {
+            update_master_io_device_index(audio_context.input_device_index.clone(), id);
+            update_radio_group_menu(app_handle, id);
         }
         _ => eprintln!("Unknown menu item selected"),
     }
 }
 
-fn update_master_output_device_index(device_index: Arc<AtomicUsize>, id: &str) {
+fn update_master_io_device_index(device_index: Arc<AtomicUsize>, id: &str) {
     let parts = id.split("-").collect::<Vec<_>>();
     let index = parts
         .last()
@@ -167,7 +192,9 @@ fn loop_through_sub_menus(id: &str, main_menu: MenuItemKind<Wry>) {
     if main_menu.id().0 == "file" {
         if let MenuItemKind::Submenu(device_menu) = main_menu {
             for menu_item in device_menu.items().expect("Failed to get sub menu items") {
-                if menu_item.id().0 == "file-output-devices" && id.starts_with("file-output") {
+                if (menu_item.id().0 == "file-output-devices" && id.starts_with("file-output"))
+                    || (menu_item.id().0 == "file-input-devices" && id.starts_with("file-input"))
+                {
                     uncheck_other_devices(id, menu_item);
                 }
             }
@@ -176,9 +203,9 @@ fn loop_through_sub_menus(id: &str, main_menu: MenuItemKind<Wry>) {
 }
 
 fn uncheck_other_devices(id: &str, menu_item: MenuItemKind<Wry>) {
-    if let MenuItemKind::Submenu(o_devices) = menu_item {
-        for o_device in o_devices.items().expect("Failed to get menus") {
-            if let MenuItemKind::Check(device) = o_device {
+    if let MenuItemKind::Submenu(io_devices) = menu_item {
+        for io_device in io_devices.items().expect("Failed to get menus") {
+            if let MenuItemKind::Check(device) = io_device {
                 device
                     .set_checked(device.id().0 == id)
                     .expect("Failed to uncheck item");
