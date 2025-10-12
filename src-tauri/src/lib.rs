@@ -22,11 +22,9 @@ pub async fn run() {
     tauri::Builder::default()
         .manage(state_audio_context)
         .setup(move |app| {
-            // build and set menu
             let menu = menu_builders::build_menus(app);
             app.set_menu(menu)?;
 
-            // create the StateMixer now that we have an `app` available
             let state_mixer = states::StateMixer::new(&app.handle(), master_output_device.clone());
             let state_mixer_guard = states::StateMixerGuard(Arc::new(Mutex::new(state_mixer)));
             app.handle().manage(state_mixer_guard);

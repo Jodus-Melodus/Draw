@@ -21,7 +21,10 @@ use plotters::{
 use serde::{Deserialize, Serialize};
 use tauri::{Emitter, Manager};
 
-use crate::{states, types::{RingBuffer, RINGBUFFER_SIZE}};
+use crate::{
+    states,
+    types::{RingBuffer, RINGBUFFER_SIZE},
+};
 
 #[tauri::command]
 pub fn get_track_list(
@@ -54,6 +57,7 @@ pub struct StreamSource {
     ring_buffer: Arc<Mutex<RingBuffer>>,
     stream: Arc<cpal::Stream>,
     recording: Arc<AtomicBool>,
+    sample_rate: u32,
 }
 
 impl StreamSource {
@@ -66,6 +70,7 @@ impl StreamSource {
             let config = device
                 .default_input_config()
                 .expect("Failed to get input config");
+            let sample_rate = config.sample_rate().0;
 
             let stream = device
                 .build_input_stream(
@@ -93,11 +98,13 @@ impl StreamSource {
                 ring_buffer,
                 stream: Arc::new(stream),
                 recording: Arc::new(AtomicBool::new(false)),
+                sample_rate,
             }
         } else if device.supports_output() {
             let config = device
                 .default_output_config()
                 .expect("Failed to get output config");
+            let sample_rate = config.sample_rate().0;
 
             let stream = device
                 .build_output_stream(
@@ -116,6 +123,7 @@ impl StreamSource {
                 ring_buffer,
                 stream: Arc::new(stream),
                 recording: Arc::new(AtomicBool::new(false)),
+                sample_rate,
             }
         } else {
             panic!("Device does not support input or output.")
@@ -155,10 +163,15 @@ impl StreamSource {
 
         let ring_buffer = buffer.lock().expect("Failed to lock buffer");
 
-        let mut data = [0.0; RINGBUFFER_SIZE];
-        ring_buffer.peek(&mut data);
+        let mut data = vec![0.0f32; RINGBUFFER_SIZE];
+        let count = ring_buffer.peek(&mut data);
 
-        let samples: Vec<(usize, f32)> = data.iter().enumerate().map(|(i, &y)| (i, y)).collect();
+        let samples: Vec<(usize, f32)> = data
+            .iter()
+            .take(count)
+            .enumerate()
+            .map(|(i, &y)| (i, y))
+            .collect();
 
         let y_min = samples
             .iter()
@@ -191,18 +204,19 @@ impl StreamSource {
     pub fn save_to_wav(&mut self, path: &str) {
         let ring_buffer_clone = self.ring_buffer.clone();
         let ring_buffer = ring_buffer_clone.lock().expect("Failed to lock buffer");
-        let mut data = vec![0.0; RINGBUFFER_SIZE];
-        ring_buffer.peek(&mut data);
+        let mut data = vec![0.0f32; RINGBUFFER_SIZE];
+        let count = ring_buffer.peek(&mut data);
+        println!("{}", count);
 
         let spectogram = hound::WavSpec {
             channels: 1,
-            sample_rate: data.len() as u32,
+            sample_rate: self.sample_rate,
             bits_per_sample: 16,
             sample_format: hound::SampleFormat::Int,
         };
         let mut writer =
             hound::WavWriter::create(path, spectogram).expect("Failed to create file writer");
-        for sample in data {
+        for sample in data.into_iter().take(count) {
             let s = (sample.clamp(-1.0, 1.0) * i16::MAX as f32) as i16;
             writer.write_sample(s).expect("Failed to write sample");
         }
