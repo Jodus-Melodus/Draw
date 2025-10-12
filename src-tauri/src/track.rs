@@ -145,7 +145,7 @@ impl StreamSource {
     pub fn stop_thread(&mut self) {
         println!("Stopped recording");
         self.recording.store(false, Ordering::Relaxed);
-        // TODO save to wav
+        self.save_to_wav("testing.wav");
     }
 
     pub fn graph_recording(&self) {
@@ -189,10 +189,10 @@ impl StreamSource {
     }
 
     pub fn save_to_wav(&mut self, path: &str) {
-        let ring_buffer = self.ring_buffer.clone();
-        let buffer = ring_buffer.lock().expect("Failed to lock buffer");
-        let mut data = [0.0; RINGBUFFER_SIZE];
-        buffer.peek(&mut data);
+        let ring_buffer_clone = self.ring_buffer.clone();
+        let ring_buffer = ring_buffer_clone.lock().expect("Failed to lock buffer");
+        let mut data = vec![0.0; RINGBUFFER_SIZE];
+        ring_buffer.peek(&mut data);
 
         let spectogram = hound::WavSpec {
             channels: 1,

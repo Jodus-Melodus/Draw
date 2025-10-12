@@ -73,7 +73,7 @@ fn build_project_menu(app: &App<Wry>) -> Submenu<Wry> {
         .unwrap();
 
     let load_project = MenuItemBuilder::new("Open project")
-        .accelerator("CmdOrCtrl+O")
+        .accelerator("CmdOrCtrl+L")
         .id("project-open-project")
         .build(app)
         .unwrap();
