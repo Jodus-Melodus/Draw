@@ -22,23 +22,28 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
         .build(app)
         .unwrap();
 
-    let settings = MenuItemBuilder::new("Settings")
-        .id("file-settings")
-        .accelerator("CmdOrCtrl+,")
-        .build(app)
+    let file_menu = SubmenuBuilder::new(app, "File")
+        .id("file")
+        .items(&[&open_file])
+        .quit()
+        .build()
         .unwrap();
 
+    file_menu
+}
+
+fn build_preferences_menu(app: &App<Wry>) -> Submenu<Wry> {
     let audio_context = app.state::<states::StateAudioContext>();
     let output_device_registry = audio_context.output_device_registry.clone();
     let input_device_registry = audio_context.input_device_registry.clone();
 
     let output_menu = SubmenuBuilder::new(app, "Output Device")
-        .id("file-output-devices")
+        .id("preferences-output-devices")
         .build()
         .unwrap();
 
     for (i, output_device_name) in output_device_registry.list().iter().enumerate() {
-        let id = format!("file-output-device-{}", i);
+        let id = format!("preferences-output-device-{}", i);
         let output_device = CheckMenuItemBuilder::new(output_device_name)
             .id(id)
             .checked(i == 0)
@@ -51,12 +56,12 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     }
 
     let input_menu = SubmenuBuilder::new(app, "Input Device")
-        .id("file-input-devices")
+        .id("preferences-input-devices")
         .build()
         .unwrap();
 
     for (i, input_device_name) in input_device_registry.list().iter().enumerate() {
-        let id = format!("file-input-device-{}", i);
+        let id = format!("preferences-input-device-{}", i);
         let input_device = CheckMenuItemBuilder::new(input_device_name)
             .id(id)
             .checked(i == 0)
@@ -68,16 +73,19 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
             .expect("Failed to add item to menu");
     }
 
-    let file_menu = SubmenuBuilder::new(app, "File")
-        .id("file")
-        .items(&[&open_file])
-        .separator()
-        .items(&[&settings, &output_menu, &input_menu])
-        .quit()
+    let settings = MenuItemBuilder::new("Settings")
+        .id("preferences-settings")
+        .accelerator("CmdOrCtrl+,")
+        .build(app)
+        .unwrap();
+
+    let preferences_menu = SubmenuBuilder::new(app, "Preferences")
+        .id("preferences")
+        .items(&[&output_menu, &input_menu, &settings])
         .build()
         .unwrap();
 
-    file_menu
+    preferences_menu
 }
 
 fn build_project_menu(app: &App<Wry>) -> Submenu<Wry> {
@@ -109,8 +117,9 @@ fn build_project_menu(app: &App<Wry>) -> Submenu<Wry> {
 pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
     let file_menu = build_file_menu(app);
     let project_menu = build_project_menu(app);
+    let preferences_menu = build_preferences_menu(app);
     MenuBuilder::new(app)
-        .items(&[&file_menu, &project_menu])
+        .items(&[&file_menu, &project_menu, &preferences_menu])
         .build()
         .unwrap()
 }
@@ -122,7 +131,7 @@ pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
 
     match id {
         "file-open-file" => file::open_files(app_handle).await,
-        "file-settings" => pages::settings_page::open_settings(app_handle),
+        "preferences-settings" => pages::settings_page::open_settings(app_handle),
         "project-add-track" => {
             menus::project_menu::add_empty_track(
                 state_mixer_guard,
@@ -137,12 +146,12 @@ pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
         }
         "project-save-project" => project::save_project(app_handle),
         "project-open-project" => project::load_project(app_handle),
-        _ if id.starts_with("file-output-device-") => {
+        _ if id.starts_with("preferences-output-device-") => {
             update_master_io_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app_handle, id);
             update_master_output_device_track(app_handle);
         }
-        _ if id.starts_with("file-input-device-") => {
+        _ if id.starts_with("preferences-input-device-") => {
             update_master_io_device_index(audio_context.input_device_index.clone(), id);
             update_radio_group_menu(app_handle, id);
         }
@@ -189,11 +198,11 @@ fn update_radio_group_menu(app: &AppHandle, id: &str) {
 }
 
 fn loop_through_sub_menus(id: &str, main_menu: MenuItemKind<Wry>) {
-    if main_menu.id().0 == "file" {
+    if main_menu.id().0 == "preferences" {
         if let MenuItemKind::Submenu(device_menu) = main_menu {
             for menu_item in device_menu.items().expect("Failed to get sub menu items") {
-                if (menu_item.id().0 == "file-output-devices" && id.starts_with("file-output"))
-                    || (menu_item.id().0 == "file-input-devices" && id.starts_with("file-input"))
+                if (menu_item.id().0 == "preferences-output-devices" && id.starts_with("preferences-output"))
+                    || (menu_item.id().0 == "preferences-input-devices" && id.starts_with("preferences-input"))
                 {
                     uncheck_other_devices(id, menu_item);
                 }
