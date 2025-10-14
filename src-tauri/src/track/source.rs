@@ -99,7 +99,7 @@ impl StreamSource {
                 sample_rate,
             }
         } else {
-            eprintln!("Device does not support input or output.")
+            panic!("Device does not support input or output.")
         }
     }
 
