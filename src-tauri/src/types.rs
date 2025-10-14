@@ -1,5 +1,6 @@
-use cpal::traits::{DeviceTrait, HostTrait};
 use std::{collections::HashMap, sync::Arc};
+
+use cpal::traits::{DeviceTrait, HostTrait};
 
 pub const RINGBUFFER_SIZE: usize = 960 * 50;
 

@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
-use crate::{states, track};
+use crate::{project, track};
 
 pub async fn open_files(app_handle: &AppHandle) {
     let app = app_handle.clone();
@@ -20,7 +20,7 @@ pub async fn open_files(app_handle: &AppHandle) {
             });
 
             if let Some(paths) = file_paths {
-                let state_mixer_guard = app.state::<states::StateMixerGuard>();
+                let state_mixer_guard = app.state::<project::states::StateMixerGuard>();
                 for path in paths {
                     if let Some(extention) = path
                         .extension()
@@ -41,14 +41,15 @@ pub async fn open_files(app_handle: &AppHandle) {
 
 fn add_file_track(
     app_handle: &AppHandle,
-    state_mixer_guard: tauri::State<states::StateMixerGuard>,
+    state_mixer_guard: tauri::State<project::states::StateMixerGuard>,
     path: PathBuf,
 ) {
     let state_mixer = state_mixer_guard.0.lock().unwrap();
     let track_list = state_mixer.track_list.clone();
     let mut list = track_list.lock().expect("Failed to lock track list");
-    let track_source = track::FileSource::new_input(&path);
-    let track = track::AudioTrack::new(track::TrackType::In, None, Some(track_source));
+    let track_source = track::source::FileSource::new(&path, 0);
+    let track =
+        track::track::AudioTrack::new(crate::track::track::TrackType::In, None, Some(track_source));
     list.add_track(
         &path
             .file_name()

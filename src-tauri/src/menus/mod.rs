@@ -1,2 +1,2 @@
-pub mod project_menu;
+pub mod commands;
 pub mod menu_builders;
