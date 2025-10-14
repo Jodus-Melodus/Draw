@@ -1,9 +1,7 @@
-use std::
-    sync::{
-        atomic::{AtomicUsize, Ordering},
-        Arc,
-    }
-;
+use std::sync::{
+    atomic::{AtomicUsize, Ordering},
+    Arc,
+};
 
 use tauri::{
     menu::{
@@ -13,7 +11,7 @@ use tauri::{
     App, AppHandle, Emitter, Manager, Wry,
 };
 
-use crate::{file, menus, pages, project, states, track};
+use crate::{project, track, menus, pages};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let open_file = MenuItemBuilder::new("Open file")
@@ -33,7 +31,7 @@ fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
 }
 
 fn build_preferences_menu(app: &App<Wry>) -> Submenu<Wry> {
-    let audio_context = app.state::<states::StateAudioContext>();
+    let audio_context = app.state::<project::states::StateAudioContext>();
     let output_device_registry = audio_context.output_device_registry.clone();
     let input_device_registry = audio_context.input_device_registry.clone();
 
@@ -125,27 +123,22 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
 }
 
 pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
-    let audio_context = app_handle.state::<states::StateAudioContext>();
-    let state_mixer_guard = app_handle.state::<states::StateMixerGuard>();
+    let audio_context = app_handle.state::<project::states::StateAudioContext>();
+    let state_mixer_guard = app_handle.state::<project::states::StateMixerGuard>();
     let id: &str = event.id.0.as_ref();
 
     match id {
-        "file-open-file" => file::open_files(app_handle).await,
+        "file-open-file" => project::file::open_files(app_handle).await,
         "preferences-settings" => pages::settings_page::open_settings(app_handle),
         "project-add-track" => {
-            menus::project_menu::add_empty_track(
-                state_mixer_guard,
-                audio_context,
-                app_handle.clone(),
-            )
-            .unwrap();
+            menus::commands::add_empty_track(state_mixer_guard, audio_context, app_handle.clone()).unwrap();
             let window = app_handle
                 .get_webview_window("main")
                 .expect("Failed to get main window");
             window.emit("updated-track-list", ()).unwrap();
         }
-        "project-save-project" => project::save_project(app_handle),
-        "project-open-project" => project::load_project(app_handle),
+        "project-save-project" => project::commands::save_project(app_handle),
+        "project-open-project" => project::commands::load_project(app_handle),
         _ if id.starts_with("preferences-output-device-") => {
             update_master_io_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app_handle, id);
@@ -170,7 +163,7 @@ fn update_master_io_device_index(device_index: Arc<AtomicUsize>, id: &str) {
 }
 
 fn update_master_output_device_track(app: &AppHandle) {
-    let state_mixer_guard = app.state::<states::StateMixerGuard>();
+    let state_mixer_guard = app.state::<project::states::StateMixerGuard>();
     let state_mixer = state_mixer_guard.0.lock().unwrap();
     let list = state_mixer.track_list.clone();
     let track_list = list.lock().expect("Failed to lock list");
@@ -181,11 +174,11 @@ fn update_master_output_device_track(app: &AppHandle) {
     let mut master_output = master_output_track
         .lock()
         .expect("Failed to lock master output");
-    let audio_context = app.state::<states::StateAudioContext>();
+    let audio_context = app.state::<project::states::StateAudioContext>();
     let new_master_output_device = audio_context
         .output_device()
         .expect("Failed to get new master output device");
-    let new_output_source = track::StreamSource::new(app, new_master_output_device.clone());
+    let new_output_source = track::source::StreamSource::new(app, new_master_output_device.clone());
     master_output.stream_source = Some(new_output_source);
 }
 
@@ -201,8 +194,10 @@ fn loop_through_sub_menus(id: &str, main_menu: MenuItemKind<Wry>) {
     if main_menu.id().0 == "preferences" {
         if let MenuItemKind::Submenu(device_menu) = main_menu {
             for menu_item in device_menu.items().expect("Failed to get sub menu items") {
-                if (menu_item.id().0 == "preferences-output-devices" && id.starts_with("preferences-output"))
-                    || (menu_item.id().0 == "preferences-input-devices" && id.starts_with("preferences-input"))
+                if (menu_item.id().0 == "preferences-output-devices"
+                    && id.starts_with("preferences-output"))
+                    || (menu_item.id().0 == "preferences-input-devices"
+                        && id.starts_with("preferences-input"))
                 {
                     uncheck_other_devices(id, menu_item);
                 }
