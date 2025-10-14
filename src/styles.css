@@ -58,11 +58,23 @@
 }
 
 /* grid */
-.column {
-  width: 2px;
+.timeline {
+  position: relative;
   height: 100%;
+  width: 90%;
 
+  left: 170px;
+
+  background-color: darkgray;
+}
+
+.column {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 2px;
   background-color: white;
+  opacity: 0.75;
 }
 
 /* mix-console */
