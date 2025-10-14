@@ -66,6 +66,7 @@ impl AudioTrack {
         }
     }
 
+    // TODO read ring buffer and append to wav file continuesly
     pub fn start_recording(&mut self, path: Option<PathBuf>) {
         if let Some(stream) = &mut self.stream_source {
             if self.file_source.is_none() {
@@ -75,17 +76,17 @@ impl AudioTrack {
                         stream.sample_rate,
                     ))))
                 } else {
-                    panic!("Expected path");
+                    eprintln!("Expected path");
                 }
             }
 
             if let Some(_file_source) = &self.file_source {
                 stream.start_thread();
             } else {
-                panic!("Track failed to create file source");
+                eprintln!("Track failed to create file source");
             }
         } else {
-            panic!("Track has no stream!");
+            eprintln!("Track has no stream!");
         }
     }
 
