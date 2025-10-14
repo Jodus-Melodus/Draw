@@ -6,6 +6,7 @@ use std::{
         atomic::{AtomicBool, Ordering},
         Arc, Mutex,
     },
+    thread,
     time::Duration,
 };
 
@@ -23,7 +24,7 @@ use plotters::{
 };
 use tauri::{Emitter, Manager};
 
-use crate::types;
+use crate::{track, types};
 
 pub struct StreamSource {
     pub recording: Arc<AtomicBool>,
@@ -111,9 +112,9 @@ impl StreamSource {
         println!("Started recording");
         recording.store(true, Ordering::Relaxed);
 
-        std::thread::spawn(move || {
+        thread::spawn(move || {
             while recording.load(Ordering::Relaxed) {
-                std::thread::sleep(Duration::from_millis(100));
+                thread::sleep(Duration::from_millis(100));
             }
 
             if let Err(e) = stream.pause() {
@@ -214,7 +215,7 @@ impl FileSource {
                 writer.write_sample(s).expect("Failed to write sample");
             }
         } else {
-            panic!("No writer");
+            eprintln!("Track does not have a writer");
         }
     }
 

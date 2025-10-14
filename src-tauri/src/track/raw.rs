@@ -17,7 +17,8 @@ impl From<&track::track::AudioTrack> for AudioTrackRaw {
         AudioTrackRaw {
             track_type: value.track_type,
             file_source_path: if let Some(file_source) = &value.file_source {
-                Some(file_source.get_path())
+                let file = file_source.lock().unwrap();
+                Some(file.get_path())
             } else {
                 None
             },
