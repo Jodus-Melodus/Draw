@@ -130,7 +130,7 @@ impl StreamSource {
         }
     }
 
-    pub fn start_thread(&mut self) {
+    fn start_thread(&mut self) {
         let stream = self.stream.clone();
         let recording = self.recording.clone();
         if let Err(e) = stream.play() {
@@ -150,7 +150,7 @@ impl StreamSource {
         });
     }
 
-    pub fn stop_thread(&mut self) {
+    fn stop_thread(&mut self) {
         println!("Stopped recording");
         self.recording.store(false, Ordering::Relaxed);
         self.save_to_wav("testing.wav");
@@ -232,10 +232,10 @@ pub struct FileSource {
 }
 
 impl FileSource {
-    pub fn new_input(input_path: &PathBuf) -> Self {
-        let reader = hound::WavReader::open(input_path).expect("Failed to create reader"); // TODO use absolute path
+    pub fn new(path: &PathBuf) -> Self {
+        let reader = hound::WavReader::open(path).expect("Failed to create reader"); // TODO use absolute path
         Self {
-            path: input_path.to_path_buf(),
+            path: path.to_path_buf(),
             reader: Some(reader),
             writer: None,
         }
@@ -290,6 +290,34 @@ impl AudioTrack {
             mute: false,
         }
     }
+
+    pub fn start_recording(&mut self, path: Option<PathBuf>) {
+        if let Some(stream) = &mut self.stream_source {
+            if self.file_source.is_none() {
+                if let Some(path) = path {
+                    self.file_source = Some(FileSource::new(&path))
+                } else {
+                    panic!("Expected path");
+                }
+            }
+
+            if let Some(_file) = &self.file_source {
+                stream.start_thread();
+            } else {
+                panic!("Track failed to create file source");
+            }
+        } else {
+            panic!("Track has no stream!");
+        }
+    }
+
+    pub fn stop_recording(&mut self) {
+        if let Some(stream) = &mut self.stream_source {
+            stream.stop_thread();
+        } else {
+            panic!("Track has no stream");
+        }
+    }
 }
 
 impl From<AudioTrackRaw> for AudioTrack {
@@ -298,7 +326,7 @@ impl From<AudioTrackRaw> for AudioTrack {
             track_type: value.track_type,
             stream_source: None,
             file_source: if let Some(file_source_path) = value.file_source_path {
-                Some(FileSource::new_input(&PathBuf::from(file_source_path)))
+                Some(FileSource::new(&PathBuf::from(file_source_path)))
             } else {
                 None
             },
@@ -382,14 +410,10 @@ impl TrackList {
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
             TrackUpdate::Mute(mute) => track.mute = mute,
-            TrackUpdate::Record(record) => {
-                if let Some(stream) = &mut track.stream_source {
-                    match record {
-                        true => stream.start_thread(),
-                        false => stream.stop_thread(),
-                    }
-                }
-            }
+            TrackUpdate::Record(record) => match record {
+                true => track.start_recording(Some(PathBuf::from(format!("{}.wav", track_name)))),
+                false => track.stop_recording(),
+            },
         }
     }
 
