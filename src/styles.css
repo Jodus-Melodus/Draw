@@ -57,6 +57,14 @@
   background-color: #c0c0c0;
 }
 
+/* grid */
+.column {
+  width: 2px;
+  height: 100%;
+
+  background-color: white;
+}
+
 /* mix-console */
 .mix-console {
   width: 100%;
