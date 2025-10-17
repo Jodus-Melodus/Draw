@@ -57,26 +57,6 @@
   background-color: #c0c0c0;
 }
 
-/* grid */
-.timeline {
-  position: relative;
-  height: 100%;
-  width: 90%;
-
-  left: 170px;
-
-  background-color: darkgray;
-}
-
-.column {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 2px;
-  background-color: white;
-  opacity: 0.75;
-}
-
 /* mix-console */
 .mix-console {
   width: 100%;
@@ -89,4 +69,90 @@
 
   border: 5px solid rgb(153, 153, 153);
   border-radius: 15px;
+}
+
+/* media-controls */
+.media-controls {
+  width: 400px;
+  height: 50px;
+  position: relative;
+  left: 50%;
+  background-color: rgb(72, 72, 72);
+  border: 5px solid rgb(153, 153, 153);
+  border-radius: 15px;
+}
+
+.beginning {
+  width: 97px;
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 48px;            /* height */
+  color: white;
+  position: relative;
+  left: 0%;
+  top: -3%;
+  background-color: rgb(72, 72, 72);
+  border: 2px solid rgb(153, 153, 153);
+  border-radius: 4px;
+}
+
+.pause {
+  width: 97px;
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 48px;            /* height */
+  color: white;
+  position: relative;
+  left: 25%;
+  top: -105%;
+  background-color: rgb(72, 72, 72);
+  border: 2px solid rgb(153, 153, 153);
+  border-radius: 4px;
+}
+
+.play {
+  width: 97px;
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 48px;            /* height */
+  color: white;
+  position: relative;
+  left: 50%;
+  top: -210%;
+  background-color: rgb(72, 72, 72);
+  border: 2px solid rgb(153, 153, 153);
+  border-radius: 4px;
+}
+
+.record {
+  width: 97px;
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 48px;            /* height */
+  color: white;
+  position: relative;
+  left: 75%;
+  top: -315%;
+  background-color: rgb(72, 72, 72);
+  border: 2px solid rgb(153, 153, 153);
+  border-radius: 4px;
+}
+
+.track-time {
+  width: 75px;
+  display: flex;           /* use to align */
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 25px;            /* height */
+  color: white;
+  position: relative;
+  left: 78%;
+  top: 80%;
+  background-color: rgb(72, 72, 72);
+  border: 2px solid rgb(153, 153, 153);
+  border-radius: 4px; 
 }
