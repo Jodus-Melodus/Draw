@@ -39,5 +39,4 @@ async function init() {
     console.log("Received audio");
   })
 }
-
 init();
