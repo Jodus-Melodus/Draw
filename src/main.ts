@@ -38,30 +38,5 @@ async function init() {
     // display wave form or gain
     console.log("Received audio");
   })
-
-
-  // timeline
-  const template = document.getElementById('timeline-template') as HTMLTemplateElement;
-  const projectWindow = document.getElementById('project-window') as HTMLElement;
-
-  const secondsPerGrid = 2;    // grid every 2 seconds
-  const pixelsPerSecond = 50;  // 1 second = 50px
-
-  function createGrid() {
-    if (!template || !projectWindow) return;
-
-    // clear old grids
-    projectWindow.innerHTML = '';
-
-    const totalWidth = projectWindow.offsetWidth;
-    const interval = secondsPerGrid * pixelsPerSecond;
-    const totalGrids = Math.floor(totalWidth / interval);
-
-    for (let i = 0; i <= totalGrids; i++) {
-      const clone = template.content.cloneNode(true);
-      projectWindow.appendChild(clone);
-    }
-  }
-  createGrid();
 }
 init();
