@@ -1,12 +1,9 @@
-use std::{
-    fs::File,
-    io::{Read, Write},
-};
+use std::{fs::File, io::{Read, Write}};
 
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
-use crate::states;
+use crate::project;
 
 pub fn save_project(app_handle: &AppHandle) {
     let app = app_handle.clone();
@@ -20,9 +17,9 @@ pub fn save_project(app_handle: &AppHandle) {
                     let config = bincode::config::standard();
 
                     let mixer_state_path = path.join("mixer_state.mix");
-                    let state_mixer_guard = app.state::<states::StateMixerGuard>();
+                    let state_mixer_guard = app.state::<project::states::StateMixerGuard>();
                     let mixer_guard = state_mixer_guard.0.lock().unwrap();
-                    let raw_state_mixer = states::StateMixerRaw::from(mixer_guard.clone());
+                    let raw_state_mixer = project::states::StateMixerRaw::from(mixer_guard.clone());
                     let encoded_mixer = bincode::encode_to_vec(&raw_state_mixer, config).unwrap();
 
                     let mut file = File::create(&mixer_state_path).expect(&format!(
@@ -62,10 +59,10 @@ pub fn load_project(app_handle: &AppHandle) {
                             "Failed to read file {}",
                             mixer_state_path.display()
                         ));
-                    let (decoded_mixer, _): (states::StateMixerRaw, usize) =
+                    let (decoded_mixer, _): (project::states::StateMixerRaw, usize) =
                         bincode::decode_from_slice(&mixer_state_buffer, config).unwrap();
-                    let new_state_mixer = states::StateMixer::from(decoded_mixer);
-                    let state_mixer = app.state::<states::StateMixerGuard>();
+                    let new_state_mixer = project::states::StateMixer::from(decoded_mixer);
+                    let state_mixer = app.state::<project::states::StateMixerGuard>();
                     let mut guard = state_mixer.0.lock().unwrap();
                     *guard = new_state_mixer;
 
