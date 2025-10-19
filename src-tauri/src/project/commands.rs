@@ -5,7 +5,7 @@ use std::{
     thread,
 };
 
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_dialog::DialogExt;
 
 use crate::project::{self};
@@ -81,9 +81,8 @@ pub fn load_project(app_handle: &AppHandle) {
 }
 
 #[tauri::command]
-pub fn start_recording(app_handle: &AppHandle) {
-    let mixer_state_guard = app_handle.state::<project::states::StateMixerGuard>();
-    let mixer_state = mixer_state_guard.0.lock().unwrap();
+pub fn start_recording(mixer: State<project::states::StateMixerGuard>) {
+    let mixer_state = mixer.0.lock().unwrap();
     let tracks = mixer_state.track_list.clone();
 
     thread::spawn(move || {
@@ -103,9 +102,8 @@ pub fn start_recording(app_handle: &AppHandle) {
 }
 
 #[tauri::command]
-pub fn stop_recording(app_handle: &AppHandle) {
-    let mixer_state_guard = app_handle.state::<project::states::StateMixerGuard>();
-    let mixer_state = mixer_state_guard.0.lock().unwrap();
+pub fn stop_recording(mixer: State<project::states::StateMixerGuard>) {
+    let mixer_state = mixer.0.lock().unwrap();
     let tracks = mixer_state.track_list.clone();
 
     thread::spawn(move || {

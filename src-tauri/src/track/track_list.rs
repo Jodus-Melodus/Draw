@@ -1,7 +1,6 @@
 use std::{
     collections::HashMap,
-    path::PathBuf,
-    sync::{atomic::Ordering, Arc, Mutex},
+    sync::{Arc, Mutex},
 };
 
 use serde::{Deserialize, Serialize};

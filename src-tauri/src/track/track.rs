@@ -133,3 +133,5 @@ impl From<track::raw::AudioTrackRaw> for AudioTrack {
         }
     }
 }
+
+// TODO create write thread when recording enabled
