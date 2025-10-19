@@ -1,4 +1,7 @@
-use std::{path::PathBuf, sync::{Arc, Mutex}};
+use std::{
+    path::PathBuf,
+    sync::{Arc, Mutex},
+};
 
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
@@ -44,22 +47,21 @@ fn add_file_track(
     state_mixer_guard: tauri::State<project::states::StateMixerGuard>,
     path: PathBuf,
 ) {
+    let name = &path
+        .file_name()
+        .map(|f| f.to_string_lossy().to_string())
+        .expect("Failed to get file name");
     let state_mixer = state_mixer_guard.0.lock().unwrap();
     let track_list = state_mixer.track_list.clone();
     let mut list = track_list.lock().expect("Failed to lock track list");
-    let track_source = track::source::FileSource::new(&path, 0);
+    let track_source = track::source::FileSource::new(path, 1);
     let track = track::track::AudioTrack::new(
+        &name,
         crate::track::track::TrackType::In,
         None,
-        Some(Arc::new(Mutex::new(track_source))),
+        Arc::new(Mutex::new(track_source)),
     );
-    list.add_track(
-        &path
-            .file_name()
-            .map(|f| f.to_string_lossy().to_string())
-            .expect("Failed to get file name"),
-        track,
-    );
+    list.add_track(name, track);
 
     let window = app_handle
         .get_webview_window("main")

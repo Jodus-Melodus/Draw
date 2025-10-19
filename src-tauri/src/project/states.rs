@@ -1,4 +1,11 @@
-use std::{collections::HashMap, sync::{atomic::{AtomicUsize, Ordering}, Arc, Mutex}};
+use std::{
+    collections::HashMap,
+    path::PathBuf,
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc, Mutex,
+    },
+};
 
 use cpal::Device;
 
@@ -29,9 +36,13 @@ impl StateMixer {
     pub fn new(app: &tauri::AppHandle, master_output: Arc<Device>) -> Self {
         let mut track_list = track::track_list::TrackList::new();
         let master_out = track::track::AudioTrack::new(
+            "Master-Out",
             track::track::TrackType::MasterOut,
             Some(track::source::StreamSource::new(app, master_output)),
-            None,
+            Arc::new(Mutex::new(track::source::FileSource::new(
+                PathBuf::from("master-out.wav"),
+                1,
+            ))),
         );
         track_list.add_track("master-out", master_out);
         StateMixer {
@@ -44,7 +55,9 @@ impl From<StateMixerRaw> for StateMixer {
     fn from(value: StateMixerRaw) -> Self {
         let track_list = value.track_list;
         StateMixer {
-            track_list: Arc::new(Mutex::new(track::track_list::TrackList::from_raw(track_list))),
+            track_list: Arc::new(Mutex::new(track::track_list::TrackList::from_raw(
+                track_list,
+            ))),
         }
     }
 }

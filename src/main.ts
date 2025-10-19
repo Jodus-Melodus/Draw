@@ -1,7 +1,9 @@
 import { listen } from "@tauri-apps/api/event";
 import { addEmptyTrack, addNewTrack, getTrackList } from "./backend/tracks";
+import { startRecording, stopRecording } from "./backend/project";
 
 var trackList;
+var recording = false;
 
 export async function updateTrackList() {
   const channelTrackContainer = document.getElementById("mix-console");
@@ -37,6 +39,19 @@ async function init() {
     // handle audio samples
     // display wave form or gain
     console.log("Received audio");
+  });
+
+  const recordingButton = document.getElementById("recording") as HTMLElement;
+  recordingButton.addEventListener("click", () => {
+    recording = !recording;
+
+    if (recording) {
+      startRecording();
+      console.log("start");
+    } else {
+      stopRecording();
+      console.log("stop");
+    }
   });
 }
 

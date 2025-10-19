@@ -15,13 +15,6 @@ use cpal::{
     Device,
 };
 use hound::{SampleFormat, WavReader, WavSpec, WavWriter};
-use plotters::{
-    backend,
-    chart::ChartBuilder,
-    prelude::{IntoDrawingArea, PathElement},
-    series::LineSeries,
-    style,
-};
 use tauri::{Emitter, Manager};
 
 use crate::types;
@@ -53,7 +46,10 @@ impl StreamSource {
 
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
+                            println!("Written samples");
                             samples_to_emit = Some(data.to_vec());
+                        } else {
+                            eprintln!("input callback: failed to lock ring buffer");
                         }
 
                         if let Some(samples) = samples_to_emit {
@@ -105,11 +101,11 @@ impl StreamSource {
 
     pub fn start_thread(&mut self) {
         let stream = self.stream.clone();
-        let recording = self.recording.clone();
         if let Err(e) = stream.play() {
             eprintln!("Failed to play stream: {}", e);
         }
         println!("Started recording");
+        let recording = self.recording.clone();
         recording.store(true, Ordering::Relaxed);
 
         thread::spawn(move || {
@@ -127,51 +123,6 @@ impl StreamSource {
         println!("Stopped recording");
         self.recording.store(false, Ordering::Relaxed);
     }
-
-    pub fn graph_recording(&self) {
-        let buffer = self.ring_buffer.clone();
-        let image = backend::BitMapBackend::new("raw.png", (250, 250)).into_drawing_area();
-        image.fill(&style::WHITE).unwrap();
-
-        let ring_buffer = buffer.lock().expect("Failed to lock buffer");
-
-        let mut data = vec![0.0f32; types::RINGBUFFER_SIZE];
-        let count = ring_buffer.peek(&mut data);
-
-        let samples: Vec<(usize, f32)> = data
-            .iter()
-            .take(count)
-            .enumerate()
-            .map(|(i, &y)| (i, y))
-            .collect();
-
-        let y_min = samples
-            .iter()
-            .map(|&(_, y)| y)
-            .fold(f32::INFINITY, f32::min);
-        let y_max = samples
-            .iter()
-            .map(|&(_, y)| y)
-            .fold(f32::NEG_INFINITY, f32::max);
-
-        let mut chart = ChartBuilder::on(&image)
-            .caption("Raw audio data", ("sans-serif", 30))
-            .margin(20)
-            .x_label_area_size(30)
-            .y_label_area_size(30)
-            .build_cartesian_2d(0..samples.len(), (y_min * 1.5)..(y_max * 1.5))
-            .unwrap();
-
-        chart.configure_mesh().draw().unwrap();
-
-        chart
-            .draw_series(LineSeries::new(samples.clone(), &style::BLUE))
-            .unwrap()
-            .label("waveform")
-            .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &style::BLUE));
-
-        image.present().unwrap();
-    }
 }
 
 pub struct FileSource {
@@ -181,7 +132,7 @@ pub struct FileSource {
 }
 
 impl FileSource {
-    pub fn new(path: &PathBuf, sample_rate: u32) -> Self {
+    pub fn new(path: PathBuf, sample_rate: u32) -> Self {
         let spectogram = WavSpec {
             channels: 1,
             sample_rate,
@@ -189,20 +140,20 @@ impl FileSource {
             sample_format: SampleFormat::Int,
         };
 
-        let reader = if let Ok(r) = WavReader::open(path) {
-            Some(r)
-        } else {
-            None
+        eprintln!("Creating WAV writer for path: {}", path.display());
+        let writer = match WavWriter::create(&path, spectogram) {
+            Ok(w) => Some(w),
+            Err(e) => panic!("Failed to create WAV writer for {}: {}", path.display(), e),
         };
 
-        let writer = if let Ok(w) = WavWriter::create(path, spectogram) {
-            Some(w)
-        } else {
-            None
-        };
+        // let reader = match WavReader::open(&path) {
+        //     Ok(r) => Some(r),
+        //     Err(e) => panic!("Failed to create WAV reader for {}: {}", path.display(), e),
+        // };
+        let reader = None;
 
         Self {
-            path: path.to_path_buf(),
+            path,
             reader,
             writer,
         }
@@ -214,18 +165,15 @@ impl FileSource {
                 let s = (sample.clamp(-1.0, 1.0) * i16::MAX as f32) as i16;
                 writer.write_sample(s).expect("Failed to write sample");
             }
-        } else {
-            eprintln!("Track does not have a writer");
         }
     }
 
     pub fn close_file(&mut self) {
         if let Some(writer) = self.writer.take() {
-            if let Err(e) = writer.finalize() {
-                eprintln!("Failed to finalize WAV file: {}", e);
+            match writer.finalize() {
+                Ok(()) => println!("Finalized"),
+                Err(e) => eprintln!("Failed to finalize: {}", e),
             }
-        } else {
-            eprintln!("No writer to finalize");
         }
     }
 
