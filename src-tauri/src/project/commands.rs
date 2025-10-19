@@ -1,7 +1,6 @@
 use std::{
     fs::File,
     io::{Read, Write},
-    path::PathBuf,
     thread,
 };
 
@@ -92,7 +91,7 @@ pub fn start_recording(mixer: State<project::states::StateMixerGuard>) {
         for track_name in track_names {
             if let Some(track) = track_list.get_track(&track_name) {
                 let mut track_lock = track.lock().unwrap();
-                track_lock.start_recording(Some(PathBuf::from(format!("{}.wav", track_name))));
+                track_lock.start_recording();
                 println!("Started recording on track: {}", track_name);
             } else {
                 eprintln!("Failed to get track");

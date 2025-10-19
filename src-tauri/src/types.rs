@@ -20,6 +20,8 @@ impl RingBuffer {
     }
 
     pub fn write(&mut self, data: &[f32]) {
+        // Debug: indicate write is called and how many samples
+        eprintln!("RingBuffer::write called with {} samples", data.len());
         for &sample in data {
             self.buffer[self.write_index] = sample;
             self.write_index = (self.write_index + 1) % self.buffer.len();

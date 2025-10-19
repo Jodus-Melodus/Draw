@@ -51,9 +51,18 @@ impl StreamSource {
                     move |data: &[f32], _: &cpal::InputCallbackInfo| {
                         let mut samples_to_emit: Option<Vec<f32>> = None;
 
+                        // Debug: indicate input callback fired and how many samples
+                        eprintln!("input callback: got {} samples", data.len());
+
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
+                            eprintln!(
+                                "input callback: wrote {} samples to ring buffer",
+                                data.len()
+                            );
                             samples_to_emit = Some(data.to_vec());
+                        } else {
+                            eprintln!("input callback: failed to lock ring buffer");
                         }
 
                         if let Some(samples) = samples_to_emit {
@@ -181,7 +190,35 @@ pub struct FileSource {
 }
 
 impl FileSource {
-    pub fn new(path: &PathBuf, sample_rate: u32) -> Self {
+    pub fn new(path: PathBuf, sample_rate: u32) -> Self {
+        // Convert to absolute path if needed
+        let abs_path = if path.is_absolute() {
+            path
+        } else {
+            std::env::current_dir().unwrap_or_else(|e| {
+                eprintln!("Failed to get current dir: {}, using '.'", e);
+                PathBuf::from(".")
+            }).join(path)
+        };
+
+        // Ensure parent directory exists with all permissions we need
+        if let Some(parent) = abs_path.parent() {
+            match std::fs::create_dir_all(parent) {
+                Ok(_) => eprintln!("Ensured directory exists: {}", parent.display()),
+                Err(e) => eprintln!("Failed to create directory {}: {}", parent.display(), e),
+            }
+
+            // Try to verify we can write to the directory
+            let test_path = parent.join(".test_write");
+            match std::fs::File::create(&test_path) {
+                Ok(_) => {
+                    eprintln!("Successfully verified write access to directory");
+                    let _ = std::fs::remove_file(test_path);
+                }
+                Err(e) => eprintln!("Warning: Cannot write to directory {}: {}", parent.display(), e),
+            }
+        }
+
         let spectogram = WavSpec {
             channels: 1,
             sample_rate,
@@ -189,20 +226,26 @@ impl FileSource {
             sample_format: SampleFormat::Int,
         };
 
-        let reader = if let Ok(r) = WavReader::open(path) {
+        eprintln!("Creating WAV writer for path: {}", abs_path.display());
+        let writer = match WavWriter::create(&abs_path, spectogram) {
+            Ok(w) => {
+                eprintln!("Successfully created WAV writer");
+                Some(w)
+            }
+            Err(e) => {
+                eprintln!("Failed to create WAV writer for {}: {}", abs_path.display(), e);
+                None
+            }
+        };
+
+        let reader = if let Ok(r) = WavReader::open(&abs_path) {
             Some(r)
         } else {
             None
         };
 
-        let writer = if let Ok(w) = WavWriter::create(path, spectogram) {
-            Some(w)
-        } else {
-            None
-        };
-
         Self {
-            path: path.to_path_buf(),
+            path: abs_path,
             reader,
             writer,
         }
@@ -215,7 +258,7 @@ impl FileSource {
                 writer.write_sample(s).expect("Failed to write sample");
             }
         } else {
-            eprintln!("Track does not have a writer");
+            eprintln!("Track {:?} does not have a writer", self.path);
         }
     }
 
