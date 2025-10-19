@@ -46,7 +46,6 @@ impl StreamSource {
 
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
-                            println!("Written samples");
                             samples_to_emit = Some(data.to_vec());
                         } else {
                             eprintln!("input callback: failed to lock ring buffer");
