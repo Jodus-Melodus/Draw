@@ -10,12 +10,12 @@ use crate::track;
 
 #[derive(Deserialize)]
 pub enum TrackUpdate {
+    Record(bool),
     Pan(f32),
     Gain(f32),
     Monitor(bool),
     Solo(bool),
     Mute(bool),
-    Record(bool),
 }
 
 pub struct TrackList {
@@ -59,10 +59,7 @@ impl TrackList {
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
             TrackUpdate::Mute(mute) => track.mute = mute,
-            TrackUpdate::Record(record) => match record {
-                true => track.start_recording(Some(PathBuf::from(format!("{}.wav", track_name)))),
-                false => track.stop_recording(),
-            },
+            TrackUpdate::Record(record) => track.record = record,
         }
     }
 
@@ -99,13 +96,6 @@ impl TrackList {
                     track::track::TrackType::In => "In",
                 };
 
-                let record = if let Some(recording) = &track.stream_source {
-                    let r = recording.recording.clone();
-                    r.load(Ordering::Relaxed)
-                } else {
-                    false
-                };
-
                 tracks.push(TrackInfo {
                     name: name.clone(),
                     track_type: track_type_str.to_string(),
@@ -114,13 +104,12 @@ impl TrackList {
                     monitor: track.monitor,
                     mute: track.mute,
                     solo: track.solo,
-                    record,
+                    record: track.record,
                 });
             }
         }
 
         tracks.sort_by(|a, b| a.name.cmp(&b.name));
-
         TrackListResponse { tracks }
     }
 }
@@ -129,12 +118,12 @@ impl TrackList {
 pub struct TrackInfo {
     pub name: String,
     pub track_type: String,
+    pub record: bool,
     pub gain: f32,
     pub pan: f32,
     pub monitor: bool,
     pub solo: bool,
     pub mute: bool,
-    pub record: bool,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

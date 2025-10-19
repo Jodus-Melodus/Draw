@@ -8,7 +8,7 @@ use std::{
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
-use crate::project::{self, states};
+use crate::project::{self};
 
 pub fn save_project(app_handle: &AppHandle) {
     let app = app_handle.clone();
@@ -93,7 +93,7 @@ pub fn start_recording(app_handle: &AppHandle) {
         for track_name in track_names {
             if let Some(track) = track_list.get_track(&track_name) {
                 let mut track_lock = track.lock().unwrap();
-                track_lock.start_recording(Some(PathBuf::from("testing.wav")));
+                track_lock.start_recording(Some(PathBuf::from(format!("{}.wav", track_name))));
                 println!("Started recording on track: {}", track_name);
             } else {
                 eprintln!("Failed to get track");

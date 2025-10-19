@@ -5,6 +5,7 @@ use crate::track;
 pub struct AudioTrackRaw {
     pub track_type: track::track::TrackType,
     pub file_source_path: Option<String>,
+    pub record:bool,
     pub gain: f32,
     pub pan: f32,
     pub solo: bool,
@@ -22,6 +23,7 @@ impl From<&track::track::AudioTrack> for AudioTrackRaw {
             } else {
                 None
             },
+            record: value.record,
             gain: value.gain,
             pan: value.pan,
             solo: value.solo,

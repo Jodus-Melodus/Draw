@@ -18,6 +18,7 @@ pub struct AudioTrack {
     pub stream_source: Option<track::source::StreamSource>,
     pub file_source: Option<Arc<Mutex<track::source::FileSource>>>,
     pub sample_rate: u32,
+    pub record: bool,
     pub gain: f32,
     pub pan: f32,
     pub solo: bool,
@@ -42,6 +43,7 @@ impl AudioTrack {
             stream_source,
             file_source,
             sample_rate,
+            record: false,
             gain: 0.0,
             pan: 0.0,
             monitor: false,
@@ -66,41 +68,43 @@ impl AudioTrack {
         }
     }
 
-    // TODO read ring buffer and append to wav file continuesly
     pub fn start_recording(&mut self, path: Option<PathBuf>) {
-        if let Some(stream) = &mut self.stream_source {
-            if self.file_source.is_none() {
-                if let Some(path) = path {
-                    self.file_source = Some(Arc::new(Mutex::new(track::source::FileSource::new(
-                        &path,
-                        stream.sample_rate,
-                    ))))
-                } else {
-                    eprintln!("Expected path");
+        if self.record {
+            if let Some(stream) = &mut self.stream_source {
+                if self.file_source.is_none() {
+                    if let Some(path) = path {
+                        self.file_source = Some(Arc::new(Mutex::new(
+                            track::source::FileSource::new(&path, stream.sample_rate),
+                        )))
+                    } else {
+                        eprintln!("Expected path");
+                    }
                 }
-            }
 
-            if let Some(_file_source) = &self.file_source {
-                stream.start_thread();
+                if let Some(_file_source) = &self.file_source {
+                    stream.start_thread();
+                } else {
+                    eprintln!("Track failed to create file source");
+                }
             } else {
-                eprintln!("Track failed to create file source");
+                eprintln!("Track has no stream!");
             }
-        } else {
-            eprintln!("Track has no stream!");
         }
     }
 
     pub fn stop_recording(&mut self) {
-        if let Some(stream) = &mut self.stream_source {
-            if let Some(file_source) = &self.file_source {
-                stream.stop_thread();
-                let mut file = file_source.lock().unwrap();
-                file.close_file();
+        if self.record {
+            if let Some(stream) = &mut self.stream_source {
+                if let Some(file_source) = &self.file_source {
+                    stream.stop_thread();
+                    let mut file = file_source.lock().unwrap();
+                    file.close_file();
+                } else {
+                    eprintln!("Track has no file source");
+                }
             } else {
-                eprintln!("Track has no file source");
+                eprintln!("Track has no stream");
             }
-        } else {
-            eprintln!("Track has no stream");
         }
     }
 }
@@ -120,6 +124,7 @@ impl From<track::raw::AudioTrackRaw> for AudioTrack {
                 None
             },
             sample_rate: 0,
+            record: value.record,
             gain: value.gain,
             pan: value.pan,
             solo: value.solo,
