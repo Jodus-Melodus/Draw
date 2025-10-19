@@ -1,9 +1,14 @@
-use std::{fs::File, io::{Read, Write}};
+use std::{
+    fs::File,
+    io::{Read, Write},
+    path::PathBuf,
+    thread,
+};
 
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
-use crate::project;
+use crate::project::{self, states};
 
 pub fn save_project(app_handle: &AppHandle) {
     let app = app_handle.clone();
@@ -73,4 +78,48 @@ pub fn load_project(app_handle: &AppHandle) {
                 }
             }
         });
+}
+
+#[tauri::command]
+pub fn start_recording(app_handle: &AppHandle) {
+    let mixer_state_guard = app_handle.state::<project::states::StateMixerGuard>();
+    let mixer_state = mixer_state_guard.0.lock().unwrap();
+    let tracks = mixer_state.track_list.clone();
+
+    thread::spawn(move || {
+        let track_list = tracks.lock().unwrap();
+        let track_names = track_list.track_list();
+
+        for track_name in track_names {
+            if let Some(track) = track_list.get_track(&track_name) {
+                let mut track_lock = track.lock().unwrap();
+                track_lock.start_recording(Some(PathBuf::from("testing.wav")));
+                println!("Started recording on track: {}", track_name);
+            } else {
+                eprintln!("Failed to get track");
+            }
+        }
+    });
+}
+
+#[tauri::command]
+pub fn stop_recording(app_handle: &AppHandle) {
+    let mixer_state_guard = app_handle.state::<project::states::StateMixerGuard>();
+    let mixer_state = mixer_state_guard.0.lock().unwrap();
+    let tracks = mixer_state.track_list.clone();
+
+    thread::spawn(move || {
+        let track_list = tracks.lock().unwrap();
+        let track_names = track_list.track_list();
+
+        for track_name in track_names {
+            if let Some(track) = track_list.get_track(&track_name) {
+                let mut track_lock = track.lock().unwrap();
+                track_lock.stop_recording();
+                println!("Stopped recording on track: {}", track_name);
+            } else {
+                eprintln!("Failed to get track");
+            }
+        }
+    });
 }
