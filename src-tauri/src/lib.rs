@@ -21,8 +21,10 @@ pub async fn run() {
             let menu = menus::menu_builders::build_menus(app);
             app.set_menu(menu)?;
 
-            let state_mixer = project::states::StateMixer::new(&app.handle(), master_output_device.clone());
-            let state_mixer_guard = project::states::StateMixerGuard(Arc::new(Mutex::new(state_mixer)));
+            let state_mixer =
+                project::states::StateMixer::new(&app.handle(), master_output_device.clone());
+            let state_mixer_guard =
+                project::states::StateMixerGuard(Arc::new(Mutex::new(state_mixer)));
             app.handle().manage(state_mixer_guard);
 
             Ok(())
@@ -38,7 +40,9 @@ pub async fn run() {
         .invoke_handler(tauri::generate_handler!(
             track::commands::get_track_list,
             track::commands::update_track,
-            menus::commands::add_empty_track
+            menus::commands::add_empty_track,
+            project::commands::start_recording,
+            project::commands::stop_recording
         ))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
