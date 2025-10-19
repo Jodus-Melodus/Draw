@@ -46,6 +46,7 @@ impl StreamSource {
 
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
+                            println!("Written samples");
                             samples_to_emit = Some(data.to_vec());
                         } else {
                             eprintln!("input callback: failed to lock ring buffer");
@@ -132,34 +133,6 @@ pub struct FileSource {
 
 impl FileSource {
     pub fn new(path: PathBuf, sample_rate: u32) -> Self {
-        // Convert to absolute path if needed
-        let abs_path = if path.is_absolute() {
-            path
-        } else {
-            std::env::current_dir().unwrap_or_else(|e| {
-                eprintln!("Failed to get current dir: {}, using '.'", e);
-                PathBuf::from(".")
-            }).join(path)
-        };
-
-        // Ensure parent directory exists with all permissions we need
-        if let Some(parent) = abs_path.parent() {
-            match std::fs::create_dir_all(parent) {
-                Ok(_) => eprintln!("Ensured directory exists: {}", parent.display()),
-                Err(e) => eprintln!("Failed to create directory {}: {}", parent.display(), e),
-            }
-
-            // Try to verify we can write to the directory
-            let test_path = parent.join(".test_write");
-            match std::fs::File::create(&test_path) {
-                Ok(_) => {
-                    eprintln!("Successfully verified write access to directory");
-                    let _ = std::fs::remove_file(test_path);
-                }
-                Err(e) => eprintln!("Warning: Cannot write to directory {}: {}", parent.display(), e),
-            }
-        }
-
         let spectogram = WavSpec {
             channels: 1,
             sample_rate,
@@ -167,26 +140,20 @@ impl FileSource {
             sample_format: SampleFormat::Int,
         };
 
-        eprintln!("Creating WAV writer for path: {}", abs_path.display());
-        let writer = match WavWriter::create(&abs_path, spectogram) {
-            Ok(w) => {
-                eprintln!("Successfully created WAV writer");
-                Some(w)
-            }
-            Err(e) => {
-                eprintln!("Failed to create WAV writer for {}: {}", abs_path.display(), e);
-                None
-            }
+        eprintln!("Creating WAV writer for path: {}", path.display());
+        let writer = match WavWriter::create(&path, spectogram) {
+            Ok(w) => Some(w),
+            Err(e) => panic!("Failed to create WAV writer for {}: {}", path.display(), e),
         };
 
-        let reader = if let Ok(r) = WavReader::open(&abs_path) {
-            Some(r)
-        } else {
-            None
-        };
+        // let reader = match WavReader::open(&path) {
+        //     Ok(r) => Some(r),
+        //     Err(e) => panic!("Failed to create WAV reader for {}: {}", path.display(), e),
+        // };
+        let reader = None;
 
         Self {
-            path: abs_path,
+            path,
             reader,
             writer,
         }
@@ -198,18 +165,15 @@ impl FileSource {
                 let s = (sample.clamp(-1.0, 1.0) * i16::MAX as f32) as i16;
                 writer.write_sample(s).expect("Failed to write sample");
             }
-        } else {
-            eprintln!("Track {:?} does not have a writer", self.path);
         }
     }
 
     pub fn close_file(&mut self) {
         if let Some(writer) = self.writer.take() {
-            if let Err(e) = writer.finalize() {
-                eprintln!("Failed to finalize WAV file: {}", e);
+            match writer.finalize() {
+                Ok(()) => println!("Finalized"),
+                Err(e) => eprintln!("Failed to finalize: {}", e),
             }
-        } else {
-            eprintln!("No writer to finalize");
         }
     }
 

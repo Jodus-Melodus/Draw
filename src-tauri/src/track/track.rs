@@ -40,14 +40,8 @@ impl AudioTrack {
         let sample_rate = if let Some(ref stream) = stream_source {
             stream.sample_rate
         } else {
-            1
+            panic!("No audio source");
         };
-
-        if let Ok(mut file) = file_source.lock() {
-            if file.get_path().ends_with(".wav") {
-                *file = track::source::FileSource::new(PathBuf::from(file.get_path()), sample_rate);
-            }
-        }
 
         if let Some(ref stream) = stream_source {
             let file = file_source.clone();
@@ -105,21 +99,25 @@ impl AudioTrack {
     }
 
     pub fn start_recording(&mut self) {
-        if let Some(stream) = &mut self.stream_source {
-            stream.start_thread();
-        } else {
-            eprintln!("Track has no stream!");
+        if self.record {
+            if let Some(stream) = &mut self.stream_source {
+                stream.start_thread();
+            } else {
+                eprintln!("Track has no stream!");
+            }
         }
     }
 
     pub fn stop_recording(&mut self) {
-        if let Some(stream) = &mut self.stream_source {
-            stream.stop_thread();
-        } else {
-            eprintln!("Track has no stream");
-        }
-        if let Ok(mut file) = self.file_source.lock() {
-            file.close_file();
+        if self.record {
+            if let Some(stream) = &mut self.stream_source {
+                stream.stop_thread();
+            } else {
+                eprintln!("Track has no stream");
+            }
+            if let Ok(mut file) = self.file_source.lock() {
+                file.close_file();
+            }
         }
     }
 }
