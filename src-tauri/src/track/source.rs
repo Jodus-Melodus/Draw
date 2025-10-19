@@ -15,13 +15,6 @@ use cpal::{
     Device,
 };
 use hound::{SampleFormat, WavReader, WavSpec, WavWriter};
-use plotters::{
-    backend,
-    chart::ChartBuilder,
-    prelude::{IntoDrawingArea, PathElement},
-    series::LineSeries,
-    style,
-};
 use tauri::{Emitter, Manager};
 
 use crate::types;
@@ -51,15 +44,8 @@ impl StreamSource {
                     move |data: &[f32], _: &cpal::InputCallbackInfo| {
                         let mut samples_to_emit: Option<Vec<f32>> = None;
 
-                        // Debug: indicate input callback fired and how many samples
-                        eprintln!("input callback: got {} samples", data.len());
-
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
-                            eprintln!(
-                                "input callback: wrote {} samples to ring buffer",
-                                data.len()
-                            );
                             samples_to_emit = Some(data.to_vec());
                         } else {
                             eprintln!("input callback: failed to lock ring buffer");
@@ -114,11 +100,11 @@ impl StreamSource {
 
     pub fn start_thread(&mut self) {
         let stream = self.stream.clone();
-        let recording = self.recording.clone();
         if let Err(e) = stream.play() {
             eprintln!("Failed to play stream: {}", e);
         }
         println!("Started recording");
+        let recording = self.recording.clone();
         recording.store(true, Ordering::Relaxed);
 
         thread::spawn(move || {
@@ -135,51 +121,6 @@ impl StreamSource {
     pub fn stop_thread(&mut self) {
         println!("Stopped recording");
         self.recording.store(false, Ordering::Relaxed);
-    }
-
-    pub fn graph_recording(&self) {
-        let buffer = self.ring_buffer.clone();
-        let image = backend::BitMapBackend::new("raw.png", (250, 250)).into_drawing_area();
-        image.fill(&style::WHITE).unwrap();
-
-        let ring_buffer = buffer.lock().expect("Failed to lock buffer");
-
-        let mut data = vec![0.0f32; types::RINGBUFFER_SIZE];
-        let count = ring_buffer.peek(&mut data);
-
-        let samples: Vec<(usize, f32)> = data
-            .iter()
-            .take(count)
-            .enumerate()
-            .map(|(i, &y)| (i, y))
-            .collect();
-
-        let y_min = samples
-            .iter()
-            .map(|&(_, y)| y)
-            .fold(f32::INFINITY, f32::min);
-        let y_max = samples
-            .iter()
-            .map(|&(_, y)| y)
-            .fold(f32::NEG_INFINITY, f32::max);
-
-        let mut chart = ChartBuilder::on(&image)
-            .caption("Raw audio data", ("sans-serif", 30))
-            .margin(20)
-            .x_label_area_size(30)
-            .y_label_area_size(30)
-            .build_cartesian_2d(0..samples.len(), (y_min * 1.5)..(y_max * 1.5))
-            .unwrap();
-
-        chart.configure_mesh().draw().unwrap();
-
-        chart
-            .draw_series(LineSeries::new(samples.clone(), &style::BLUE))
-            .unwrap()
-            .label("waveform")
-            .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &style::BLUE));
-
-        image.present().unwrap();
     }
 }
 
