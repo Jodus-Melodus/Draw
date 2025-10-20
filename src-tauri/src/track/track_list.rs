@@ -9,6 +9,7 @@ use crate::track;
 
 #[derive(Deserialize)]
 pub enum TrackUpdate {
+    Name(String),
     Record(bool),
     Pan(f32),
     Gain(f32),
@@ -32,10 +33,12 @@ impl TrackList {
         self.tracks.insert(name.into(), Arc::new(Mutex::new(track)));
     }
 
-    pub fn remove_track(&mut self, name: &str) {
-        if self.tracks.contains_key(name) {
-            self.tracks.remove(name);
-        }
+    pub fn add_arc_mut_track(&mut self, name: &str, track: Arc<Mutex<track::track::AudioTrack>>) {
+        self.tracks.insert(name.into(), track);
+    }
+
+    pub fn remove_track(&mut self, name: &str) -> Option<Arc<Mutex<track::track::AudioTrack>>> {
+        self.tracks.remove(name)
     }
 
     pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<track::track::AudioTrack>>> {
@@ -53,12 +56,19 @@ impl TrackList {
         let mut track = track_arc.lock().expect("Failed to lock track");
 
         match update {
+            TrackUpdate::Name(name) => {
+                if let Some(track) = self.remove_track(track_name) {
+                    self.add_arc_mut_track(&name, track);
+                } else {
+                    eprintln!("No existing track with that name");
+                }
+            }
+            TrackUpdate::Record(record) => track.record = record,
             TrackUpdate::Pan(pan) => track.pan = pan,
             TrackUpdate::Gain(gain) => track.gain = gain,
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Solo(solo) => track.solo = solo,
             TrackUpdate::Mute(mute) => track.mute = mute,
-            TrackUpdate::Record(record) => track.record = record,
         }
     }
 

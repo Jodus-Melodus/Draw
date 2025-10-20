@@ -14,6 +14,7 @@ export type TrackListResponse = {
 };
 
 export type TrackUpdate = | { Pan: number }
+    | { Name: string }
     | { Gain: number }
     | { Monitor: boolean }
     | { Solo: boolean }

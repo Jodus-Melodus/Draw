@@ -17,7 +17,11 @@ pub fn add_empty_track(
         let new_track_name = format!("track-{}", number);
         let path = format!("{}.wav", new_track_name);
         let stream_source = track::source::StreamSource::new(&app, input_device);
-        let file_source = track::source::FileSource::new(path.into(), stream_source.sample_rate);
+        let file_source = track::source::FileSource::new(
+            path.into(),
+            stream_source.sample_rate,
+            stream_source.channels,
+        );
         let track = track::track::AudioTrack::new(
             &new_track_name,
             track::track::TrackType::In,

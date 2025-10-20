@@ -131,6 +131,7 @@ impl From<track::raw::AudioTrackRaw> for AudioTrack {
             file_source: Arc::new(Mutex::new(track::source::FileSource::new(
                 PathBuf::from(value.file_source_path),
                 1,
+                1,
             ))),
             sample_rate: 0,
             record: value.record,
