@@ -42,6 +42,7 @@ impl StateMixer {
             Arc::new(Mutex::new(track::source::FileSource::new(
                 PathBuf::from("master-out.wav"),
                 1,
+                1,
             ))),
         );
         track_list.add_track("master-out", master_out);

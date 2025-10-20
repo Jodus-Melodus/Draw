@@ -92,7 +92,6 @@ pub fn start_recording(mixer: State<project::states::StateMixerGuard>) {
             if let Some(track) = track_list.get_track(&track_name) {
                 let mut track_lock = track.lock().unwrap();
                 track_lock.start_recording();
-                println!("Started recording on track: {}", track_name);
             } else {
                 eprintln!("Failed to get track");
             }
@@ -113,7 +112,6 @@ pub fn stop_recording(mixer: State<project::states::StateMixerGuard>) {
             if let Some(track) = track_list.get_track(&track_name) {
                 let mut track_lock = track.lock().unwrap();
                 track_lock.stop_recording();
-                println!("Stopped recording on track: {}", track_name);
             } else {
                 eprintln!("Failed to get track");
             }
