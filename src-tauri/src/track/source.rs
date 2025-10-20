@@ -195,34 +195,6 @@ pub struct FileSource {
 
 impl FileSource {
     pub fn new(path: PathBuf, sample_rate: u32, channels: u16) -> Self {
-        // Convert to absolute path if needed
-        let abs_path = if path.is_absolute() {
-            path
-        } else {
-            std::env::current_dir().unwrap_or_else(|e| {
-                eprintln!("Failed to get current dir: {}, using '.'", e);
-                PathBuf::from(".")
-            }).join(path)
-        };
-
-        // Ensure parent directory exists with all permissions we need
-        if let Some(parent) = abs_path.parent() {
-            match std::fs::create_dir_all(parent) {
-                Ok(_) => eprintln!("Ensured directory exists: {}", parent.display()),
-                Err(e) => eprintln!("Failed to create directory {}: {}", parent.display(), e),
-            }
-
-            // Try to verify we can write to the directory
-            let test_path = parent.join(".test_write");
-            match std::fs::File::create(&test_path) {
-                Ok(_) => {
-                    eprintln!("Successfully verified write access to directory");
-                    let _ = std::fs::remove_file(test_path);
-                }
-                Err(e) => eprintln!("Warning: Cannot write to directory {}: {}", parent.display(), e),
-            }
-        }
-
         let spectogram = WavSpec {
             channels: channels as u16,
             sample_rate,
@@ -230,26 +202,26 @@ impl FileSource {
             sample_format: SampleFormat::Int,
         };
 
-        eprintln!("Creating WAV writer for path: {}", abs_path.display());
-        let writer = match WavWriter::create(&abs_path, spectogram) {
+        eprintln!("Creating WAV writer for path: {}", path.display());
+        let writer = match WavWriter::create(&path, spectogram) {
             Ok(w) => {
                 eprintln!("Successfully created WAV writer");
                 Some(w)
             }
             Err(e) => {
-                eprintln!("Failed to create WAV writer for {}: {}", abs_path.display(), e);
+                eprintln!("Failed to create WAV writer for {}: {}", path.display(), e);
                 None
             }
         };
 
-        let reader = if let Ok(r) = WavReader::open(&abs_path) {
+        let reader = if let Ok(r) = WavReader::open(&path) {
             Some(r)
         } else {
             None
         };
 
         Self {
-            path: abs_path,
+            path,
             reader,
             writer,
             channels,
