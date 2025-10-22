@@ -14,7 +14,7 @@ use bincode::{Decode, Encode};
 #[derive(Clone, Copy, Encode, Decode)]
 pub enum TrackType {
     In,
-    MasterOut,
+    Out,
 }
 
 pub struct AudioTrack {
@@ -101,7 +101,7 @@ impl AudioTrack {
     pub fn start_recording(&mut self) {
         if self.record {
             if let Some(stream) = &mut self.stream_source {
-                stream.start_thread();
+                stream.start_recording();
             } else {
                 eprintln!("Track has no stream!");
             }
@@ -111,7 +111,7 @@ impl AudioTrack {
     pub fn stop_recording(&mut self) {
         if self.record {
             if let Some(stream) = &mut self.stream_source {
-                stream.stop_thread();
+                stream.stop_recording();
             } else {
                 eprintln!("Track has no stream");
             }

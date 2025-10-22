@@ -37,7 +37,7 @@ impl StateMixer {
         let mut track_list = track::track_list::TrackList::new();
         let master_out = track::track::AudioTrack::new(
             "Master-Out",
-            track::track::TrackType::MasterOut,
+            track::track::TrackType::Out,
             Some(track::source::StreamSource::new(app, master_output)),
             Arc::new(Mutex::new(track::source::FileSource::new(
                 PathBuf::from("master-out.wav"),

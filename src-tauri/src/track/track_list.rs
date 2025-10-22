@@ -101,7 +101,7 @@ impl TrackList {
         for (name, track_mutex) in &self.tracks {
             if let Ok(track) = track_mutex.lock() {
                 let track_type_str = match track.track_type {
-                    track::track::TrackType::MasterOut => "MasterOut",
+                    track::track::TrackType::Out => "MasterOut",
                     track::track::TrackType::In => "In",
                 };
 
