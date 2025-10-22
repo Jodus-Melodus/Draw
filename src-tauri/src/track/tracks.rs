@@ -34,4 +34,16 @@ impl OutputTrack {
     pub fn new(sink: Box<dyn track::source::AudioSink>) -> Self {
         OutputTrack { sink, gain: 100.0 }
     }
+
+    pub fn as_response(&self) -> track::track_list::TrackInfo {
+        track::track_list::TrackInfo {
+            name: "master-out".to_string(),
+            record: false,
+            gain: self.gain,
+            pan: 0.0,
+            monitor: false,
+            solo: false,
+            mute: false,
+        }
+    }
 }

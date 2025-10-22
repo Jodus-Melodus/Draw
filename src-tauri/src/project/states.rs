@@ -28,7 +28,7 @@ pub struct StateMixerGuard(pub Arc<Mutex<StateMixer>>);
 
 pub struct StateMixer {
     pub track_list: Arc<Mutex<track::track_list::TrackList>>,
-    pub master_out: Arc<Mutex<track::track::OutputTrack>>,
+    pub master_out: Arc<Mutex<track::tracks::OutputTrack>>,
 }
 
 impl StateMixer {
@@ -36,7 +36,7 @@ impl StateMixer {
         let track_list = Arc::new(Mutex::new(track::track_list::TrackList::new()));
         let sink =
             track::source::StreamSink::new(device, Arc::new(Mutex::new(types::RingBuffer::new())));
-        let master_out = Arc::new(Mutex::new(track::track::OutputTrack::new(Box::new(sink))));
+        let master_out = Arc::new(Mutex::new(track::tracks::OutputTrack::new(Box::new(sink))));
         StateMixer {
             track_list,
             master_out,

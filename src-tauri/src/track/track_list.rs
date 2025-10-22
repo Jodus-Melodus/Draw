@@ -18,7 +18,7 @@ pub enum TrackUpdate {
 }
 
 pub struct TrackList {
-    tracks: HashMap<String, Arc<Mutex<track::track::InputTrack>>>,
+    tracks: HashMap<String, Arc<Mutex<track::tracks::InputTrack>>>,
 }
 
 impl TrackList {
@@ -28,19 +28,19 @@ impl TrackList {
         }
     }
 
-    pub fn add_track(&mut self, name: &str, track: track::track::InputTrack) {
+    pub fn add_track(&mut self, name: &str, track: track::tracks::InputTrack) {
         self.tracks.insert(name.into(), Arc::new(Mutex::new(track)));
     }
 
-    pub fn add_arc_mut_track(&mut self, name: &str, track: Arc<Mutex<track::track::InputTrack>>) {
+    pub fn add_arc_mut_track(&mut self, name: &str, track: Arc<Mutex<track::tracks::InputTrack>>) {
         self.tracks.insert(name.into(), track);
     }
 
-    pub fn remove_track(&mut self, name: &str) -> Option<Arc<Mutex<track::track::InputTrack>>> {
+    pub fn remove_track(&mut self, name: &str) -> Option<Arc<Mutex<track::tracks::InputTrack>>> {
         self.tracks.remove(name)
     }
 
-    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<track::track::InputTrack>>> {
+    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<track::tracks::InputTrack>>> {
         self.tracks.get(name).cloned()
     }
 
