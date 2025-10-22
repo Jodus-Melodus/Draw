@@ -14,12 +14,11 @@ pub enum TrackUpdate {
     Pan(f32),
     Gain(f32),
     Monitor(bool),
-    Solo(bool),
     Mute(bool),
 }
 
 pub struct TrackList {
-    tracks: HashMap<String, Arc<Mutex<track::track::AudioTrack>>>,
+    tracks: HashMap<String, Arc<Mutex<track::track::InputTrack>>>,
 }
 
 impl TrackList {
@@ -29,19 +28,19 @@ impl TrackList {
         }
     }
 
-    pub fn add_track(&mut self, name: &str, track: track::track::AudioTrack) {
+    pub fn add_track(&mut self, name: &str, track: track::track::InputTrack) {
         self.tracks.insert(name.into(), Arc::new(Mutex::new(track)));
     }
 
-    pub fn add_arc_mut_track(&mut self, name: &str, track: Arc<Mutex<track::track::AudioTrack>>) {
+    pub fn add_arc_mut_track(&mut self, name: &str, track: Arc<Mutex<track::track::InputTrack>>) {
         self.tracks.insert(name.into(), track);
     }
 
-    pub fn remove_track(&mut self, name: &str) -> Option<Arc<Mutex<track::track::AudioTrack>>> {
+    pub fn remove_track(&mut self, name: &str) -> Option<Arc<Mutex<track::track::InputTrack>>> {
         self.tracks.remove(name)
     }
 
-    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<track::track::AudioTrack>>> {
+    pub fn get_track(&self, name: &str) -> Option<Arc<Mutex<track::track::InputTrack>>> {
         self.tracks.get(name).cloned()
     }
 
@@ -67,52 +66,45 @@ impl TrackList {
             TrackUpdate::Pan(pan) => track.pan = pan,
             TrackUpdate::Gain(gain) => track.gain = gain,
             TrackUpdate::Monitor(monitor) => track.monitor = monitor,
-            TrackUpdate::Solo(solo) => track.solo = solo,
             TrackUpdate::Mute(mute) => track.mute = mute,
         }
     }
 
-    pub fn from_raw(raw_track_list: HashMap<String, track::raw::AudioTrackRaw>) -> Self {
-        let mut tracks = HashMap::new();
+    // pub fn from_raw(raw_track_list: HashMap<String, track::raw::AudioTrackRaw>) -> Self {
+    //     let mut tracks = HashMap::new();
 
-        for (track_name, raw_track) in raw_track_list {
-            tracks.insert(
-                track_name,
-                Arc::new(Mutex::new(track::track::AudioTrack::from(raw_track))),
-            );
-        }
+    //     for (track_name, raw_track) in raw_track_list {
+    //         tracks.insert(
+    //             track_name,
+    //             Arc::new(Mutex::new(track::track::InputTrack::from(raw_track))),
+    //         );
+    //     }
 
-        TrackList { tracks }
-    }
+    //     TrackList { tracks }
+    // }
 
-    pub fn to_raw(&self) -> HashMap<String, track::raw::AudioTrackRaw> {
-        self.tracks
-            .iter()
-            .map(|(key, value)| {
-                let audio_track = value.lock().expect("Failed to lock track");
-                (key.clone(), track::raw::AudioTrackRaw::from(&*audio_track))
-            })
-            .collect()
-    }
+    // pub fn to_raw(&self) -> HashMap<String, track::raw::AudioTrackRaw> {
+    //     self.tracks
+    //         .iter()
+    //         .map(|(key, value)| {
+    //             let audio_track = value.lock().expect("Failed to lock track");
+    //             (key.clone(), track::raw::AudioTrackRaw::from(&*audio_track))
+    //         })
+    //         .collect()
+    // }
 
     pub fn as_response(&self) -> TrackListResponse {
         let mut tracks = Vec::new();
 
         for (name, track_mutex) in &self.tracks {
             if let Ok(track) = track_mutex.lock() {
-                let track_type_str = match track.track_type {
-                    track::track::TrackType::Out => "MasterOut",
-                    track::track::TrackType::In => "In",
-                };
-
                 tracks.push(TrackInfo {
                     name: name.clone(),
-                    track_type: track_type_str.to_string(),
                     gain: track.gain,
                     pan: track.pan,
                     monitor: track.monitor,
                     mute: track.mute,
-                    solo: track.solo,
+                    solo: false,
                     record: track.record,
                 });
             }
@@ -126,7 +118,6 @@ impl TrackList {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct TrackInfo {
     pub name: String,
-    pub track_type: String,
     pub record: bool,
     pub gain: f32,
     pub pan: f32,

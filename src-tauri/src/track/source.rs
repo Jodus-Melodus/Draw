@@ -12,98 +12,49 @@ use std::{
 
 use cpal::{
     traits::{DeviceTrait, StreamTrait},
-    Device,
+    Device, InputCallbackInfo, OutputCallbackInfo, Stream, SupportedStreamConfig,
 };
-use hound::{SampleFormat, WavReader, WavSpec, WavWriter};
-use tauri::{Emitter, Manager};
+use hound::{WavReader, WavSpec, WavWriter};
 
-use crate::types;
+use crate::types::RingBuffer;
 
 pub struct StreamSource {
-    pub recording: Arc<AtomicBool>,
-    pub ring_buffer: Arc<Mutex<types::RingBuffer>>,
-    pub sample_rate: u32,
-    pub channels: u16,
-    stream: Arc<cpal::Stream>,
+    recording: Arc<AtomicBool>,
+    ring_buffer: Arc<Mutex<RingBuffer>>,
+    stream: Arc<Stream>,
+    config: SupportedStreamConfig,
 }
 
 impl StreamSource {
-    pub fn new(app: &tauri::AppHandle, device: Arc<Device>) -> Self {
-        let ring_buffer = Arc::new(Mutex::new(types::RingBuffer::new()));
+    pub fn new(device: Arc<Device>) -> Self {
+        if !device.supports_input() {
+            panic!("Device doesn't support input");
+        }
+
+        let recording = Arc::new(AtomicBool::new(false));
+        let ring_buffer = Arc::new(Mutex::new(RingBuffer::new()));
         let ring_buffer_clone = ring_buffer.clone();
-        let window = app.get_webview_window("main").unwrap();
-
-        if device.supports_input() {
-            let config = device
-                .default_input_config()
-                .expect("Failed to get input config");
-            let sample_rate = config.sample_rate().0;
-            let channels = config.channels();
-
-            let stream = device
+        let config = device.default_input_config().unwrap();
+        let stream = Arc::new(
+            device
                 .build_input_stream(
-                    &config.into(),
-                    move |data: &[f32], _: &cpal::InputCallbackInfo| {
-                        let mut samples_to_emit: Option<Vec<f32>> = None;
-
+                    &config.config(),
+                    move |data: &[f32], _: &InputCallbackInfo| {
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             rb.write(data);
-                            eprintln!(
-                                "input callback: wrote {} samples to ring buffer",
-                                data.len()
-                            );
-                            samples_to_emit = Some(data.to_vec());
-                        } else {
-                            eprintln!("input callback: failed to lock ring buffer");
-                        }
-
-                        if let Some(samples) = samples_to_emit {
-                            if let Err(e) = window.emit("audio-samples", samples) {
-                                eprintln!("Failed to emit audio sample: {:?}", e);
-                            }
                         }
                     },
                     move |err| eprintln!("Stream error: {}", err),
                     None,
                 )
-                .expect("Failed to create input stream");
+                .expect("Failed to create input stream"),
+        );
 
-            StreamSource {
-                ring_buffer,
-                stream: Arc::new(stream),
-                recording: Arc::new(AtomicBool::new(false)),
-                sample_rate,
-                channels,
-            }
-        } else if device.supports_output() {
-            let config = device
-                .default_output_config()
-                .expect("Failed to get output config");
-            let sample_rate = config.sample_rate().0;
-            let channels = config.channels();
-
-            let stream = device
-                .build_output_stream(
-                    &config.into(),
-                    move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-                        for sample in data.iter_mut() {
-                            *sample = 0.0;
-                        }
-                    },
-                    move |err| eprintln!("Stream error: {}", err),
-                    None,
-                )
-                .expect("Failed to create output stream");
-
-            StreamSource {
-                ring_buffer,
-                stream: Arc::new(stream),
-                recording: Arc::new(AtomicBool::new(false)),
-                sample_rate,
-                channels,
-            }
-        } else {
-            panic!("Device does not support input or output.")
+        StreamSource {
+            recording,
+            ring_buffer,
+            stream,
+            config,
         }
     }
 
@@ -132,52 +83,72 @@ impl StreamSource {
 }
 
 pub struct FileSource {
-    path: PathBuf,
-    reader: Option<WavReader<BufReader<File>>>,
-    writer: Option<WavWriter<BufWriter<File>>>,
-    channels: u16,
+    reader: WavReader<BufReader<File>>,
+    config: WavSpec,
 }
 
 impl FileSource {
-    pub fn new(path: PathBuf, sample_rate: u32, channels: u16) -> Self {
-        let spectogram = WavSpec {
-            channels: channels as u16,
-            sample_rate,
-            bits_per_sample: 16,
-            sample_format: SampleFormat::Int,
-        };
+    pub fn new(path: PathBuf) -> Self {
+        let reader = WavReader::open(path).expect("Failed to open file source");
+        let config = reader.spec();
+        FileSource { reader, config }
+    }
+}
 
-        eprintln!("Creating WAV writer for path: {}", path.display());
-        let writer = match WavWriter::create(&path, spectogram) {
-            Ok(w) => {
-                eprintln!("Successfully created WAV writer");
-                Some(w)
-            }
-            Err(e) => {
-                eprintln!("Failed to create WAV writer for {}: {}", path.display(), e);
-                None
-            }
-        };
+pub trait AudioSource: Send {}
 
-        let reader = if let Ok(r) = WavReader::open(&path) {
-            Some(r)
-        } else {
-            None
-        };
+impl AudioSource for StreamSource {}
 
-        Self {
-            path,
-            reader,
-            writer,
-            channels,
+impl AudioSource for FileSource {}
+
+pub struct StreamSink {
+    stream: Arc<Stream>,
+    config: SupportedStreamConfig,
+}
+
+impl StreamSink {
+    pub fn new(device: Arc<Device>, ring_buffer: Arc<Mutex<RingBuffer>>) -> Self {
+        if !device.supports_output() {
+            panic!("Device doesn't support output");
         }
+
+        let ring_buffer_clone = ring_buffer.clone();
+        let config = device.default_output_config().unwrap();
+        let stream = Arc::new(
+            device
+                .build_output_stream(
+                    &config.config(),
+                    move |data: &mut [f32], _: &OutputCallbackInfo| {
+                        if let Ok(mut rb) = ring_buffer_clone.lock() {
+                            rb.read(data);
+                        }
+                    },
+                    move |err| eprintln!("Stream error: {}", err),
+                    None,
+                )
+                .expect("Failed to create output stream"),
+        );
+
+        StreamSink { stream, config }
+    }
+}
+
+pub struct FileSink {
+    writer: Option<WavWriter<BufWriter<File>>>,
+    config: WavSpec,
+}
+
+impl FileSink {
+    pub fn new(path: PathBuf, config: WavSpec) -> Self {
+        let writer = WavWriter::create(path, config).ok();
+        FileSink { writer, config }
     }
 
     pub fn save_to_wav(&mut self, data: Vec<f32>, count: usize) {
         if let Some(writer) = &mut self.writer {
             // Ensure we write a multiple of channels. If count is not a multiple of channels,
             // pad the remaining samples with zeros so finalize doesn't fail.
-            let ch = self.channels as usize;
+            let ch = self.config.channels as usize;
             let mut to_write = data.into_iter().take(count).collect::<Vec<f32>>();
             let remainder = to_write.len() % ch;
             if remainder != 0 {
@@ -196,7 +167,7 @@ impl FileSource {
                 writer.write_sample(s).expect("Failed to write sample");
             }
         } else {
-            eprintln!("Track {:?} does not have a writer", self.path);
+            eprintln!("Track does not have a writer");
         }
     }
 
@@ -209,8 +180,10 @@ impl FileSource {
             eprintln!("No writer to finalize");
         }
     }
-
-    pub fn get_path(&self) -> String {
-        self.path.to_string_lossy().to_string()
-    }
 }
+
+pub trait AudioSink: Send {}
+
+impl AudioSink for StreamSink {}
+
+impl AudioSink for FileSink {}

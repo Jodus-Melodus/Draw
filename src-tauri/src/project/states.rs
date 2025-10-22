@@ -1,67 +1,59 @@
-use std::{
-    collections::HashMap,
-    path::PathBuf,
-    sync::{
-        atomic::{AtomicUsize, Ordering},
-        Arc, Mutex,
-    },
+use std::sync::{
+    atomic::{AtomicUsize, Ordering},
+    Arc, Mutex,
 };
 
 use cpal::Device;
 
-use crate::{track, types};
+use crate::{
+    track,
+    types::{self},
+};
 
-#[derive(bincode::Encode, bincode::Decode)]
-pub struct StateMixerRaw {
-    track_list: HashMap<String, track::raw::AudioTrackRaw>,
-}
+// #[derive(bincode::Encode, bincode::Decode)]
+// pub struct StateMixerRaw {
+//     track_list: HashMap<String, track::raw::AudioTrackRaw>,
+// }
 
-impl From<StateMixer> for StateMixerRaw {
-    fn from(value: StateMixer) -> Self {
-        let track_list = value.track_list.lock().expect("Failed to lock track list");
-        StateMixerRaw {
-            track_list: track_list.to_raw(),
-        }
-    }
-}
+// impl From<StateMixer> for StateMixerRaw {
+//     fn from(value: StateMixer) -> Self {
+//         let track_list = value.track_list.lock().expect("Failed to lock track list");
+//         StateMixerRaw {
+//             track_list: track_list.to_raw(),
+//         }
+//     }
+// }
 
 pub struct StateMixerGuard(pub Arc<Mutex<StateMixer>>);
 
-#[derive(Clone)]
 pub struct StateMixer {
     pub track_list: Arc<Mutex<track::track_list::TrackList>>,
+    pub master_out: Arc<Mutex<track::track::OutputTrack>>,
 }
 
 impl StateMixer {
-    pub fn new(app: &tauri::AppHandle, master_output: Arc<Device>) -> Self {
-        let mut track_list = track::track_list::TrackList::new();
-        let master_out = track::track::AudioTrack::new(
-            "Master-Out",
-            track::track::TrackType::Out,
-            Some(track::source::StreamSource::new(app, master_output)),
-            Arc::new(Mutex::new(track::source::FileSource::new(
-                PathBuf::from("master-out.wav"),
-                1,
-                1,
-            ))),
-        );
-        track_list.add_track("master-out", master_out);
+    pub fn new(device: Arc<Device>) -> Self {
+        let track_list = Arc::new(Mutex::new(track::track_list::TrackList::new()));
+        let sink =
+            track::source::StreamSink::new(device, Arc::new(Mutex::new(types::RingBuffer::new())));
+        let master_out = Arc::new(Mutex::new(track::track::OutputTrack::new(Box::new(sink))));
         StateMixer {
-            track_list: Arc::new(Mutex::new(track_list)),
+            track_list,
+            master_out,
         }
     }
 }
 
-impl From<StateMixerRaw> for StateMixer {
-    fn from(value: StateMixerRaw) -> Self {
-        let track_list = value.track_list;
-        StateMixer {
-            track_list: Arc::new(Mutex::new(track::track_list::TrackList::from_raw(
-                track_list,
-            ))),
-        }
-    }
-}
+// impl From<StateMixerRaw> for StateMixer {
+//     fn from(value: StateMixerRaw) -> Self {
+//         let track_list = value.track_list;
+//         StateMixer {
+//             track_list: Arc::new(Mutex::new(track::track_list::TrackList::from_raw(
+//                 track_list,
+//             ))),
+//         }
+//     }
+// }
 
 #[derive(Clone)]
 pub struct StateAudioContext {

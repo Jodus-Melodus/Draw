@@ -1,6 +1,6 @@
 use std::sync::{
     atomic::{AtomicUsize, Ordering},
-    Arc,
+    Arc, Mutex,
 };
 
 use tauri::{
@@ -11,7 +11,7 @@ use tauri::{
     App, AppHandle, Emitter, Manager, Wry,
 };
 
-use crate::{project, track, menus, pages};
+use crate::{menus, pages, project, track, types};
 
 fn build_file_menu(app: &App<Wry>) -> Submenu<Wry> {
     let open_file = MenuItemBuilder::new("Open file")
@@ -131,14 +131,14 @@ pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
         "file-open-file" => project::file::open_files(app_handle).await,
         "preferences-settings" => pages::settings_page::open_settings(app_handle),
         "project-add-track" => {
-            menus::commands::add_empty_track(state_mixer_guard, audio_context, app_handle.clone()).unwrap();
+            menus::commands::add_empty_track(state_mixer_guard, audio_context).unwrap();
             let window = app_handle
                 .get_webview_window("main")
                 .expect("Failed to get main window");
             window.emit("updated-track-list", ()).unwrap();
         }
-        "project-save-project" => project::commands::save_project(app_handle),
-        "project-open-project" => project::commands::load_project(app_handle),
+        // "project-save-project" => project::commands::save_project(app_handle),
+        // "project-open-project" => project::commands::load_project(app_handle),
         _ if id.starts_with("preferences-output-device-") => {
             update_master_io_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app_handle, id);
@@ -165,21 +165,16 @@ fn update_master_io_device_index(device_index: Arc<AtomicUsize>, id: &str) {
 fn update_master_output_device_track(app: &AppHandle) {
     let state_mixer_guard = app.state::<project::states::StateMixerGuard>();
     let state_mixer = state_mixer_guard.0.lock().unwrap();
-    let list = state_mixer.track_list.clone();
-    let track_list = list.lock().expect("Failed to lock list");
-    let master_output_track = track_list
-        .get_track("master-out")
-        .expect("Failed to get master output track")
-        .clone();
-    let mut master_output = master_output_track
-        .lock()
-        .expect("Failed to lock master output");
+    let mut master_output = state_mixer.master_out.lock().unwrap();
     let audio_context = app.state::<project::states::StateAudioContext>();
     let new_master_output_device = audio_context
         .output_device()
         .expect("Failed to get new master output device");
-    let new_output_source = track::source::StreamSource::new(app, new_master_output_device.clone());
-    master_output.stream_source = Some(new_output_source);
+    let new_output_source = track::source::StreamSink::new(
+        new_master_output_device,
+        Arc::new(Mutex::new(types::RingBuffer::new())),
+    );
+    master_output.sink = Box::new(new_output_source);
 }
 
 fn update_radio_group_menu(app: &AppHandle, id: &str) {

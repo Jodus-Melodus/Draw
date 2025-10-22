@@ -1,7 +1,4 @@
-use std::{
-    path::PathBuf,
-    sync::{Arc, Mutex},
-};
+use std::path::PathBuf;
 
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
@@ -54,13 +51,8 @@ fn add_file_track(
     let state_mixer = state_mixer_guard.0.lock().unwrap();
     let track_list = state_mixer.track_list.clone();
     let mut list = track_list.lock().expect("Failed to lock track list");
-    let track_source = track::source::FileSource::new(path, 1, 1);
-    let track = track::track::AudioTrack::new(
-        &name,
-        crate::track::track::TrackType::In,
-        None,
-        Arc::new(Mutex::new(track_source)),
-    );
+    let track_source = track::source::FileSource::new(path);
+    let track = track::track::InputTrack::new(name, Box::new(track_source));
     list.add_track(name, track);
 
     let window = app_handle
