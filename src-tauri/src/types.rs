@@ -1,6 +1,9 @@
 use std::{collections::HashMap, sync::Arc};
 
-use cpal::traits::{DeviceTrait, HostTrait};
+use cpal::{
+    traits::{DeviceTrait, HostTrait},
+    Device, Host,
+};
 
 pub const RINGBUFFER_SIZE: usize = 960 * 50;
 
@@ -58,11 +61,11 @@ impl RingBuffer {
 
 #[derive(Clone)]
 pub struct InputDeviceRegistry {
-    devices: HashMap<String, Arc<cpal::Device>>,
+    devices: HashMap<String, Arc<Device>>,
 }
 
 impl InputDeviceRegistry {
-    pub fn new(host: &cpal::Host) -> Self {
+    pub fn new(host: &Host) -> Self {
         let mut map = HashMap::new();
         for device in host.input_devices().expect("No input devices available") {
             let name = device.name().unwrap_or_else(|_| "Unknown".into());
@@ -72,7 +75,7 @@ impl InputDeviceRegistry {
         Self { devices: map }
     }
 
-    pub fn get_from_name(&self, name: &str) -> Option<Arc<cpal::Device>> {
+    pub fn get_from_name(&self, name: &str) -> Option<Arc<Device>> {
         self.devices.get(name).cloned()
     }
 
@@ -87,11 +90,11 @@ impl InputDeviceRegistry {
 
 #[derive(Clone)]
 pub struct OutputDeviceRegistry {
-    devices: HashMap<String, Arc<cpal::Device>>,
+    devices: HashMap<String, Arc<Device>>,
 }
 
 impl OutputDeviceRegistry {
-    pub fn new(host: &cpal::Host) -> Self {
+    pub fn new(host: &Host) -> Self {
         let mut map = HashMap::new();
         for device in host.output_devices().expect("No output devices available") {
             let name = device.name().unwrap_or_else(|_| "Unknown".into());
@@ -101,7 +104,7 @@ impl OutputDeviceRegistry {
         Self { devices: map }
     }
 
-    pub fn get_from_name(&self, name: &str) -> Option<Arc<cpal::Device>> {
+    pub fn get_from_name(&self, name: &str) -> Option<Arc<Device>> {
         self.devices.get(name).cloned()
     }
 
