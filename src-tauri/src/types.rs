@@ -5,7 +5,7 @@ use cpal::{
     Device, Host,
 };
 
-const RINGBUFFER_SIZE: usize = 960 * 50;
+const RINGBUFFER_SIZE: usize = 48000;
 
 pub struct RingBuffer {
     buffer: Vec<f32>,

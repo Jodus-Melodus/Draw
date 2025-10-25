@@ -1,6 +1,6 @@
 import { listen } from "@tauri-apps/api/event";
 import { addEmptyTrack, addNewTrack, getTrackList } from "./backend/tracks";
-import { startRecording, stopRecording } from "./backend/project";
+import { startStream, stopStream } from "./backend/project";
 
 var trackList;
 var recording = false;
@@ -46,11 +46,9 @@ async function init() {
     recording = !recording;
 
     if (recording) {
-      startRecording();
-      console.log("start");
+      startStream();
     } else {
-      stopRecording();
-      console.log("stop");
+      stopStream();
     }
   });
 }

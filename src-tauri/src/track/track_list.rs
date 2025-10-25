@@ -10,10 +10,10 @@ use crate::track;
 #[derive(Deserialize)]
 pub enum TrackUpdate {
     Name(String),
+    Monitor(bool),
     Record(bool),
     Pan(f32),
     Gain(f32),
-    Monitor(bool),
     Mute(bool),
 }
 
@@ -67,9 +67,9 @@ impl TrackList {
                 }
             }
             TrackUpdate::Record(record) => track.record = record,
+            TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Pan(pan) => track.pan = pan,
             TrackUpdate::Gain(gain) => track.gain = gain,
-            TrackUpdate::Monitor(monitor) => track.monitor = monitor,
             TrackUpdate::Mute(mute) => track.mute = mute,
         }
     }

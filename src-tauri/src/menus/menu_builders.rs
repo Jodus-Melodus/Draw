@@ -170,8 +170,10 @@ fn update_master_output_device_track(app: &AppHandle) {
     let new_master_output_device = audio_context
         .output_device()
         .expect("Failed to get new master output device");
-    let new_output_source =
-        track::source::StreamSink::new(new_master_output_device, state_mixer.track_list.clone());
+    let new_output_source = track::sources::sink::StreamSink::new(
+        new_master_output_device,
+        state_mixer.track_list.clone(),
+    );
     master_output.sink = Box::new(new_output_source);
 }
 

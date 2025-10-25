@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{BufReader, BufWriter},
+    io::BufWriter,
     path::PathBuf,
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -12,109 +12,15 @@ use std::{
 
 use cpal::{
     traits::{DeviceTrait, StreamTrait},
-    Device, InputCallbackInfo, OutputCallbackInfo, Stream, SupportedStreamConfig,
+    Device, OutputCallbackInfo, Stream, SupportedStreamConfig,
 };
-use hound::{WavReader, WavSpec, WavWriter};
+use hound::{WavSpec, WavWriter};
 
-use crate::{track, types::RingBuffer};
-
-pub struct StreamSource {
-    recording: Arc<AtomicBool>,
-    ring_buffer: Arc<Mutex<RingBuffer>>,
-    stream: Arc<Stream>,
-    config: SupportedStreamConfig,
-}
-
-impl StreamSource {
-    pub fn new(device: Arc<Device>) -> Self {
-        if !device.supports_input() {
-            panic!("Device doesn't support input");
-        }
-
-        let recording = Arc::new(AtomicBool::new(false));
-        let ring_buffer = Arc::new(Mutex::new(RingBuffer::new()));
-        let ring_buffer_clone = ring_buffer.clone();
-        let config = device.default_input_config().unwrap();
-        let stream = Arc::new(
-            device
-                .build_input_stream(
-                    &config.config(),
-                    move |data: &[f32], _: &InputCallbackInfo| {
-                        if let Ok(mut rb) = ring_buffer_clone.lock() {
-                            for &sample in data {
-                                rb.push(sample);
-                            }
-                        }
-                    },
-                    move |err| eprintln!("Stream error: {}", err),
-                    None,
-                )
-                .expect("Failed to create input stream"),
-        );
-
-        StreamSource {
-            recording,
-            ring_buffer,
-            stream,
-            config,
-        }
-    }
-
-    pub fn start_stream(&mut self) {
-        let stream = self.stream.clone();
-        let recording = self.recording.clone();
-        if let Err(e) = stream.play() {
-            eprintln!("Failed to play stream: {}", e);
-        }
-        recording.store(true, Ordering::Relaxed);
-
-        thread::spawn(move || {
-            while recording.load(Ordering::Relaxed) {
-                thread::sleep(Duration::from_secs(1));
-            }
-
-            if let Err(e) = stream.pause() {
-                eprintln!("Failed to pause stream: {}", e);
-            }
-        });
-    }
-
-    pub fn stop_stream(&mut self) {
-        self.recording.store(false, Ordering::Relaxed);
-    }
-}
-
-pub struct FileSource {
-    reader: WavReader<BufReader<File>>,
-    config: WavSpec,
-}
-
-impl FileSource {
-    pub fn new(path: PathBuf) -> Self {
-        let reader = WavReader::open(path).expect("Failed to open file source");
-        let config = reader.spec();
-        FileSource { reader, config }
-    }
-}
-
-pub trait AudioSource: Send {
-    fn get_ring_buffer(&self) -> Arc<Mutex<RingBuffer>>;
-}
-
-impl AudioSource for StreamSource {
-    fn get_ring_buffer(&self) -> Arc<Mutex<RingBuffer>> {
-        self.ring_buffer.clone()
-    }
-}
-
-impl AudioSource for FileSource {
-    fn get_ring_buffer(&self) -> Arc<Mutex<RingBuffer>> {
-        todo!()
-    }
-}
+use crate::track;
 
 pub struct StreamSink {
     stream: Arc<Stream>,
+    streaming: Arc<AtomicBool>,
     config: SupportedStreamConfig,
 }
 
@@ -123,7 +29,7 @@ impl StreamSink {
         if !device.supports_output() {
             panic!("Device doesn't support output");
         }
-
+        let streaming = Arc::new(AtomicBool::new(false));
         let config = device.default_output_config().unwrap();
         let stream = Arc::new(
             device
@@ -151,7 +57,34 @@ impl StreamSink {
                 .expect("Failed to create output stream"),
         );
 
-        StreamSink { stream, config }
+        StreamSink {
+            stream,
+            config,
+            streaming,
+        }
+    }
+
+    fn start(&self) {
+        let stream = self.stream.clone();
+        let streaming = self.streaming.clone();
+        if let Err(e) = stream.play() {
+            eprintln!("Failed to play stream: {}", e);
+        }
+        streaming.store(true, Ordering::Relaxed);
+
+        thread::spawn(move || {
+            while streaming.load(Ordering::Relaxed) {
+                thread::sleep(Duration::from_secs(1));
+            }
+
+            if let Err(e) = stream.pause() {
+                eprintln!("Failed to pause stream: {}", e);
+            }
+        });
+    }
+
+    fn stop(&self) {
+        self.streaming.store(false, Ordering::Relaxed);
     }
 }
 
@@ -204,8 +137,27 @@ impl FileSink {
     }
 }
 
-pub trait AudioSink: Send {}
+pub trait AudioSink: Send {
+    fn start_stream(&self);
+    fn stop_stream(&self);
+}
 
-impl AudioSink for StreamSink {}
+impl AudioSink for StreamSink {
+    fn start_stream(&self) {
+        self.start();
+    }
 
-impl AudioSink for FileSink {}
+    fn stop_stream(&self) {
+        self.stop();
+    }
+}
+
+impl AudioSink for FileSink {
+    fn start_stream(&self) {
+        todo!()
+    }
+
+    fn stop_stream(&self) {
+        todo!()
+    }
+}
