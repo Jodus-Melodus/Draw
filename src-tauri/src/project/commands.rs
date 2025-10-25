@@ -19,13 +19,11 @@ pub fn save_project(app_handle: AppHandle) {
             if let Some(folder_path) = folder_path {
                 if let Some(path) = folder_path.as_path() {
                     let config = bincode::config::standard();
-
                     let mixer_state_path = path.join("mixer_state.mix");
                     let state_mixer_guard = app.state::<project::states::StateMixerGuard>();
                     let mixer_guard = state_mixer_guard.0.lock().unwrap();
                     let raw_state_mixer = project::states::StateMixerRaw::from(&*mixer_guard);
                     let encoded_mixer = bincode::encode_to_vec(&raw_state_mixer, config).unwrap();
-
                     let mut file = File::create(&mixer_state_path).expect(&format!(
                         "Failed to create file {}",
                         mixer_state_path.display()

@@ -137,8 +137,8 @@ pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
                 .expect("Failed to get main window");
             window.emit("updated-track-list", ()).unwrap();
         }
-        // "project-save-project" => project::commands::save_project(app_handle),
-        // "project-open-project" => project::commands::load_project(app_handle),
+        "project-save-project" => project::commands::save_project(app_handle.clone()),
+        "project-open-project" => project::commands::load_project(app_handle.clone()),
         _ if id.starts_with("preferences-output-device-") => {
             update_master_io_device_index(audio_context.output_device_index.clone(), id);
             update_radio_group_menu(app_handle, id);

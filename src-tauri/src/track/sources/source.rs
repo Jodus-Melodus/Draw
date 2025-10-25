@@ -47,7 +47,7 @@ impl StreamSource {
                             }
                         }
                     },
-                    move |err| eprintln!("Stream error: {}", err),
+                    move |err| eprintln!("Source stream error: {}", err),
                     None,
                 )
                 .expect("Failed to create input stream"),
