@@ -1,4 +1,7 @@
+use std::path::PathBuf;
+
 use crate::track;
+
 
 pub struct InputTrack {
     pub source: Box<dyn track::sources::source::AudioSource>,
@@ -19,6 +22,27 @@ impl InputTrack {
             pan: 0.0,
             mute: false,
             gain: 100.0,
+            record: false,
+            monitor: false,
+        }
+    }
+}
+
+impl From<track::raw::InputTrackRaw> for InputTrack {
+    fn from(value: track::raw::InputTrackRaw) -> Self {
+        InputTrack {
+            source: {
+                match value.source_type {
+                    track::sources::source::AudioSourceRaw::File(path) => {
+                        Box::new(track::sources::source::FileSource::new(PathBuf::from(path)))
+                    }
+                    track::sources::source::AudioSourceRaw::Stream(_) => todo!(),
+                }
+            },
+            name: value.name,
+            pan: value.pan,
+            mute: false,
+            gain: value.gain,
             record: false,
             monitor: false,
         }

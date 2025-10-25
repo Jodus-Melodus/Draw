@@ -1,6 +1,9 @@
-use std::sync::{
-    atomic::{AtomicUsize, Ordering},
-    Arc, Mutex,
+use std::{
+    collections::HashMap,
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc, Mutex,
+    },
 };
 
 use cpal::Device;
@@ -10,19 +13,19 @@ use crate::{
     types::{self},
 };
 
-// #[derive(bincode::Encode, bincode::Decode)]
-// pub struct StateMixerRaw {
-//     track_list: HashMap<String, track::raw::AudioTrackRaw>,
-// }
+#[derive(bincode::Encode, bincode::Decode)]
+pub struct StateMixerRaw {
+    track_list: HashMap<String, track::raw::InputTrackRaw>,
+}
 
-// impl From<StateMixer> for StateMixerRaw {
-//     fn from(value: StateMixer) -> Self {
-//         let track_list = value.track_list.lock().expect("Failed to lock track list");
-//         StateMixerRaw {
-//             track_list: track_list.to_raw(),
-//         }
-//     }
-// }
+impl From<&StateMixer> for StateMixerRaw {
+    fn from(value: &StateMixer) -> Self {
+        let track_list = value.track_list.lock().expect("Failed to lock track list");
+        StateMixerRaw {
+            track_list: track_list.to_raw(),
+        }
+    }
+}
 
 pub struct StateMixerGuard(pub Arc<Mutex<StateMixer>>);
 
@@ -46,16 +49,17 @@ impl StateMixer {
     }
 }
 
-// impl From<StateMixerRaw> for StateMixer {
-//     fn from(value: StateMixerRaw) -> Self {
-//         let track_list = value.track_list;
-//         StateMixer {
-//             track_list: Arc::new(Mutex::new(track::track_list::TrackList::from_raw(
-//                 track_list,
-//             ))),
-//         }
-//     }
-// }
+impl From<StateMixerRaw> for StateMixer {
+    fn from(value: StateMixerRaw) -> Self {
+        let track_list = value.track_list;
+        StateMixer {
+            track_list: Arc::new(Mutex::new(track::track_list::TrackList::from_raw(
+                track_list,
+            ))),
+            master_out: { todo!() },
+        }
+    }
+}
 
 #[derive(Clone)]
 pub struct StateAudioContext {

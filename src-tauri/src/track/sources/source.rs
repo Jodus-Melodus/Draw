@@ -19,6 +19,7 @@ use hound::{WavReader, WavSpec};
 use crate::types;
 
 pub struct StreamSource {
+    pub device_name: String,
     streaming: Arc<AtomicBool>,
     ring_buffer: Arc<Mutex<types::RingBuffer>>,
     stream: Arc<Stream>,
@@ -30,7 +31,7 @@ impl StreamSource {
         if !device.supports_input() {
             panic!("Device doesn't support input");
         }
-
+        let device_name = device.name().unwrap();
         let streaming = Arc::new(AtomicBool::new(false));
         let ring_buffer = Arc::new(Mutex::new(types::RingBuffer::new()));
         let ring_buffer_clone = ring_buffer.clone();
@@ -53,6 +54,7 @@ impl StreamSource {
         );
 
         StreamSource {
+            device_name,
             streaming,
             ring_buffer,
             stream,
@@ -87,20 +89,32 @@ impl StreamSource {
 pub struct FileSource {
     reader: WavReader<BufReader<File>>,
     config: WavSpec,
+    path: PathBuf,
 }
 
 impl FileSource {
     pub fn new(path: PathBuf) -> Self {
-        let reader = WavReader::open(path).expect("Failed to open file source");
+        let reader = WavReader::open(&path).expect("Failed to open file source");
         let config = reader.spec();
-        FileSource { reader, config }
+        FileSource {
+            path,
+            reader,
+            config,
+        }
     }
+}
+
+#[derive(bincode::Encode, bincode::Decode)]
+pub enum AudioSourceRaw {
+    File(String),
+    Stream(String),
 }
 
 pub trait AudioSource: Send {
     fn get_ring_buffer(&self) -> Arc<Mutex<types::RingBuffer>>;
     fn start_stream(&self);
     fn stop_stream(&self);
+    fn kind(&self) -> AudioSourceRaw;
 }
 
 impl AudioSource for StreamSource {
@@ -115,6 +129,10 @@ impl AudioSource for StreamSource {
     fn stop_stream(&self) {
         self.stop();
     }
+
+    fn kind(&self) -> AudioSourceRaw {
+        AudioSourceRaw::Stream(self.device_name.clone())
+    }
 }
 
 impl AudioSource for FileSource {
@@ -128,5 +146,9 @@ impl AudioSource for FileSource {
 
     fn stop_stream(&self) {
         todo!()
+    }
+
+    fn kind(&self) -> AudioSourceRaw {
+        AudioSourceRaw::File(self.path.to_string_lossy().to_string())
     }
 }

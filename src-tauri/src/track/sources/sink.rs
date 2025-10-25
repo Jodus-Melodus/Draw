@@ -96,7 +96,10 @@ pub struct FileSink {
 impl FileSink {
     pub fn new(path: PathBuf, config: WavSpec) -> Self {
         let writer = WavWriter::create(path, config).ok();
-        FileSink { writer, config }
+        FileSink {
+            writer,
+            config,
+        }
     }
 
     pub fn save_to_wav(&mut self, data: Vec<f32>, count: usize) {

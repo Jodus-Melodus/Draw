@@ -41,7 +41,9 @@ pub async fn run() {
             track::commands::update_track,
             menus::commands::add_empty_track,
             project::commands::start_stream,
-            project::commands::stop_stream
+            project::commands::stop_stream,
+            project::commands::load_project,
+            project::commands::save_project
         ))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

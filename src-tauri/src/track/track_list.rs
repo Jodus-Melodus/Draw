@@ -74,28 +74,28 @@ impl TrackList {
         }
     }
 
-    // pub fn from_raw(raw_track_list: HashMap<String, track::raw::AudioTrackRaw>) -> Self {
-    //     let mut tracks = HashMap::new();
+    pub fn from_raw(raw_track_list: HashMap<String, track::raw::InputTrackRaw>) -> Self {
+        let mut tracks = HashMap::new();
 
-    //     for (track_name, raw_track) in raw_track_list {
-    //         tracks.insert(
-    //             track_name,
-    //             Arc::new(Mutex::new(track::track::InputTrack::from(raw_track))),
-    //         );
-    //     }
+        for (track_name, raw_track) in raw_track_list {
+            tracks.insert(
+                track_name,
+                Arc::new(Mutex::new(track::tracks::InputTrack::from(raw_track))),
+            );
+        }
 
-    //     TrackList { tracks }
-    // }
+        TrackList { tracks }
+    }
 
-    // pub fn to_raw(&self) -> HashMap<String, track::raw::AudioTrackRaw> {
-    //     self.tracks
-    //         .iter()
-    //         .map(|(key, value)| {
-    //             let audio_track = value.lock().expect("Failed to lock track");
-    //             (key.clone(), track::raw::AudioTrackRaw::from(&*audio_track))
-    //         })
-    //         .collect()
-    // }
+    pub fn to_raw(&self) -> HashMap<String, track::raw::InputTrackRaw> {
+        self.tracks
+            .iter()
+            .map(|(key, value)| {
+                let audio_track = value.lock().expect("Failed to lock track");
+                (key.clone(), track::raw::InputTrackRaw::from(&*audio_track))
+            })
+            .collect()
+    }
 
     pub fn as_response(&self) -> TrackListResponse {
         let mut tracks = Vec::new();
