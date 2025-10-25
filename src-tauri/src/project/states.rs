@@ -10,7 +10,7 @@ use cpal::Device;
 
 use crate::{
     track,
-    types::{self},
+    types,
 };
 
 #[derive(bincode::Encode, bincode::Decode)]
