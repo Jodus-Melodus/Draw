@@ -16,7 +16,7 @@ use cpal::{
 };
 use hound::{WavReader, WavSpec, WavWriter};
 
-use crate::types::RingBuffer;
+use crate::{track, types::RingBuffer};
 
 pub struct StreamSource {
     recording: Arc<AtomicBool>,
@@ -41,7 +41,9 @@ impl StreamSource {
                     &config.config(),
                     move |data: &[f32], _: &InputCallbackInfo| {
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
-                            rb.write(data);
+                            for &sample in data {
+                                rb.push(sample);
+                            }
                         }
                     },
                     move |err| eprintln!("Stream error: {}", err),
@@ -58,7 +60,7 @@ impl StreamSource {
         }
     }
 
-    pub fn start_recording(&mut self) {
+    pub fn start_stream(&mut self) {
         let stream = self.stream.clone();
         let recording = self.recording.clone();
         if let Err(e) = stream.play() {
@@ -68,7 +70,7 @@ impl StreamSource {
 
         thread::spawn(move || {
             while recording.load(Ordering::Relaxed) {
-                thread::sleep(Duration::from_millis(100));
+                thread::sleep(Duration::from_secs(1));
             }
 
             if let Err(e) = stream.pause() {
@@ -77,7 +79,7 @@ impl StreamSource {
         });
     }
 
-    pub fn stop_recording(&mut self) {
+    pub fn stop_stream(&mut self) {
         self.recording.store(false, Ordering::Relaxed);
     }
 }
@@ -95,11 +97,21 @@ impl FileSource {
     }
 }
 
-pub trait AudioSource: Send {}
+pub trait AudioSource: Send {
+    fn get_ring_buffer(&self) -> Arc<Mutex<RingBuffer>>;
+}
 
-impl AudioSource for StreamSource {}
+impl AudioSource for StreamSource {
+    fn get_ring_buffer(&self) -> Arc<Mutex<RingBuffer>> {
+        self.ring_buffer.clone()
+    }
+}
 
-impl AudioSource for FileSource {}
+impl AudioSource for FileSource {
+    fn get_ring_buffer(&self) -> Arc<Mutex<RingBuffer>> {
+        todo!()
+    }
+}
 
 pub struct StreamSink {
     stream: Arc<Stream>,
@@ -107,20 +119,30 @@ pub struct StreamSink {
 }
 
 impl StreamSink {
-    pub fn new(device: Arc<Device>, ring_buffer: Arc<Mutex<RingBuffer>>) -> Self {
+    pub fn new(device: Arc<Device>, track_list: Arc<Mutex<track::track_list::TrackList>>) -> Self {
         if !device.supports_output() {
             panic!("Device doesn't support output");
         }
 
-        let ring_buffer_clone = ring_buffer.clone();
         let config = device.default_output_config().unwrap();
         let stream = Arc::new(
             device
                 .build_output_stream(
                     &config.config(),
                     move |data: &mut [f32], _: &OutputCallbackInfo| {
-                        if let Ok(mut rb) = ring_buffer_clone.lock() {
-                            rb.read(data);
+                        for sample in data.iter_mut() {
+                            let mut sum = 0.0;
+                            if let Ok(tracks) = track_list.lock() {
+                                for track in tracks.get_tracks() {
+                                    if let Ok(t) = track.lock() {
+                                        let ring_buffer = t.source.get_ring_buffer();
+                                        if let Ok(mut rb) = ring_buffer.lock() {
+                                            sum += rb.pop().unwrap_or(0.0);
+                                        };
+                                    }
+                                }
+                                *sample = sum;
+                            }
                         }
                     },
                     move |err| eprintln!("Stream error: {}", err),

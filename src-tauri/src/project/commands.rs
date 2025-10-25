@@ -1,13 +1,3 @@
-use std::{
-    fs::File,
-    io::{Read, Write},
-    thread,
-};
-
-use tauri::{AppHandle, Emitter, Manager, State};
-use tauri_plugin_dialog::DialogExt;
-
-use crate::project::{self};
 
 // pub fn save_project(app_handle: &AppHandle) {
 //     let app = app_handle.clone();

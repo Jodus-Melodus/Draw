@@ -35,7 +35,7 @@ impl StateMixer {
     pub fn new(device: Arc<Device>) -> Self {
         let track_list = Arc::new(Mutex::new(track::track_list::TrackList::new()));
         let sink =
-            track::source::StreamSink::new(device, Arc::new(Mutex::new(types::RingBuffer::new())));
+            track::source::StreamSink::new(device, track_list.clone());
         let master_out = Arc::new(Mutex::new(track::tracks::OutputTrack::new(Box::new(sink))));
         StateMixer {
             track_list,

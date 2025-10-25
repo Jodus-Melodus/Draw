@@ -1,7 +1,7 @@
 use crate::track;
 
 pub struct InputTrack {
-    source: Box<dyn track::source::AudioSource>,
+    pub source: Box<dyn track::source::AudioSource>,
     pub name: String,
     pub pan: f32,
     pub mute: bool,

@@ -28,6 +28,10 @@ impl TrackList {
         }
     }
 
+    pub fn get_tracks(&self) -> Vec<Arc<Mutex<track::tracks::InputTrack>>> {
+        self.tracks.values().cloned().collect()
+    }
+
     pub fn add_track(&mut self, name: &str, track: track::tracks::InputTrack) {
         self.tracks.insert(name.into(), Arc::new(Mutex::new(track)));
     }
