@@ -1,32 +1,20 @@
 use crate::track;
 
-// TODO save stream also
 #[derive(bincode::Encode, bincode::Decode)]
-pub struct AudioTrackRaw {
-    pub track_type: track::track::TrackType,
-    pub file_source_path: String,
-    pub record: bool,
+pub struct InputTrackRaw {
+    pub name: String,
     pub gain: f32,
     pub pan: f32,
-    pub solo: bool,
-    pub monitor: bool,
-    pub mute: bool,
+    pub source_type: track::sources::source::AudioSourceRaw,
 }
 
-impl From<&track::track::AudioTrack> for AudioTrackRaw {
-    fn from(value: &track::track::AudioTrack) -> Self {
-        AudioTrackRaw {
-            track_type: value.track_type,
-            file_source_path: {
-                let file = value.file_source.lock().unwrap();
-                file.get_path()
-            },
-            record: value.record,
+impl From<&track::tracks::InputTrack> for InputTrackRaw {
+    fn from(value: &track::tracks::InputTrack) -> Self {
+        InputTrackRaw {
+            name: value.name.clone(),
             gain: value.gain,
             pan: value.pan,
-            solo: value.solo,
-            monitor: value.monitor,
-            mute: value.mute,
+            source_type: value.source.kind(),
         }
     }
 }

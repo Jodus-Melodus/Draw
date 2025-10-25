@@ -1,68 +1,56 @@
 use std::{collections::HashMap, sync::Arc};
 
-use cpal::traits::{DeviceTrait, HostTrait};
+use cpal::{
+    traits::{DeviceTrait, HostTrait},
+    Device, Host,
+};
 
-pub const RINGBUFFER_SIZE: usize = 960 * 50;
+const RINGBUFFER_SIZE: usize = 48000;
 
 pub struct RingBuffer {
-    buffer: [f32; RINGBUFFER_SIZE],
-    write_index: usize,
-    read_index: usize,
+    buffer: Vec<f32>,
+    read_idx: usize,
+    write_idx: usize,
+    full: bool,
 }
 
 impl RingBuffer {
     pub fn new() -> Self {
-        RingBuffer {
-            buffer: [0.0; RINGBUFFER_SIZE],
-            write_index: 0,
-            read_index: 0,
+        Self {
+            buffer: vec![0.0; RINGBUFFER_SIZE],
+            read_idx: 0,
+            write_idx: 0,
+            full: false,
         }
     }
 
-    pub fn write(&mut self, data: &[f32]) {
-        for &sample in data {
-            self.buffer[self.write_index] = sample;
-            self.write_index = (self.write_index + 1) % self.buffer.len();
-
-            if self.write_index == self.read_index {
-                self.read_index = (self.read_index + 1) % self.buffer.len();
-            }
+    pub fn push(&mut self, sample: f32) {
+        self.buffer[self.write_idx] = sample;
+        self.write_idx = (self.write_idx + 1) % self.buffer.len();
+        if self.full {
+            self.read_idx = (self.read_idx + 1) % self.buffer.len();
         }
+        self.full = self.write_idx == self.read_idx;
     }
-
-    pub fn read(&mut self, buffer: &mut [f32]) -> usize {
-        let unread = (self.write_index + self.buffer.len() - self.read_index) % self.buffer.len();
-        let to_read = unread.min(buffer.len());
-
-        for i in 0..to_read {
-            buffer[i] = self.buffer[self.read_index];
-            self.read_index = (self.read_index + 1) % self.buffer.len();
+    pub fn pop(&mut self) -> Option<f32> {
+        if !self.full && self.read_idx == self.write_idx {
+            return None;
         }
 
-        to_read
-    }
-
-    pub fn peek(&self, buffer: &mut [f32]) -> usize {
-        let unread = (self.write_index + self.buffer.len() - self.read_index) % self.buffer.len();
-        let to_read = unread.min(buffer.len());
-        let mut index = self.read_index;
-
-        for i in 0..to_read {
-            buffer[i] = self.buffer[index];
-            index = (index + 1) % self.buffer.len();
-        }
-
-        to_read
+        let sample = self.buffer[self.read_idx];
+        self.read_idx = (self.read_idx + 1) % self.buffer.len();
+        self.full = false;
+        Some(sample)
     }
 }
 
 #[derive(Clone)]
 pub struct InputDeviceRegistry {
-    devices: HashMap<String, Arc<cpal::Device>>,
+    devices: HashMap<String, Arc<Device>>,
 }
 
 impl InputDeviceRegistry {
-    pub fn new(host: &cpal::Host) -> Self {
+    pub fn new(host: &Host) -> Self {
         let mut map = HashMap::new();
         for device in host.input_devices().expect("No input devices available") {
             let name = device.name().unwrap_or_else(|_| "Unknown".into());
@@ -72,7 +60,7 @@ impl InputDeviceRegistry {
         Self { devices: map }
     }
 
-    pub fn get_from_name(&self, name: &str) -> Option<Arc<cpal::Device>> {
+    pub fn get_from_name(&self, name: &str) -> Option<Arc<Device>> {
         self.devices.get(name).cloned()
     }
 
@@ -87,11 +75,11 @@ impl InputDeviceRegistry {
 
 #[derive(Clone)]
 pub struct OutputDeviceRegistry {
-    devices: HashMap<String, Arc<cpal::Device>>,
+    devices: HashMap<String, Arc<Device>>,
 }
 
 impl OutputDeviceRegistry {
-    pub fn new(host: &cpal::Host) -> Self {
+    pub fn new(host: &Host) -> Self {
         let mut map = HashMap::new();
         for device in host.output_devices().expect("No output devices available") {
             let name = device.name().unwrap_or_else(|_| "Unknown".into());
@@ -101,7 +89,7 @@ impl OutputDeviceRegistry {
         Self { devices: map }
     }
 
-    pub fn get_from_name(&self, name: &str) -> Option<Arc<cpal::Device>> {
+    pub fn get_from_name(&self, name: &str) -> Option<Arc<Device>> {
         self.devices.get(name).cloned()
     }
 

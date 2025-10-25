@@ -1,15 +1,15 @@
 use std::{
     fs::File,
     io::{Read, Write},
-    thread,
 };
 
 use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_dialog::DialogExt;
 
-use crate::project::{self};
+use crate::project;
 
-pub fn save_project(app_handle: &AppHandle) {
+#[tauri::command]
+pub fn save_project(app_handle: AppHandle) {
     let app = app_handle.clone();
 
     app.dialog()
@@ -19,13 +19,11 @@ pub fn save_project(app_handle: &AppHandle) {
             if let Some(folder_path) = folder_path {
                 if let Some(path) = folder_path.as_path() {
                     let config = bincode::config::standard();
-
                     let mixer_state_path = path.join("mixer_state.mix");
                     let state_mixer_guard = app.state::<project::states::StateMixerGuard>();
                     let mixer_guard = state_mixer_guard.0.lock().unwrap();
-                    let raw_state_mixer = project::states::StateMixerRaw::from(mixer_guard.clone());
+                    let raw_state_mixer = project::states::StateMixerRaw::from(&*mixer_guard);
                     let encoded_mixer = bincode::encode_to_vec(&raw_state_mixer, config).unwrap();
-
                     let mut file = File::create(&mixer_state_path).expect(&format!(
                         "Failed to create file {}",
                         mixer_state_path.display()
@@ -40,7 +38,7 @@ pub fn save_project(app_handle: &AppHandle) {
 }
 
 #[tauri::command]
-pub fn load_project(app_handle: &AppHandle) {
+pub fn load_project(app_handle: AppHandle) {
     let app = app_handle.clone();
 
     app.dialog()
@@ -80,41 +78,29 @@ pub fn load_project(app_handle: &AppHandle) {
 }
 
 #[tauri::command]
-pub fn start_recording(mixer: State<project::states::StateMixerGuard>) {
+pub fn start_stream(mixer: State<project::states::StateMixerGuard>) {
     let mixer_state = mixer.0.lock().unwrap();
-    let tracks = mixer_state.track_list.clone();
+    let track_list = mixer_state.track_list.lock().unwrap();
 
-    thread::spawn(move || {
-        let track_list = tracks.lock().unwrap();
-        let track_names = track_list.track_list();
-
-        for track_name in track_names {
-            if let Some(track) = track_list.get_track(&track_name) {
-                let mut track_lock = track.lock().unwrap();
-                track_lock.start_recording();
-            } else {
-                eprintln!("Failed to get track");
-            }
+    for track in track_list.get_tracks() {
+        if let Ok(t) = track.lock() {
+            t.source.start_stream();
+        } else {
+            eprintln!("Failed to lock track");
         }
-    });
+    }
 }
 
 #[tauri::command]
-pub fn stop_recording(mixer: State<project::states::StateMixerGuard>) {
+pub fn stop_stream(mixer: State<project::states::StateMixerGuard>) {
     let mixer_state = mixer.0.lock().unwrap();
-    let tracks = mixer_state.track_list.clone();
+    let track_list = mixer_state.track_list.lock().unwrap();
 
-    thread::spawn(move || {
-        let track_list = tracks.lock().unwrap();
-        let track_names = track_list.track_list();
-
-        for track_name in track_names {
-            if let Some(track) = track_list.get_track(&track_name) {
-                let mut track_lock = track.lock().unwrap();
-                track_lock.stop_recording();
-            } else {
-                eprintln!("Failed to get track");
-            }
+    for track in track_list.get_tracks() {
+        if let Ok(t) = track.lock() {
+            t.source.stop_stream();
+        } else {
+            eprintln!("Failed to lock track");
         }
-    });
+    }
 }

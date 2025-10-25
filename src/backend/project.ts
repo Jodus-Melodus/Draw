@@ -1,19 +1,19 @@
 import { invoke } from "@tauri-apps/api/core";
 
-export async function startRecording() {
+export async function startStream() {
     try {
-        await invoke("start_recording", {});
-        console.log("Started recording");
+        await invoke("start_stream", {});
+        console.log("Started stream");
     } catch (err) {
-        console.error("Failed to start recording:", err);
+        console.error("Failed to start stream:", err);
     }
 }
 
-export async function stopRecording() {
+export async function stopStream() {
     try {
-        await invoke("stop_recording", {});
-        console.log("Stopped recording");
+        await invoke("stop_stream", {});
+        console.log("Stopped stream");
     } catch (err) {
-        console.error("Failed to stop recording:", err);
+        console.error("Failed to stop stream:", err);
     }
 }
