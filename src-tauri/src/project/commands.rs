@@ -80,27 +80,17 @@ pub fn load_project(app_handle: AppHandle) {
 #[tauri::command]
 pub fn start_stream(mixer: State<project::states::StateMixerGuard>) {
     let mixer_state = mixer.0.lock().unwrap();
-    let track_list = mixer_state.track_list.lock().unwrap();
-
-    for track in track_list.get_tracks() {
-        if let Ok(t) = track.lock() {
-            t.source.start_stream();
-        } else {
-            eprintln!("Failed to lock track");
-        }
-    }
+    let master_out = mixer_state.master_out.clone();
+    if let Ok(output) = master_out.lock() {
+        output.sink.start_stream();
+    };
 }
 
 #[tauri::command]
 pub fn stop_stream(mixer: State<project::states::StateMixerGuard>) {
     let mixer_state = mixer.0.lock().unwrap();
-    let track_list = mixer_state.track_list.lock().unwrap();
-
-    for track in track_list.get_tracks() {
-        if let Ok(t) = track.lock() {
-            t.source.stop_stream();
-        } else {
-            eprintln!("Failed to lock track");
-        }
-    }
+    let master_out = mixer_state.master_out.clone();
+    if let Ok(output) = master_out.lock() {
+        output.sink.stop_stream();
+    };
 }
