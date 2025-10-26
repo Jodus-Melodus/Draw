@@ -165,7 +165,8 @@ fn update_master_io_device_index(device_index: Arc<AtomicUsize>, id: &str) {
 fn update_master_output_device_track(app: &AppHandle) {
     let state_mixer_guard = app.state::<project::states::StateMixerGuard>();
     let state_mixer = state_mixer_guard.0.lock().unwrap();
-    let mut master_output = state_mixer.master_out.lock().unwrap();
+    let out = state_mixer.master_out.clone();
+    let mut master_output = out.lock().unwrap();
     let audio_context = app.state::<project::states::StateAudioContext>();
     let new_master_output_device = audio_context
         .output_device()
@@ -173,8 +174,9 @@ fn update_master_output_device_track(app: &AppHandle) {
     let new_output_source = track::sources::sink::StreamSink::new(
         new_master_output_device,
         state_mixer.track_list.clone(),
+        out.clone(),
     );
-    master_output.sink = Box::new(new_output_source);
+    master_output.sink = Some(Box::new(new_output_source));
 }
 
 fn update_radio_group_menu(app: &AppHandle, id: &str) {

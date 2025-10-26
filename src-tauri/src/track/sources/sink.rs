@@ -25,7 +25,11 @@ pub struct StreamSink {
 }
 
 impl StreamSink {
-    pub fn new(device: Arc<Device>, track_list: Arc<Mutex<track::track_list::TrackList>>) -> Self {
+    pub fn new(
+        device: Arc<Device>,
+        track_list: Arc<Mutex<track::track_list::TrackList>>,
+        master_out: Arc<Mutex<track::tracks::OutputTrack>>,
+    ) -> Self {
         if !device.supports_output() {
             panic!("Device doesn't support output");
         }
@@ -36,20 +40,23 @@ impl StreamSink {
                 .build_output_stream(
                     &config.config(),
                     move |data: &mut [f32], _: &OutputCallbackInfo| {
-                        for sample in data.iter_mut() {
-                            let mut sum = 0.0;
-                            if let Ok(tracks) = track_list.lock() {
-                                for track in tracks.get_tracks() {
-                                    if let Ok(t) = track.lock() {
-                                        if t.monitor {
-                                            let ring_buffer = t.source.get_ring_buffer();
-                                            if let Ok(mut rb) = ring_buffer.lock() {
-                                                sum += rb.pop().unwrap_or(0.0) * t.gain;
-                                            };
+                        if let Ok(master_out) = master_out.lock() {
+                            for sample in data.iter_mut() {
+                                let mut sum = 0.0;
+                                if let Ok(tracks) = track_list.lock() {
+                                    for track in tracks.get_tracks() {
+                                        if let Ok(t) = track.lock() {
+                                            if t.monitor {
+                                                let ring_buffer = t.source.get_ring_buffer();
+                                                if let Ok(mut rb) = ring_buffer.lock() {
+                                                    sum +=
+                                                        rb.pop().unwrap_or(0.0) * (t.gain / 100.0);
+                                                };
+                                            }
                                         }
                                     }
+                                    *sample = sum * (master_out.gain / 100.0);
                                 }
-                                *sample = sum;
                             }
                         }
                     },

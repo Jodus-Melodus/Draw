@@ -49,13 +49,13 @@ impl From<track::raw::InputTrackRaw> for InputTrack {
 }
 
 pub struct OutputTrack {
-    pub sink: Box<dyn track::sources::sink::AudioSink>,
+    pub sink: Option<Box<dyn track::sources::sink::AudioSink>>,
     pub gain: f32,
     pub pan: f32,
 }
 
 impl OutputTrack {
-    pub fn new(sink: Box<dyn track::sources::sink::AudioSink>) -> Self {
+    pub fn new(sink: Option<Box<dyn track::sources::sink::AudioSink>>) -> Self {
         OutputTrack {
             sink,
             gain: 100.0,
