@@ -79,18 +79,10 @@ pub fn load_project(app_handle: AppHandle) {
 
 #[tauri::command]
 pub fn start_stream(mixer: State<project::states::StateMixerGuard>) {
-    let mixer_state = mixer.0.lock().unwrap();
-    let master_out = mixer_state.master_out.clone();
-    if let Ok(output) = master_out.lock() {
-        output.sink.start_stream();
-    };
+    eprintln!("Not implemented");
 }
 
 #[tauri::command]
 pub fn stop_stream(mixer: State<project::states::StateMixerGuard>) {
-    let mixer_state = mixer.0.lock().unwrap();
-    let master_out = mixer_state.master_out.clone();
-    if let Ok(output) = master_out.lock() {
-        output.sink.stop_stream();
-    };
+    eprintln!("Not implemented");
 }
