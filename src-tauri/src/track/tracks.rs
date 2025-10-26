@@ -20,7 +20,7 @@ impl InputTrack {
             name: name.to_string(),
             pan: 0.0,
             mute: false,
-            gain: 50.0,
+            gain: 0.5, // Initialize at 50% volume
             record: false,
             monitor: false,
         }
@@ -58,7 +58,7 @@ impl OutputTrack {
     pub fn new(sink: Option<Box<dyn track::sources::sink::AudioSink>>) -> Self {
         OutputTrack {
             sink,
-            gain: 100.0,
+            gain: 1.0,
             pan: 0.0,
         }
     }
