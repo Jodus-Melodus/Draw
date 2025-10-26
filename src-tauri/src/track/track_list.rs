@@ -55,28 +55,33 @@ impl TrackList {
     }
 
     pub fn update_track(&mut self, track_name: &str, update: TrackUpdate) {
-        let track_arc = self.get_track(track_name).expect("Track not found");
-        let mut track = track_arc.lock().expect("Failed to lock track");
+        if let Some(track_arc) = self.get_track(track_name) {
+            let mut track = track_arc.lock().expect("Failed to lock track");
 
-        match update {
-            TrackUpdate::Name(name) => {
-                if let Some(track) = self.remove_track(track_name) {
-                    self.add_arc_mut_track(&name, track);
-                } else {
-                    eprintln!("No existing track with that name");
+            match update {
+                TrackUpdate::Name(name) => {
+                    if let Some(track) = self.remove_track(track_name) {
+                        self.add_arc_mut_track(&name, track);
+                    } else {
+                        eprintln!("No existing track with that name");
+                    }
                 }
+                TrackUpdate::Record(record) => track.record = record,
+                TrackUpdate::Monitor(monitor) => track.monitor = monitor,
+                TrackUpdate::Pan(pan) => track.pan = pan,
+                TrackUpdate::Gain(gain) => track.gain = gain,
+                TrackUpdate::Mute(mute) => track.mute = mute,
             }
-            TrackUpdate::Record(record) => track.record = record,
-            TrackUpdate::Monitor(monitor) => track.monitor = monitor,
-            TrackUpdate::Pan(pan) => track.pan = pan,
-            TrackUpdate::Gain(gain) => track.gain = gain,
-            TrackUpdate::Mute(mute) => track.mute = mute,
-        }
 
-        if track.monitor || track.record {
-            track.source.start_stream();
+            if track.monitor || track.record {
+                track.source.start_stream();
+            } else {
+                track.source.stop_stream();
+            }
+
+            println!("Updated: {} gain to {}", track.name, track.gain);
         } else {
-            track.source.stop_stream();
+            eprintln!("Track not found");
         }
     }
 
