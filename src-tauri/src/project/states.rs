@@ -8,10 +8,7 @@ use std::{
 
 use cpal::Device;
 
-use crate::{
-    track,
-    types,
-};
+use crate::{track, types};
 
 #[derive(bincode::Encode, bincode::Decode)]
 pub struct StateMixerRaw {
@@ -37,10 +34,15 @@ pub struct StateMixer {
 impl StateMixer {
     pub fn new(device: Arc<Device>) -> Self {
         let track_list = Arc::new(Mutex::new(track::track_list::TrackList::new()));
-        let sink = track::sources::sink::StreamSink::new(device, track_list.clone());
-        let master_out = Arc::new(Mutex::new(track::tracks::OutputTrack::new(Box::new(sink))));
-        if let Ok(output) = master_out.lock() {
-            output.sink.start_stream();
+        let master_out = Arc::new(Mutex::new(track::tracks::OutputTrack::new(None)));
+        let sink =
+            track::sources::sink::StreamSink::new(device, track_list.clone(), master_out.clone());
+
+        if let Ok(mut master_out) = master_out.lock() {
+            master_out.sink = Some(Box::new(sink));
+            if let Some(ref sink) = master_out.sink {
+                sink.start_stream();
+            }
         }
         StateMixer {
             track_list,

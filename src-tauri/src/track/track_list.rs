@@ -78,8 +78,6 @@ impl TrackList {
             } else {
                 track.source.stop_stream();
             }
-
-            println!("Updated: {} gain to {}", track.name, track.gain);
         } else {
             eprintln!("Track not found");
         }

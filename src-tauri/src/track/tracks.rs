@@ -2,7 +2,6 @@ use std::path::PathBuf;
 
 use crate::track;
 
-
 pub struct InputTrack {
     pub source: Box<dyn track::sources::source::AudioSource>,
     pub name: String,
@@ -21,7 +20,7 @@ impl InputTrack {
             name: name.to_string(),
             pan: 0.0,
             mute: false,
-            gain: 50.0,
+            gain: 0.5, // Initialize at 50% volume
             record: false,
             monitor: false,
         }
@@ -50,13 +49,18 @@ impl From<track::raw::InputTrackRaw> for InputTrack {
 }
 
 pub struct OutputTrack {
-    pub sink: Box<dyn track::sources::sink::AudioSink>,
+    pub sink: Option<Box<dyn track::sources::sink::AudioSink>>,
     pub gain: f32,
+    pub pan: f32,
 }
 
 impl OutputTrack {
-    pub fn new(sink: Box<dyn track::sources::sink::AudioSink>) -> Self {
-        OutputTrack { sink, gain: 100.0 }
+    pub fn new(sink: Option<Box<dyn track::sources::sink::AudioSink>>) -> Self {
+        OutputTrack {
+            sink,
+            gain: 1.0,
+            pan: 0.0,
+        }
     }
 
     pub fn as_response(&self) -> track::track_list::TrackInfo {

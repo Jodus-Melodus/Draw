@@ -1,5 +1,6 @@
 import type { TrackInfo, TrackListResponse, TrackUpdate } from "./types.js";
 import { invoke } from "@tauri-apps/api/core";
+import { percentToDb, percentToGain } from "./utils.js";
 
 /**
  * Get a list of all the input and output tracks
@@ -267,7 +268,9 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         percent = Math.round(percent);
         newY = ((100 - percent) / 100) * faderRange + (channelFaderThumb.offsetHeight / 2);
         channelFaderThumb.style.top = `${newY}px`;
-        updateTrack(track.name, { Gain: percent });
+        // let gain = percentToGain(percent);
+        const gain = Math.pow(10, percentToDb(percent) / 20);
+        updateTrack(track.name, { Gain: gain });
     });
 
     channelFader.addEventListener("wheel", (e) => {
@@ -276,12 +279,14 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         let currentTop = parseFloat(channelFaderThumb.style.top || "0");
         const faderRange = faderRect.height - channelFaderThumb.offsetHeight;
         let currentPercent = 100 - ((currentTop - channelFaderThumb.offsetHeight / 2) / faderRange) * 100;
-        const step = e.shiftKey ? 0.1 : 1; // hold Shift for fine control
+        const step = e.shiftKey ? 0.1 : 1;
         const delta = e.deltaY > 0 ? -step : step;
-        let newPercent = Math.max(0, Math.min(currentPercent + delta, 100));
-        const newY = ((100 - newPercent) / 100) * faderRange + (channelFaderThumb.offsetHeight / 2);
+        let percent = Math.max(0, Math.min(currentPercent + delta, 100));
+        const newY = ((100 - percent) / 100) * faderRange + (channelFaderThumb.offsetHeight / 2);
         channelFaderThumb.style.top = `${newY}px`;
-        updateTrack(track.name, { Gain: newPercent });
+        // let gain = percentToGain(percent);
+        const gain = Math.pow(10, percentToDb(percent) / 20);
+        updateTrack(track.name, { Gain: gain });
     });
 
     trackContainer.appendChild(newTrack);
