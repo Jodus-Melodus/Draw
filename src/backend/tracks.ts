@@ -52,6 +52,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const channelSoloButton = newChannel.querySelector(".channel-solo") as HTMLElement;
     const channelRecordButton = newChannel.querySelector(".channel-record") as HTMLElement;
     const channelMonitorButton = newChannel.querySelector(".channel-monitor") as HTMLElement;
+    const channelFader = newChannel.querySelector(".fader") as HTMLElement;
+    const channelFaderThumb = newChannel.querySelector(".fader-thumb") as HTMLElement;
 
     trackName.textContent = track.name;
     channelName.textContent = track.name;
@@ -76,6 +78,9 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         trackMonitorButton.classList.add("active");
         channelMonitorButton.classList.add("active");
     }
+
+    channelFaderThumb.dataset.dragging = "false";
+    channelFaderThumb.dataset.offSetY = "0";
 
     trackMuteButton.addEventListener("click", async () => {
         const active = trackMuteButton.classList.contains("active");
@@ -235,6 +240,48 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
             trackMonitorButton.classList.add("active");
             channelMonitorButton.classList.add("active");
         }
+    });
+
+    channelFaderThumb.addEventListener("mousedown", (e) => {
+        channelFaderThumb.dataset.dragging = "true";
+        channelFaderThumb.dataset.offsetY = (e.clientY - channelFaderThumb.getBoundingClientRect().top).toString();
+        channelFaderThumb.style.cursor = "grabbing";
+    });
+
+    window.addEventListener("mouseup", () => {
+        channelFaderThumb.dataset.dragging = "false";
+        channelFaderThumb.style.cursor = "grab";
+    });
+
+    window.addEventListener("mousemove", (e) => {
+        if (channelFaderThumb.dataset.dragging !== "true") return;
+        const faderRect = channelFader.getBoundingClientRect();
+        const offsetY = parseFloat(channelFaderThumb.dataset.offsetY ?? "0");
+        let newY = e.clientY - faderRect.top - offsetY;
+        newY = Math.max(
+            channelFaderThumb.offsetHeight / 2,
+            Math.min(newY, faderRect.height - channelFaderThumb.offsetHeight / 2)
+        );
+        const faderRange = faderRect.height - channelFaderThumb.offsetHeight;
+        let percent = 100 - ((newY - channelFaderThumb.offsetHeight / 2) / faderRange) * 100;
+        percent = Math.round(percent);
+        newY = ((100 - percent) / 100) * faderRange + (channelFaderThumb.offsetHeight / 2);
+        channelFaderThumb.style.top = `${newY}px`;
+        updateTrack(track.name, { Gain: percent });
+    });
+
+    channelFader.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const faderRect = channelFader.getBoundingClientRect();
+        let currentTop = parseFloat(channelFaderThumb.style.top || "0");
+        const faderRange = faderRect.height - channelFaderThumb.offsetHeight;
+        let currentPercent = 100 - ((currentTop - channelFaderThumb.offsetHeight / 2) / faderRange) * 100;
+        const step = e.shiftKey ? 0.1 : 1; // hold Shift for fine control
+        const delta = e.deltaY > 0 ? -step : step;
+        let newPercent = Math.max(0, Math.min(currentPercent + delta, 100));
+        const newY = ((100 - newPercent) / 100) * faderRange + (channelFaderThumb.offsetHeight / 2);
+        channelFaderThumb.style.top = `${newY}px`;
+        updateTrack(track.name, { Gain: newPercent });
     });
 
     trackContainer.appendChild(newTrack);
