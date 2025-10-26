@@ -10,7 +10,7 @@ use cpal::Device;
 
 use crate::{
     track,
-    types::{self},
+    types,
 };
 
 #[derive(bincode::Encode, bincode::Decode)]
@@ -39,9 +39,9 @@ impl StateMixer {
         let track_list = Arc::new(Mutex::new(track::track_list::TrackList::new()));
         let sink = track::sources::sink::StreamSink::new(device, track_list.clone());
         let master_out = Arc::new(Mutex::new(track::tracks::OutputTrack::new(Box::new(sink))));
-        let output = master_out.clone();
-        let out = output.lock().unwrap();
-        out.sink.start_stream();
+        if let Ok(output) = master_out.lock() {
+            output.sink.start_stream();
+        }
         StateMixer {
             track_list,
             master_out,

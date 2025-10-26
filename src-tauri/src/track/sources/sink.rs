@@ -41,10 +41,12 @@ impl StreamSink {
                             if let Ok(tracks) = track_list.lock() {
                                 for track in tracks.get_tracks() {
                                     if let Ok(t) = track.lock() {
-                                        let ring_buffer = t.source.get_ring_buffer();
-                                        if let Ok(mut rb) = ring_buffer.lock() {
-                                            sum += rb.pop().unwrap_or(0.0);
-                                        };
+                                        if t.monitor {
+                                            let ring_buffer = t.source.get_ring_buffer();
+                                            if let Ok(mut rb) = ring_buffer.lock() {
+                                                sum += rb.pop().unwrap_or(0.0);
+                                            };
+                                        }
                                     }
                                 }
                                 *sample = sum;

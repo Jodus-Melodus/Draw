@@ -72,6 +72,12 @@ impl TrackList {
             TrackUpdate::Gain(gain) => track.gain = gain,
             TrackUpdate::Mute(mute) => track.mute = mute,
         }
+
+        if track.monitor || track.record {
+            track.source.start_stream();
+        } else {
+            track.source.stop_stream();
+        }
     }
 
     pub fn from_raw(raw_track_list: HashMap<String, track::raw::InputTrackRaw>) -> Self {
