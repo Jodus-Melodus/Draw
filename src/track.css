@@ -1,48 +1,34 @@
 .track {
-  width: 150px;
+  width: 100%;
   height: 50px;
-
   position: relative;
-  left: 5px;
-  top: 15px;
-
-  font-size: 20px;
-  
-  background-color: #c0c0c0;
+  background-color: #464646;
   color: white;
-
-  border: 5px solid rgb(153, 153, 153);
-  border-radius: 10px;
+  border: 5px solid rgb(161, 161, 161);
+  border-radius: 5px;
 }
 
 .track-name {
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-
+  display: flex;
+  justify-content: center;
   position: relative;
-  top: 0px;
-
+  font-size: clamp(16px, 2.5vw, 24px);
   color: white;
-  font-size: 20px;
 }
 
 .track-mute {
   width: 30px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 15px;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 15px;
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 12px;
-
   position: absolute;
   top: 50%;
   left: 1%;
-  
-  border: 2px solid rgb(83, 83, 83);
-
+  border: 2px solid rgb(161, 161, 161);
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
@@ -50,21 +36,17 @@
 
 .track-solo {
   width: 30px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 15px;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 15px;
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 12px;
-
   position: absolute;
   top: 50%;
   left: 26%;
-  
   border: 2px solid rgb(83, 83, 83);
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease
@@ -72,21 +54,17 @@
 
 .track-record {
   width: 30px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 15px;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 15px;
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 12px;
-
   position: absolute;
   top: 50%;
   left: 51%;
-  
   border: 2px solid rgb(83, 83, 83);
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease
@@ -99,21 +77,17 @@
 
 .track-monitor {
   width: 30px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 15px;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 15px;
   background-color: rgb(153, 153, 153);
   color: white;
   font-size: 12px;
-
   position: absolute;
   top: 50%;
   left: 76%;
-  
   border: 2px solid rgb(83, 83, 83);
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease

@@ -1,13 +1,13 @@
 /* channel-strip */
 .channel-strip {
-  width: 100px;
-  height: 300px;
-  background-color: #c0c0c0;  
+  width: 6%;
+  height: 100%;
+  background-color: #464646;  
   position: relative;
-  top: 0%;
-  left: 5px;
   border: 5px solid rgb(116, 116, 116);
-  border-radius: 10px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  margin-left: 5px
 }
 
 /* meters */
@@ -18,7 +18,7 @@
   position: absolute;
   top: 17%;
   left: 60%; 
-  border: 1px solid black;
+  border: 1px solid rgb(128, 128, 128);
 }
 
 .meterL {
@@ -28,7 +28,7 @@
   position: absolute;
   top: 17%;
   left: 80%;  
-  border: 1px solid black;
+  border: 1px solid rgb(128, 128, 128);
 }
 
 .metergain {
@@ -148,8 +148,6 @@
   transform: translate(-50%, -50%);
 
   border: 1px solid #999999;
-
-  cursor: grab;
   user-select: none;
   transition: background-color 0.2s ease;
 }

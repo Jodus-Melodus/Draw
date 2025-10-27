@@ -1,0 +1,59 @@
+.project-window {
+    width: 100vw;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.track-list {
+    background-color: #2B2B2B;
+    width: 12%;
+    height: 100%;
+    padding: 5px;
+    padding-right: 15px;
+    border-radius: 5px;
+
+    /* Scrolling */
+    overflow: hidden;
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+.mix-console {
+    width: 100vw;
+    height: 35vh;
+    display: flex;
+    position: relative;
+    background-color: #2B2B2B;
+    padding-top: 5px;
+    padding-bottom: 15px;
+    padding-right: 15px;
+    margin-bottom: 15px;
+    margin: 5px;
+    border-radius: 5px;
+
+    /* Scrolling */
+    box-sizing: border-box;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.project-buttons {
+    background-color: #2B2B2B;
+    margin-bottom: 5px;
+}
+
+.add-track {
+    background-color: rgb(100, 100, 100);
+    width: 1.5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.add-track:hover {
+    background-color: #3b3b3b;
+    cursor: pointer;
+}

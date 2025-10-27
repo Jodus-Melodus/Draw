@@ -17,8 +17,9 @@
         "title": "Draw",
         "center": true,
         "maximized": true,
-        "resizable": false,
-        "url": "index.html"
+        "url": "index.html",
+        "minHeight": 810,
+        "minWidth": 1440
       }
     ],
     "security": {

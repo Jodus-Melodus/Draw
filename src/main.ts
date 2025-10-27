@@ -41,16 +41,16 @@ async function init() {
     console.log("Received audio");
   });
 
-  const recordingButton = document.getElementById("recording") as HTMLElement;
-  recordingButton.addEventListener("click", () => {
-    recording = !recording;
+  // const recordingButton = document.getElementById("recording") as HTMLElement;
+  // recordingButton.addEventListener("click", () => {
+  //   recording = !recording;
 
-    if (recording) {
-      startStream();
-    } else {
-      stopStream();
-    }
-  });
+  //   if (recording) {
+  //     startStream();
+  //   } else {
+  //     stopStream();
+  //   }
+  // });
 }
 
 init();
