@@ -109,8 +109,6 @@ impl FileSink {
 
     pub fn save_to_wav(&mut self, data: Vec<f32>, count: usize) {
         if let Some(writer) = &mut self.writer {
-            // Ensure we write a multiple of channels. If count is not a multiple of channels,
-            // pad the remaining samples with zeros so finalize doesn't fail.
             let ch = self.config.channels as usize;
             let mut to_write = data.into_iter().take(count).collect::<Vec<f32>>();
             let remainder = to_write.len() % ch;
