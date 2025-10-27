@@ -34,8 +34,6 @@ pub fn update_track(
                 track::track_list::TrackUpdate::Gain(gain) => output.gain = gain,
                 _ => (),
             }
-
-            println!("Master out gain: {}", output.gain);
         };
     } else {
         let mut list = state_mixer
