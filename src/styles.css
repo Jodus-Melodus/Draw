@@ -1,11 +1,14 @@
 * {
-  user-select: none; /* prevent user from selecting text */
+  user-select: none;
+  /* prevent user from selecting text */
 }
 
-html,body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
+  background-color: rgb(72, 72, 72);
 }
 
 /* media-controls */
@@ -21,10 +24,14 @@ html,body {
 
 .beginning {
   width: 97px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 48px;            /* height */
+  display: flex;
+  /* use to align */
+  justify-content: center;
+  /* horizontal */
+  align-items: center;
+  /* vertical */
+  height: 48px;
+  /* height */
   color: white;
   position: relative;
   left: 0%;
@@ -36,10 +43,14 @@ html,body {
 
 .pause {
   width: 97px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 48px;            /* height */
+  display: flex;
+  /* use to align */
+  justify-content: center;
+  /* horizontal */
+  align-items: center;
+  /* vertical */
+  height: 48px;
+  /* height */
   color: white;
   position: relative;
   left: 25%;
@@ -51,10 +62,14 @@ html,body {
 
 .play {
   width: 97px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 48px;            /* height */
+  display: flex;
+  /* use to align */
+  justify-content: center;
+  /* horizontal */
+  align-items: center;
+  /* vertical */
+  height: 48px;
+  /* height */
   color: white;
   position: relative;
   left: 50%;
@@ -66,10 +81,14 @@ html,body {
 
 .record {
   width: 97px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 48px;            /* height */
+  display: flex;
+  /* use to align */
+  justify-content: center;
+  /* horizontal */
+  align-items: center;
+  /* vertical */
+  height: 48px;
+  /* height */
   color: white;
   position: relative;
   left: 75%;
@@ -81,15 +100,19 @@ html,body {
 
 .track-time {
   width: 75px;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 25px;            /* height */
+  display: flex;
+  /* use to align */
+  justify-content: center;
+  /* horizontal */
+  align-items: center;
+  /* vertical */
+  height: 25px;
+  /* height */
   color: white;
   position: relative;
   left: 78%;
   top: 80%;
   background-color: rgb(72, 72, 72);
   border: 2px solid rgb(153, 153, 153);
-  border-radius: 4px; 
+  border-radius: 4px;
 }

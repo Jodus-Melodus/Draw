@@ -2,10 +2,10 @@
 .channel-strip {
   width: 6%;
   height: 100%;
-  background-color: #c0c0c0;  
+  background-color: #464646;  
   position: relative;
   border: 5px solid rgb(116, 116, 116);
-  border-radius: 10px;
+  border-radius: 5px;
   flex-shrink: 0;
   margin-left: 5px
 }
@@ -18,7 +18,7 @@
   position: absolute;
   top: 17%;
   left: 60%; 
-  border: 1px solid black;
+  border: 1px solid rgb(128, 128, 128);
 }
 
 .meterL {
@@ -28,7 +28,7 @@
   position: absolute;
   top: 17%;
   left: 80%;  
-  border: 1px solid black;
+  border: 1px solid rgb(128, 128, 128);
 }
 
 .metergain {
