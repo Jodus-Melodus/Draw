@@ -17,7 +17,6 @@
         "title": "Draw",
         "center": true,
         "maximized": true,
-        "resizable": false,
         "url": "index.html"
       }
     ],
