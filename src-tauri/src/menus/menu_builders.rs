@@ -176,7 +176,7 @@ fn update_master_output_device_track(app: &AppHandle) {
         state_mixer.track_list.clone(),
         out.clone(),
     );
-    master_output.sink = Some(Box::new(new_output_source));
+    master_output.sink = Box::new(new_output_source);
 }
 
 fn update_radio_group_menu(app: &AppHandle, id: &str) {
