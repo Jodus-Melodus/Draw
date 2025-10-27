@@ -246,12 +246,12 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     channelFaderThumb.addEventListener("mousedown", (e) => {
         channelFaderThumb.dataset.dragging = "true";
         channelFaderThumb.dataset.offsetY = (e.clientY - channelFaderThumb.getBoundingClientRect().top).toString();
-        channelFaderThumb.style.cursor = "grabbing";
+        channelFaderThumb.style.cursor = "ns-resize";
     });
 
     window.addEventListener("mouseup", () => {
         channelFaderThumb.dataset.dragging = "false";
-        channelFaderThumb.style.cursor = "grab";
+        channelFaderThumb.style.cursor = "ns-resize";
     });
 
     window.addEventListener("mousemove", (e) => {

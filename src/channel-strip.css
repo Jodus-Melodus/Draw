@@ -148,8 +148,6 @@
   transform: translate(-50%, -50%);
 
   border: 1px solid #999999;
-
-  cursor: grab;
   user-select: none;
   transition: background-color 0.2s ease;
 }
