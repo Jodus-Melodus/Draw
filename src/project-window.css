@@ -38,3 +38,22 @@
     overflow-x: scroll;
     overflow-y: hidden;
 }
+
+.project-buttons {
+    background-color: #2B2B2B;
+    margin-bottom: 5px;
+}
+
+.add-track {
+    background-color: rgb(100, 100, 100);
+    width: 1.5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.add-track:hover {
+    background-color: #3b3b3b;
+    cursor: pointer;
+}
