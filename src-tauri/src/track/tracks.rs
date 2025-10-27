@@ -20,7 +20,7 @@ impl InputTrack {
             name: name.to_string(),
             pan: 0.0,
             mute: false,
-            gain: 0.5, // Initialize at 50% volume
+            gain: 0.5, 
             record: false,
             monitor: false,
         }
@@ -48,19 +48,34 @@ impl From<track::raw::InputTrackRaw> for InputTrack {
     }
 }
 
+struct DummySink;
+impl track::sources::sink::AudioSink for DummySink {
+    fn start_stream(&self) {
+        panic!("Dummy should never be used");
+    }
+
+    fn stop_stream(&self) {
+        panic!("Dummy should never be used");
+    }
+}
+
 pub struct OutputTrack {
-    pub sink: Option<Box<dyn track::sources::sink::AudioSink>>,
     pub gain: f32,
     pub pan: f32,
+    pub sink: Box<dyn track::sources::sink::AudioSink>,
 }
 
 impl OutputTrack {
-    pub fn new(sink: Option<Box<dyn track::sources::sink::AudioSink>>) -> Self {
+    pub fn new() -> Self {
         OutputTrack {
-            sink,
+            sink: Box::new(DummySink),
             gain: 1.0,
             pan: 0.0,
         }
+    }
+
+    pub fn initialize(&mut self, sink: Box<dyn track::sources::sink::AudioSink>) {
+        self.sink = sink;
     }
 
     pub fn as_response(&self) -> track::track_list::TrackInfo {
