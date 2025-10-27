@@ -1,13 +1,13 @@
 /* channel-strip */
 .channel-strip {
-  width: 100px;
-  height: 300px;
+  width: 6%;
+  height: 100%;
   background-color: #c0c0c0;  
   position: relative;
-  top: 0%;
-  left: 5px;
   border: 5px solid rgb(116, 116, 116);
   border-radius: 10px;
+  flex-shrink: 0;
+  margin-left: 5px
 }
 
 /* meters */

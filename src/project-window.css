@@ -1,0 +1,39 @@
+.project-window {
+    width: 100vw;
+    height: 60vh;
+    background-color: rgb(72, 72, 72);
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.track-list {
+    background-color: rgb(72, 72, 72);
+    width: 12%;
+    height: 100%;
+    padding: 5px;
+    padding-right: 15px;
+    border-radius: 15px;
+
+    /* Scrolling */
+    overflow: hidden;
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+.mix-console {
+    width: 100vw;
+    height: 35vh;
+    display: flex;
+    position: relative;
+    background-color: rgb(72, 72, 72);
+    padding-top: 5px;
+    padding-bottom: 15px;
+    padding-right: 15px;
+    margin-bottom: 15px;
+
+    /* Scrolling */
+    box-sizing: border-box;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
