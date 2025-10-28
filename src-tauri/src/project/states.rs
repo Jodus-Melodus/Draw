@@ -35,7 +35,7 @@ impl StateMixer {
     pub fn new(device: Arc<Device>) -> Self {
         let track_list = Arc::new(Mutex::new(track::track_list::TrackList::new()));
         let master_out = Arc::new(Mutex::new(track::tracks::OutputTrack::new()));
-        let sink = track::io::sink::StreamSink::new(device, track_list.clone(), master_out.clone());
+        let sink = track::sources::sink::StreamSink::new(device, track_list.clone(), master_out.clone());
         if let Ok(mut out) = master_out.lock() {
             out.initialize(Box::new(sink));
             out.sink.start_stream();

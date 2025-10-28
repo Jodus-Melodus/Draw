@@ -51,7 +51,7 @@ fn add_file_track(
     let state_mixer = state_mixer_guard.0.lock().unwrap();
     let track_list = state_mixer.track_list.clone();
     let mut list = track_list.lock().expect("Failed to lock track list");
-    let track_source = track::io::source::FileSource::new(path);
+    let track_source = track::sources::source::FileSource::new(path);
     let track = track::tracks::InputTrack::new(name, Box::new(track_source));
     list.add_track(name, track);
 
