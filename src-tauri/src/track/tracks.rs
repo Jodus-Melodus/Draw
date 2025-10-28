@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use crate::track;
 
 pub struct InputTrack {
-    pub source: Box<dyn track::sources::source::AudioSource>,
+    pub source: Box<dyn track::io::source::AudioSource>,
     pub name: String,
     pub pan: f32,
     pub mute: bool,
@@ -14,7 +14,7 @@ pub struct InputTrack {
 }
 
 impl InputTrack {
-    pub fn new(name: &str, source: Box<dyn track::sources::source::AudioSource>) -> Self {
+    pub fn new(name: &str, source: Box<dyn track::io::source::AudioSource>) -> Self {
         InputTrack {
             source,
             name: name.to_string(),
@@ -32,10 +32,10 @@ impl From<track::raw::InputTrackRaw> for InputTrack {
         InputTrack {
             source: {
                 match value.source_type {
-                    track::sources::source::AudioSourceRaw::File(path) => {
-                        Box::new(track::sources::source::FileSource::new(PathBuf::from(path)))
+                    track::io::source::AudioSourceRaw::File(path) => {
+                        Box::new(track::io::source::FileSource::new(PathBuf::from(path)))
                     }
-                    track::sources::source::AudioSourceRaw::Stream(_) => todo!(),
+                    track::io::source::AudioSourceRaw::Stream(_) => todo!(),
                 }
             },
             name: value.name,
@@ -49,7 +49,7 @@ impl From<track::raw::InputTrackRaw> for InputTrack {
 }
 
 struct DummySink;
-impl track::sources::sink::AudioSink for DummySink {
+impl track::io::sink::AudioSink for DummySink {
     fn start_stream(&self) {
         panic!("Dummy should never be used");
     }
@@ -62,7 +62,7 @@ impl track::sources::sink::AudioSink for DummySink {
 pub struct OutputTrack {
     pub gain: f32,
     pub pan: f32,
-    pub sink: Box<dyn track::sources::sink::AudioSink>,
+    pub sink: Box<dyn track::io::sink::AudioSink>,
 }
 
 impl OutputTrack {
@@ -74,7 +74,7 @@ impl OutputTrack {
         }
     }
 
-    pub fn initialize(&mut self, sink: Box<dyn track::sources::sink::AudioSink>) {
+    pub fn initialize(&mut self, sink: Box<dyn track::io::sink::AudioSink>) {
         self.sink = sink;
     }
 

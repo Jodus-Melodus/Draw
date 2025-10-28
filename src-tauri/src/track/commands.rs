@@ -1,46 +1,87 @@
+use tauri::{AppHandle, Manager};
+use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
+
 use crate::{project, track};
 
 #[tauri::command]
-pub fn get_track_list(
-    state: tauri::State<project::states::StateMixerGuard>,
-) -> Result<track::track_list::TrackListResponse, String> {
-    let state_mixer = state.0.lock().map_err(|_| "Failed to lock state mixer")?;
-    let master_out = state_mixer
-        .master_out
-        .lock()
-        .map_err(|_| "Failed to lock track list")?;
-    let list = state_mixer
-        .track_list
-        .lock()
-        .map_err(|_| "Failed to lock track list")?;
-    let mut response = list.as_response();
-    response.tracks.insert(0, master_out.as_response());
-    Ok(response)
+pub fn get_track_list(app_handle: AppHandle) -> Result<track::track_list::TrackListResponse, ()> {
+    let state_mixer_guard = app_handle.state::<project::states::StateMixerGuard>();
+
+    let result = if let Ok(state_mixer) = state_mixer_guard.0.lock() {
+        if let Ok(master_out) = state_mixer.master_out.lock() {
+            if let Ok(list) = state_mixer.track_list.lock() {
+                let mut response = list.as_response();
+                response.tracks.insert(0, master_out.as_response());
+                Ok(response)
+            } else {
+                app_handle
+                    .dialog()
+                    .message("Failed to lock track list")
+                    .title("Track List Error")
+                    .kind(MessageDialogKind::Warning)
+                    .buttons(MessageDialogButtons::Ok)
+                    .blocking_show();
+                Err(())
+            }
+        } else {
+            app_handle
+                .dialog()
+                .message("Failed to lock master out")
+                .title("Track List Error")
+                .kind(MessageDialogKind::Warning)
+                .buttons(MessageDialogButtons::Ok)
+                .blocking_show();
+            Err(())
+        }
+    } else {
+        app_handle
+            .dialog()
+            .message("Failed to lock state mixer")
+            .title("Track List Error")
+            .kind(MessageDialogKind::Warning)
+            .buttons(MessageDialogButtons::Ok)
+            .blocking_show();
+        Err(())
+    };
+    result
 }
 
 #[tauri::command]
 pub fn update_track(
-    state: tauri::State<project::states::StateMixerGuard>,
+    app_handle: AppHandle,
     track_name: String,
     update: track::track_list::TrackUpdate,
-) -> Result<(), String> {
-    let state_mixer = state.0.lock().map_err(|_| "Failed to lock state mixer")?;
-
-    if track_name == "master-out" {
-        let master_out = state_mixer.master_out.clone();
-        if let Ok(mut output) = master_out.lock() {
-            match update {
-                track::track_list::TrackUpdate::Pan(pan) => output.pan = pan,
-                track::track_list::TrackUpdate::Gain(gain) => output.gain = gain,
-                _ => (),
+) {
+    let state_mixer_guard = app_handle.state::<project::states::StateMixerGuard>();
+    if let Ok(state_mixer) = state_mixer_guard.0.lock() {
+        if track_name == "master-out" {
+            if let Ok(mut output) = state_mixer.master_out.lock() {
+                match update {
+                    track::track_list::TrackUpdate::Pan(pan) => output.pan = pan,
+                    track::track_list::TrackUpdate::Gain(gain) => output.gain = gain,
+                    _ => (),
+                }
+            } else {
+                app_handle
+                    .dialog()
+                    .message("Failed to lock master out")
+                    .title("Master Out Error")
+                    .kind(MessageDialogKind::Warning)
+                    .buttons(MessageDialogButtons::Ok)
+                    .blocking_show();
             }
-        };
-    } else {
-        let mut list = state_mixer
-            .track_list
-            .lock()
-            .map_err(|_| "Failed to lock track list")?;
-        list.update_track(&track_name, update);
-    }
-    Ok(())
+        } else {
+            if let Ok(mut list) = state_mixer.track_list.lock() {
+                list.update_track(&track_name, update);
+            } else {
+                app_handle
+                    .dialog()
+                    .message("Failed to lock track list")
+                    .title("Track List Error")
+                    .kind(MessageDialogKind::Warning)
+                    .buttons(MessageDialogButtons::Ok)
+                    .blocking_show();
+            }
+        }
+    };
 }

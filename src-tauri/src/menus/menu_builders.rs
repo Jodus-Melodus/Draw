@@ -124,14 +124,13 @@ pub fn build_menus(app: &App<Wry>) -> Menu<Wry> {
 
 pub async fn handle_menu_events(app_handle: &AppHandle, event: &MenuEvent) {
     let audio_context = app_handle.state::<project::states::StateAudioContext>();
-    let state_mixer_guard = app_handle.state::<project::states::StateMixerGuard>();
     let id: &str = event.id.0.as_ref();
 
     match id {
         "file-open-file" => project::file::open_files(app_handle).await,
         "preferences-settings" => pages::settings_page::open_settings(app_handle),
         "project-add-track" => {
-            menus::commands::add_empty_track(state_mixer_guard, audio_context).unwrap();
+            menus::commands::add_empty_track(app_handle.clone()).unwrap();
             let window = app_handle
                 .get_webview_window("main")
                 .expect("Failed to get main window");
@@ -171,7 +170,7 @@ fn update_master_output_device_track(app: &AppHandle) {
     let new_master_output_device = audio_context
         .output_device()
         .expect("Failed to get new master output device");
-    let new_output_source = track::sources::sink::StreamSink::new(
+    let new_output_source = track::io::sink::StreamSink::new(
         new_master_output_device,
         state_mixer.track_list.clone(),
         out.clone(),

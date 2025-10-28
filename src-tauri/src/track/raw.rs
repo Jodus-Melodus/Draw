@@ -5,7 +5,7 @@ pub struct InputTrackRaw {
     pub name: String,
     pub gain: f32,
     pub pan: f32,
-    pub source_type: track::sources::source::AudioSourceRaw,
+    pub source_type: track::io::source::AudioSourceRaw,
 }
 
 impl From<&track::tracks::InputTrack> for InputTrackRaw {
