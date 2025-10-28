@@ -1,6 +1,4 @@
 use std::{
-    fs::File,
-    io::BufReader,
     path::PathBuf,
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -87,20 +85,48 @@ impl StreamSource {
 }
 
 pub struct FileSource {
-    reader: WavReader<BufReader<File>>,
+    pub path: PathBuf,
+    streaming: Arc<AtomicBool>,
+    ring_buffer: Arc<Mutex<types::RingBuffer>>,
     config: WavSpec,
-    path: PathBuf,
 }
 
 impl FileSource {
     pub fn new(path: PathBuf) -> Self {
-        let reader = WavReader::open(&path).expect("Failed to open file source");
+        let streaming = Arc::new(AtomicBool::new(false));
+        let streaming_clone = streaming.clone();
+        let ring_buffer = Arc::new(Mutex::new(types::RingBuffer::new()));
+        let ring_buffer_clone = ring_buffer.clone();
+        let mut reader = WavReader::open(&path).expect("Failed to open file source");
         let config = reader.spec();
+
+        thread::spawn(move || {
+            let mut samples = reader.samples::<i16>();
+            while streaming_clone.load(Ordering::Relaxed) {
+                if let Some(Ok(s)) = samples.next() {
+                    if let Ok(mut rb) = ring_buffer_clone.lock() {
+                        rb.push(s as f32 / i16::MAX as f32);
+                    }
+                } else {
+                    break; // EOF
+                }
+            }
+        });
+
         FileSource {
             path,
-            reader,
+            streaming,
+            ring_buffer,
             config,
         }
+    }
+
+    pub fn start(&self) {
+        self.streaming.store(true, Ordering::Relaxed);
+    }
+
+    pub fn stop(&self) {
+        self.streaming.store(false, Ordering::Relaxed);
     }
 }
 
@@ -137,15 +163,15 @@ impl AudioSource for StreamSource {
 
 impl AudioSource for FileSource {
     fn get_ring_buffer(&self) -> Arc<Mutex<types::RingBuffer>> {
-        todo!()
+        self.ring_buffer.clone()
     }
 
     fn start_stream(&self) {
-        todo!()
+        self.start();
     }
 
     fn stop_stream(&self) {
-        todo!()
+        self.stop();
     }
 
     fn kind(&self) -> AudioSourceRaw {
