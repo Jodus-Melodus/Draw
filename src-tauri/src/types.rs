@@ -101,3 +101,11 @@ impl OutputDeviceRegistry {
         self.devices.keys().cloned().collect()
     }
 }
+
+
+    // let _r = app
+    //     .dialog()
+    //     .message("Error")
+    //     .kind(MessageDialogKind::Error)
+    //     .title("Error")
+    //     .buttons(MessageDialogButtons::Ok);
