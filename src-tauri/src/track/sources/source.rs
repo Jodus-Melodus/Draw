@@ -94,26 +94,37 @@ pub struct FileSource {
 impl FileSource {
     pub fn new(path: PathBuf) -> Self {
         let streaming = Arc::new(AtomicBool::new(false));
-        let streaming_clone = streaming.clone();
+        let streaming_clone = Arc::clone(&streaming);
         let ring_buffer = Arc::new(Mutex::new(types::RingBuffer::new()));
-        let ring_buffer_clone = ring_buffer.clone();
-        let mut reader = WavReader::open(&path).expect("Failed to open file source");
-        let config = reader.spec();
+        let ring_buffer_clone = Arc::clone(&ring_buffer);
 
-        thread::spawn(move || {
-            let mut samples = reader.samples::<i16>();
+        let reader = WavReader::open(&path).expect("Failed to open file source");
+        let config = reader.spec();
+        println!("{}", reader.duration());
+        let p = path.clone();
+
+        thread::spawn(move || loop {
+            if !streaming_clone.load(Ordering::Relaxed) {
+                thread::sleep(std::time::Duration::from_millis(10));
+                continue;
+            }
+
+            let mut reader = WavReader::open(&p).expect("Failed to open file source");
+            let mut samples = reader.samples::<f32>();
+
             while streaming_clone.load(Ordering::Relaxed) {
                 if let Some(Ok(s)) = samples.next() {
                     if let Ok(mut rb) = ring_buffer_clone.lock() {
-                        rb.push(s as f32 / i16::MAX as f32);
+                        rb.push(s * 100.0);
                     }
                 } else {
-                    break; // EOF
+                    println!("EOF reached");
+                    break;
                 }
             }
         });
 
-        FileSource {
+        Self {
             path,
             streaming,
             ring_buffer,
