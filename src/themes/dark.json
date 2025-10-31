@@ -1,33 +1,33 @@
 {
     "background": "#ff0000",
-    "text": "",
+    "text": "#ffffff",
     "track": {
-        "background": "",
-        "text": "",
+        "background": "#464646",
+        "text": "#ffffff",
         "name": {
-            "background": "",
-            "text": ""
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
         },
         "mute": {
-            "background": "",
-            "text": ""
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
         },
         "solo": {
-            "background": "",
-            "text": ""
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
         },
         "monitor": {
-            "background": "",
-            "text": ""
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
         },
         "record": {
-            "background": "",
-            "text": ""
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
         }
     },
     "channel": {
         "background": "#464646",
-        "text": "",
+        "text": "#ffffff",
         "meters": {
             "right": {
                 "background": ""
