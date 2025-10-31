@@ -1,0 +1,80 @@
+{
+    "background": "#ff0000",
+    "text": "#ffffff",
+    "track": {
+        "background": "#464646",
+        "text": "#ffffff",
+        "name": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "mute": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "solo": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "monitor": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "record": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        }
+    },
+    "channel": {
+        "background": "#464646",
+        "text": "#ffffff",
+        "meters": {
+            "right": {
+                "background": ""
+            },
+            "left": {
+                "background": ""
+            }
+        },
+        "gain": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "pan": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "fader": {
+            "background": "#dddddd",
+            "thumb": {
+                "background": "#ffffff",
+                "body": "rgb(153, 153, 153)",
+                "notch": "#000000"
+            },
+            "gain": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
+        },
+        "name": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "mute": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "solo": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "monitor": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "record": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        }
+    }
+}

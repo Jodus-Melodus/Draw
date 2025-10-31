@@ -1,26 +1,6 @@
 import { listen } from "@tauri-apps/api/event";
-import { addEmptyTrack, addNewTrack, getTrackList } from "./backend/tracks";
-import { startStream, stopStream } from "./backend/project";
-
-var trackList;
-var recording = false;
-
-export async function updateTrackList() {
-  const channelTrackContainer = document.getElementById("mix-console");
-  const trackContainer = document.getElementById("track-list");
-  const channelTrackTemplate = document.getElementById("channel-track-template") as HTMLTemplateElement;
-  const trackTemplate = document.getElementById("track-template") as HTMLTemplateElement;
-
-  if (channelTrackContainer && channelTrackTemplate && trackContainer && trackTemplate) {
-    channelTrackContainer.replaceChildren();
-    trackContainer.replaceChildren();
-    trackList = await getTrackList();
-
-    trackList.tracks.forEach(track => {
-      addNewTrack(trackTemplate, channelTrackTemplate, track, trackContainer, channelTrackContainer);
-    });
-  }
-}
+import { addEmptyTrack, updateTrackList } from "./backend/tracks";
+import { loadTheme } from "./backend/theme";
 
 async function init() {
   updateTrackList();
@@ -40,17 +20,10 @@ async function init() {
     // display wave form or gain
     console.log("Received audio");
   });
-
-  // const recordingButton = document.getElementById("recording") as HTMLElement;
-  // recordingButton.addEventListener("click", () => {
-  //   recording = !recording;
-
-  //   if (recording) {
-  //     startStream();
-  //   } else {
-  //     stopStream();
-  //   }
-  // });
 }
+
+window.addEventListener("DOMContentLoaded", async () => {
+  loadTheme("dark");
+})
 
 init();

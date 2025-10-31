@@ -3,17 +3,17 @@ export type TrackInfo = {
     trackType: string;
     gain: number;
     pan: number;
-    monitor: boolean,
-    solo: boolean,
-    mute: boolean,
-    record: boolean
+    monitor: boolean;
+    solo: boolean;
+    mute: boolean;
+    record: boolean;
 };
 
 export type TrackListResponse = {
     tracks: TrackInfo[];
 };
 
-export type TrackUpdate = | { Pan: number }
+export type TrackUpdate = { Pan: number }
     | { Name: string }
     | { Gain: number }
     | { Monitor: boolean }
