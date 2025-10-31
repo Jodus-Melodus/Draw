@@ -133,7 +133,7 @@ type ChannelTheme = {
 }
 
 
-export async function loadTheme(mode: "light" | "dark") {
+export async function loadTheme(mode: string) {
     const response = await fetch(`themes/${mode}.json`);
     const theme = await response.json();
     applyTheme(theme);
@@ -150,9 +150,7 @@ export function applyTheme(theme: BodyTheme) {
             if (typeof value === "object" && value !== null) {
                 walk(value, newPath);
             } else {
-                const varName = "--" + newPath.join("-"); // e.g. --channel-fader-gain-text
-                console.log(varName);
-                
+                const varName = "--" + newPath.join("-");
                 root.setProperty(varName, String(value));
             }
         }
