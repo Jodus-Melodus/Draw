@@ -1,6 +1,8 @@
 import type { TrackInfo, TrackListResponse, TrackUpdate } from "./types.js";
 import { invoke } from "@tauri-apps/api/core";
-import { percentToDb, percentToGain } from "./utils.js";
+import { percentToDb } from "./utils.js";
+
+var trackList: TrackListResponse;
 
 /**
  * Get a list of all the input and output tracks
@@ -291,4 +293,21 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
 
     trackContainer.appendChild(newTrack);
     channelTrackContainer.appendChild(newChannel);
+}
+
+export async function updateTrackList() {
+    const channelTrackContainer = document.getElementById("mix-console");
+    const trackContainer = document.getElementById("track-list");
+    const channelTrackTemplate = document.getElementById("channel-track-template") as HTMLTemplateElement;
+    const trackTemplate = document.getElementById("track-template") as HTMLTemplateElement;
+
+    if (channelTrackContainer && channelTrackTemplate && trackContainer && trackTemplate) {
+        channelTrackContainer.replaceChildren();
+        trackContainer.replaceChildren();
+        trackList = await getTrackList();
+
+        trackList.tracks.forEach(track => {
+            addNewTrack(trackTemplate, channelTrackTemplate, track, trackContainer, channelTrackContainer);
+        });
+    }
 }
