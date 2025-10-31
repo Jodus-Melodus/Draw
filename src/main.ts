@@ -23,7 +23,7 @@ async function init() {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
-  loadTheme("light");
+  loadTheme("dark");
 })
 
 init();

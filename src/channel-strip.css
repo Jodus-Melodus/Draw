@@ -2,7 +2,6 @@
 .channel-strip {
   width: 6%;
   height: 100%;
-  background-color: #464646;  
   position: relative;
   border: 5px solid rgb(116, 116, 116);
   border-radius: 5px;
@@ -38,8 +37,6 @@
   align-items: center;     /* vertical */
   height: 5%;            /* height */
 
-  background-color: rgb(153, 153, 153);
-  color: white;
   font-size: 15px;
 
   position: absolute;
@@ -56,9 +53,6 @@
   justify-content: center; /* horizontal */
   align-items: center;     /* vertical */
   height: 5%;          /* height */
-
-  background-color: rgb(153, 153, 153);
-  color: white;
 
   position: relative;
   top: 1%;
@@ -83,9 +77,6 @@
   align-items: center;     /* vertical */
   height: 5%;            /* height */
 
-  background-color: rgb(153, 153, 153);
-  color: white;
-
   position: absolute;
   top: 1%;
   left: 53%;
@@ -109,9 +100,6 @@
   align-items: center;     /* vertical */
   height: 5%;            /* height */
 
-  background-color: rgb(153, 153, 153);
-  color: white;
-
   position: absolute;
   top: 8%;
   left: 4%;
@@ -127,7 +115,6 @@
 .fader {
   width: 15%;
   height: 50%;
-  background-color: #dddddd;
 
   position: absolute;
   top: 17%;
@@ -139,8 +126,6 @@
 .fader-thumb {
   width: 175%;
   height: 30%;
-
-  background-color: #ffffff;
   
   position: relative;
   left: 50%;
@@ -156,8 +141,6 @@
   width: 98%;
   height: 80%;
 
-  background-color: rgb(153, 153, 153);
-
   position: relative;
   top: 10%;
   left: 1%;
@@ -166,8 +149,6 @@
 .fader-thumb-notch {
   width: 90%;
   height: 2%;
-
-  background-color: black;
 
   position: relative;
   top: 50%;
@@ -181,8 +162,6 @@
   align-items: center;     /* vertical */
   height: 5%;            /* height */
 
-  background-color: rgb(153, 153, 153);
-  color: white;
   font-size: 15px;
 
   position: absolute;
@@ -200,7 +179,6 @@
   align-items: center;     /* vertical */
   height: 5%;            /* height */
 
-  background-color: rgb(153, 153, 153);
   font-size: 14px;
 
   position: absolute;
@@ -230,7 +208,6 @@
   align-items: center;     /* vertical */
   height: 5%;            /* height */
 
-  background-color: rgb(153, 153, 153);
   font-size: 14px;
 
   position: absolute;
@@ -261,8 +238,6 @@
   align-items: center;     /* vertical */
   height: 12%;            /* height */
 
-  background-color: rgb(153, 153, 153);
-  color: white;
   font-size: 18px;
 
   position: absolute;

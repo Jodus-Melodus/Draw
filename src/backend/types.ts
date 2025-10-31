@@ -20,10 +20,3 @@ export type TrackUpdate = { Pan: number }
     | { Solo: boolean }
     | { Mute: boolean }
     | { Record: boolean };
-
-
-export type Theme = {
-    background: string;
-    text: string;
-    primary: string
-};

@@ -1,5 +1,80 @@
 {
-    "background": "#121212",
-    "text": "#ffffff",
-    "primary": "#1e90ff"
+    "background": "#ff0000",
+    "text": "",
+    "track": {
+        "background": "",
+        "text": "",
+        "name": {
+            "background": "",
+            "text": ""
+        },
+        "mute": {
+            "background": "",
+            "text": ""
+        },
+        "solo": {
+            "background": "",
+            "text": ""
+        },
+        "monitor": {
+            "background": "",
+            "text": ""
+        },
+        "record": {
+            "background": "",
+            "text": ""
+        }
+    },
+    "channel": {
+        "background": "#464646",
+        "text": "",
+        "meters": {
+            "right": {
+                "background": ""
+            },
+            "left": {
+                "background": ""
+            }
+        },
+        "gain": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "pan": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "fader": {
+            "background": "#dddddd",
+            "thumb": {
+                "background": "#ffffff",
+                "body": "rgb(153, 153, 153)",
+                "notch": "#000000"
+            },
+            "gain": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
+        },
+        "name": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "mute": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "solo": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "monitor": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        },
+        "record": {
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
+        }
+    }
 }
