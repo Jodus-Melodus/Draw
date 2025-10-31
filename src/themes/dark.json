@@ -10,7 +10,7 @@
         },
         "mute": {
             "active": {
-                "background": "rgb(153, 153, 153)",
+                "background": "#ffd633",
                 "text": "#ffffff"
             },
             "inactive": {
@@ -20,7 +20,7 @@
         },
         "solo": {
             "active": {
-                "background": "rgb(153, 153, 153)",
+                "background": "#e75b3c",
                 "text": "#ffffff"
             },
             "inactive": {
@@ -30,7 +30,7 @@
         },
         "monitor": {
             "active": {
-                "background": "rgb(153, 153, 153)",
+                "background": "#ffa033",
                 "text": "#ffffff"
             },
             "inactive": {
@@ -40,7 +40,7 @@
         },
         "record": {
             "active": {
-                "background": "rgb(153, 153, 153)",
+                "background": "#eb2323",
                 "text": "#ffffff"
             },
             "inactive": {
