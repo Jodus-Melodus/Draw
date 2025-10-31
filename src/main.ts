@@ -27,3 +27,5 @@ window.addEventListener("DOMContentLoaded", async () => {
 })
 
 init();
+
+// TODO fix button onclick
