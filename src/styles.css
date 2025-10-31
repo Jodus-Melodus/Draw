@@ -8,7 +8,8 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: rgb(72, 72, 72);
+  background-color: var(--background);
+  color: var(--text);
 }
 
 /* media-controls */
