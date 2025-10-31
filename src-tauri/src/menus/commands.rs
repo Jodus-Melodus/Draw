@@ -8,7 +8,7 @@ pub fn add_empty_track(app_handle: AppHandle) -> Result<(), ()> {
     let state_mixer_guard = app_handle.state::<project::states::StateMixerGuard>();
     let audio_context = app_handle.state::<project::states::StateAudioContext>();
 
-    if let Ok(state_mixer) = state_mixer_guard.0.lock() {
+    let res = if let Ok(state_mixer) = state_mixer_guard.0.lock() {
         if let Ok(mut track_list) = state_mixer.track_list.lock() {
             if let Some(input_device) = audio_context.input_device() {
                 let number = track_list.track_list().len() + 1;
@@ -47,6 +47,6 @@ pub fn add_empty_track(app_handle: AppHandle) -> Result<(), ()> {
             .buttons(MessageDialogButtons::Ok)
             .blocking_show();
         Err(())
-    }?;
-    Err(())
+    };
+    res
 }
