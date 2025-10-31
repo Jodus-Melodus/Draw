@@ -14,20 +14,44 @@ type TrackTheme = {
         text: string;
     };
     mute: {
-        background: string;
-        text: string;
+        active: {
+            background: string;
+            text: string;
+        };
+        inactive: {
+            background: string;
+            text: string;
+        }
     };
     solo: {
-        background: string;
-        text: string;
+        active: {
+            background: string;
+            text: string;
+        };
+        inactive: {
+            background: string;
+            text: string;
+        }
     };
     monitor: {
-        background: string;
-        text: string;
+        active: {
+            background: string;
+            text: string;
+        };
+        inactive: {
+            background: string;
+            text: string;
+        }
     };
     record: {
-        background: string;
-        text: string;
+        active: {
+            background: string;
+            text: string;
+        };
+        inactive: {
+            background: string;
+            text: string;
+        }
     };
 };
 
@@ -67,36 +91,70 @@ type ChannelTheme = {
         text: string;
     };
     mute: {
-        background: string;
-        text: string;
+        active: {
+            background: string;
+            text: string;
+        };
+        inactive: {
+            background: string;
+            text: string;
+        }
     };
     solo: {
-        background: string;
-        text: string;
+        active: {
+            background: string;
+            text: string;
+        };
+        inactive: {
+            background: string;
+            text: string;
+        }
     };
     monitor: {
-        background: string;
-        text: string;
+        active: {
+            background: string;
+            text: string;
+        };
+        inactive: {
+            background: string;
+            text: string;
+        }
     };
     record: {
-        background: string;
-        text: string;
+        active: {
+            background: string;
+            text: string;
+        };
+        inactive: {
+            background: string;
+            text: string;
+        }
     }
 }
 
 
-export async function loadTheme(mode: "light" | "dark") {
+export async function loadTheme(mode: string) {
     const response = await fetch(`themes/${mode}.json`);
     const theme = await response.json();
     applyTheme(theme);
 }
 
 export function applyTheme(theme: BodyTheme) {
-    document.body.style.backgroundColor = theme.background;
-    document.body.style.color = theme.text;
+    const root = document.documentElement.style;
 
-    const buttons = document.querySelectorAll<HTMLButtonElement>("button");
-    buttons.forEach(button => {
-        button.style.color = theme.text;
-    })
+    function walk(obj: any, path: string[]) {
+        for (const key in obj) {
+            const value = obj[key];
+            const newPath = [...path, key];
+
+            if (typeof value === "object" && value !== null) {
+                walk(value, newPath);
+            } else {
+                const varName = "--" + newPath.join("-");
+                root.setProperty(varName, String(value));
+            }
+        }
+    }
+
+    walk(theme, []);
 }

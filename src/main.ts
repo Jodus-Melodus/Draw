@@ -23,7 +23,17 @@ async function init() {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
-  loadTheme("dark");
+  const savedTheme = localStorage.getItem("theme") || "dark";
+  loadTheme(savedTheme);
 })
 
+window.addEventListener("storage", (event) => {
+  if (event.key === "theme" && event.newValue) {
+    loadTheme(event.newValue);
+  }
+});
+
+
 init();
+
+// TODO fix button onclick

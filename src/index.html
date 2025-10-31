@@ -6,10 +6,10 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>Draw</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link rel='stylesheet' type='text/css' media='screen' href='styles.css'>
-  <link rel='stylesheet' type='text/css' media='screen' href='channel-strip.css'>
-  <link rel='stylesheet' type='text/css' media='screen' href='track.css'>
-  <link rel='stylesheet' type='text/css' media='screen' href='project-window.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='styles/styles.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='styles/channel-strip.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='styles/track.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='styles/project-window.css'>
 </head>
 
 <template id="channel-track-template">
@@ -23,9 +23,9 @@
     </div>
   
     <!-- buttons & pan -->
-    <div class="channel-mute">M</div>
-    <div class="channel-solo">S</div>
-    <div class="channel-pan">C</div>
+    <button class="channel-mute">M</button>
+    <button class="channel-solo">S</button>
+    <button class="channel-pan">C</button>
   
     <!-- fader -->
     <div class="fader">
@@ -38,12 +38,12 @@
     <div class="fadergain"></div>
   
     <!-- monitor & record -->
-    <div class="channel-record">
+    <button class="channel-record">
       <img src="assets/record_icon.png" class="channel-record-icon" />
-    </div>
-    <div class="channel-monitor">
+    </button>
+    <button class="channel-monitor">
       <img src="assets/monitor_icon.png" class="channel-monitor-icon" />
-    </div>
+    </button>
   
     <!-- channel name  -->
     <div class="channel-name"></div>
@@ -53,14 +53,14 @@
 <template id="track-template">
   <div class="track">
     <div class="track-name"></div>
-    <div class="track-mute">M</div>
-    <div class="track-solo">S</div>
-    <div class="track-record">
+    <button class="track-mute">M</button>
+    <button class="track-solo">S</button>
+    <button class="track-record">
       <img src="assets/record_icon.png" class="track-record-icon" />
-    </div>
-    <div class="track-monitor">
+    </button>
+    <button class="track-monitor">
       <img src="assets/monitor_icon.png" class="track-monitor-icon" />
-    </div>
+    </button>
   </div>
 </template>
 
@@ -68,7 +68,7 @@
   <!-- project-window -->
   <div class="project-window" id="project-window">
     <div class="project-buttons">
-      <div class="add-track">+</div>
+      <button class="add-track">+</button>
     </div>
     <div id="track-list" class="track-list"></div>
   </div>

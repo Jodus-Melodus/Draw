@@ -1,4 +1,7 @@
 .track {
+  background-color: var(--track-background);
+  color: var(--track-text);
+
   width: 100%;
   height: 50px;
   position: relative;
@@ -7,6 +10,9 @@
 }
 
 .track-name {
+  background-color: var(--track-name-background);
+  color: var(--track-name-text);
+
   display: flex;
   justify-content: center;
   position: relative;
@@ -14,6 +20,9 @@
 }
 
 .track-mute {
+  background-color: var(--track-mute-inactive-background);
+  color: var(--track-mute-inactive-text);
+
   width: 30px;
   display: flex;
   justify-content: center;
@@ -30,6 +39,9 @@
 }
 
 .track-solo {
+  background-color: var(--track-solo-inactive-background);
+  color: var(--track-solo-inactive-text);
+
   width: 30px;
   display: flex;
   justify-content: center;
@@ -46,6 +58,9 @@
 }
 
 .track-record {
+  background-color: var(--track-record-inactive-background);
+  color: var(--track-record-inactive-text);
+
   width: 30px;
   display: flex;
   justify-content: center;
@@ -67,6 +82,9 @@
 }
 
 .track-monitor {
+  background-color: var(--track-monitor-inactive-background);
+  color: var(--track-monitor-inactive-text);
+
   width: 30px;
   display: flex;
   justify-content: center;
@@ -88,19 +106,21 @@
 }
 
 .track-mute.active {
-  background-color: #ffd633;
-  color: black;
+  background-color: var(--track-mute-active-background);
+  color: var(--track-mute-active-text);
 }
 
 .track-solo.active {
-  background-color: #e75b3c;
-  color: black;
+  background-color: var(--track-solo-active-background);
+  color: var(--track-solo-active-text);
 }
 
 .track-record.active {
-  background-color: #eb2323;
+  background-color: var(--track-record-active-background);
+  color: var(--track-record-active-text);
 }
 
 .track-monitor.active {
-  background-color: #ffa033;
+  background-color: var(--track-monitor-active-background);
+  color: var(--track-monitor-active-text);
 }

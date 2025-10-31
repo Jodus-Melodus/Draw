@@ -45,43 +45,21 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const newChannel = channelTrackTemplate.content.cloneNode(true) as DocumentFragment;
 
     const trackName = newTrack.querySelector(".track-name") as HTMLElement;
-    const trackMuteButton = newTrack.querySelector(".track-mute") as HTMLElement;
-    const trackSoloButton = newTrack.querySelector(".track-solo") as HTMLElement;
-    const trackRecordButton = newTrack.querySelector(".track-record") as HTMLElement;
-    const trackMonitorButton = newTrack.querySelector(".track-monitor") as HTMLElement;
+    const trackMuteButton = newTrack.querySelector(".track-mute") as HTMLButtonElement;
+    const trackSoloButton = newTrack.querySelector(".track-solo") as HTMLButtonElement;
+    const trackRecordButton = newTrack.querySelector(".track-record") as HTMLButtonElement;
+    const trackMonitorButton = newTrack.querySelector(".track-monitor") as HTMLButtonElement;
 
     const channelName = newChannel.querySelector(".channel-name") as HTMLElement;
-    const channelMuteButton = newChannel.querySelector(".channel-mute") as HTMLElement;
-    const channelSoloButton = newChannel.querySelector(".channel-solo") as HTMLElement;
-    const channelRecordButton = newChannel.querySelector(".channel-record") as HTMLElement;
-    const channelMonitorButton = newChannel.querySelector(".channel-monitor") as HTMLElement;
+    const channelMuteButton = newChannel.querySelector(".channel-mute") as HTMLButtonElement;
+    const channelSoloButton = newChannel.querySelector(".channel-solo") as HTMLButtonElement;
+    const channelRecordButton = newChannel.querySelector(".channel-record") as HTMLButtonElement;
+    const channelMonitorButton = newChannel.querySelector(".channel-monitor") as HTMLButtonElement;
     const channelFader = newChannel.querySelector(".fader") as HTMLElement;
     const channelFaderThumb = newChannel.querySelector(".fader-thumb") as HTMLElement;
 
     trackName.textContent = track.name;
     channelName.textContent = track.name;
-
-    // Initialize button active states from server-side track state
-    if (track.mute) {
-        trackMuteButton.classList.add("active");
-        channelMuteButton.classList.add("active");
-    }
-
-    if (track.solo) {
-        trackSoloButton.classList.add("active");
-        channelSoloButton.classList.add("active");
-    }
-
-    if (track.record) {
-        trackRecordButton.classList.add("active");
-        channelRecordButton.classList.add("active");
-    }
-
-    if (track.monitor) {
-        trackMonitorButton.classList.add("active");
-        channelMonitorButton.classList.add("active");
-    }
-
     channelFaderThumb.dataset.dragging = "false";
     channelFaderThumb.dataset.offSetY = "0";
 

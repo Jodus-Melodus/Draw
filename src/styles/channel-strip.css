@@ -1,5 +1,7 @@
-/* channel-strip */
 .channel-strip {
+  background-color: var(--channel-background);
+  color: var(--channel-text);
+
   width: 6%;
   height: 100%;
   position: relative;
@@ -9,14 +11,13 @@
   margin-left: 5px
 }
 
-/* meters */
 .meterR {
   width: 15%;
   height: 50%;
-  background-image: linear-gradient(0deg, #54aef7 40%, yellow,  red 100%);
+  background-image: linear-gradient(0deg, #54aef7 40%, yellow, red 100%);
   position: absolute;
   top: 17%;
-  left: 60%; 
+  left: 60%;
   border: 1px solid rgb(128, 128, 128);
 }
 
@@ -26,174 +27,173 @@
   background-image: linear-gradient(0deg, #54aef7 40%, yellow, red 100%);
   position: absolute;
   top: 17%;
-  left: 80%;  
+  left: 80%;
   border: 1px solid rgb(128, 128, 128);
 }
 
 .metergain {
+  background-color: var(--channel-gain-background);
+  color: var(--channel-gain-text);
+
   width: 40%;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 5%;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5%;
   font-size: 15px;
-
   position: absolute;
   top: 70%;
   left: 55%;
-   
   border: 2px solid rgb(83, 83, 83);
 }
 
-/* buttons & pan */
 .channel-mute {
-  width: 40%;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 5%;          /* height */
+  background-color: var(--channel-mute-inactive-background);
+  color: var(--channel-mute-inactive-text);
 
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5%;
   position: relative;
   top: 1%;
   left: 4%;
-  
   border: 2px solid rgb(83, 83, 83);
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
 }
 
 .channel-mute.active {
-  background-color: #ffd633;
-  color: black;
+  background-color: var(--channel-mute-active-background);
+  color: var(--channel-mute-active-text);
 }
 
 .channel-solo {
-  width: 40%;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 5%;            /* height */
+  background-color: var(--channel-solo-inactive-background);
+  color: var(--channel-solo-inactive-text);
 
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5%;
   position: absolute;
   top: 1%;
   left: 53%;
-  
   border: 2px solid rgb(83, 83, 83);
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
 }
 
 .channel-solo.active {
-  background-color: #e75b3c;
-  color: black;
+  background-color: var(--channel-solo-active-background);
+  color: var(--channel-solo-active-text);
 }
 
 .channel-pan {
-  width: 89%;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 5%;            /* height */
+  background-color: var(--channel-pan-background);
+  color: var(--channel-pan-text);
 
+  width: 89%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5%;
   position: absolute;
   top: 8%;
   left: 4%;
-
   border: 2px solid rgb(83, 83, 83);
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
 }
 
-/* fader */
 .fader {
+  background-color: var(--channel-fader-background);
+
   width: 15%;
   height: 50%;
-
   position: absolute;
   top: 17%;
   left: 15%;
-
   border-radius: 10px;
 }
 
 .fader-thumb {
+  background-color: var(--channel-fader-thumb-background);
+
   width: 175%;
   height: 30%;
-  
   position: relative;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-
   border: 1px solid #999999;
   user-select: none;
   transition: background-color 0.2s ease;
 }
 
 .fader-thumb-body {
+  background-color: var(--channel-fader-thumb-body);
+
   width: 98%;
   height: 80%;
-
   position: relative;
   top: 10%;
   left: 1%;
 }
 
 .fader-thumb-notch {
+  background-color: var(--channel-fader-thumb-notch);
+
   width: 90%;
   height: 2%;
-
   position: relative;
   top: 50%;
   left: 5%;
 }
 
 .fadergain {
+  background-color: var(--channel-fader-gain-background);
+  color: var(--channel-fader-gain-text);
+
   width: 40%;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 5%;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5%;
   font-size: 15px;
-
   position: absolute;
   top: 70%;
-  left: 4%; 
-
+  left: 4%;
   border: 2px solid rgb(83, 83, 83);
 }
 
-/* monitor & record */
 .channel-record {
+  background-color: var(--channel-record-inactive-background);
+  color: var(--channel-record-inactive-text);
+
   width: 40%;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 5%;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5%;
   font-size: 14px;
-
   position: absolute;
   top: 77%;
   left: 4%;
-
   border: 2px solid rgb(83, 83, 83);
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
 }
 
 .channel-record.active {
-  background-color: #eb2323;
+  background-color: var(--channel-record-active-background);
+  color: var(--channel-record-active-text);
 }
 
 .channel-record-icon {
@@ -202,27 +202,27 @@
 }
 
 .channel-monitor {
+  background-color: var(--channel-monitor-inactive-background);
+  color: var(--channel-monitor-inactive-text);
+
   width: 40%;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 5%;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5%;
   font-size: 14px;
-
   position: absolute;
   top: 77%;
   left: 55%;
-
   border: 2px solid rgb(83, 83, 83);
-
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
 }
 
 .channel-monitor.active {
-  background-color: #ffa033;
+  background-color: var(--channel-monitor-active-background);
+  color: var(--channel-monitor-active-text);
 }
 
 .channel-monitor-icon {
@@ -230,20 +230,19 @@
   height: 15px;
 }
 
-/* channel name */
 .channel-name {
+  background-color: var(--channel-name-background);
+  color: var(--channel-name-text);
+
   width: 95%;
-  display: flex;           /* use to align */
-  justify-content: center; /* horizontal */
-  align-items: center;     /* vertical */
-  height: 12%;            /* height */
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 12%;
   font-size: 18px;
-
   position: absolute;
   top: 86%;
   left: -2%;
-
   border: 5px solid rgb(116, 116, 116);
   border-radius: 10px;
 }

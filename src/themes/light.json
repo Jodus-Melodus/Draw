@@ -1,28 +1,128 @@
 {
-    "background": "#00ff00",
-    "text": "",
+    "background": "#f5f5f5",
+    "text": "#222222",
     "track": {
-        "background": "",
-        "color": "",
+        "background": "#e0e0e0",
+        "text": "#222222",
         "name": {
-            "background": "",
-            "color": ""
+            "background": "#ffffff",
+            "text": "#222222"
         },
         "mute": {
-            "background": "",
-            "color": ""
+            "active": {
+                "background": "#ffd633",
+                "text": "#000000"
+            },
+            "inactive": {
+                "background": "#f0f0f0",
+                "text": "#555555"
+            }
         },
         "solo": {
-            "background": "",
-            "color": ""
+            "active": {
+                "background": "#ff9966",
+                "text": "#000000"
+            },
+            "inactive": {
+                "background": "#f0f0f0",
+                "text": "#555555"
+            }
         },
         "monitor": {
-            "background": "",
-            "color": ""
+            "active": {
+                "background": "#ffa033",
+                "text": "#000000"
+            },
+            "inactive": {
+                "background": "#f0f0f0",
+                "text": "#555555"
+            }
         },
         "record": {
-            "background": "",
-            "color": ""
+            "active": {
+                "background": "#eb2323",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "#f0f0f0",
+                "text": "#555555"
+            }
+        }
+    },
+    "channel": {
+        "background": "#ffffff",
+        "text": "#222222",
+        "meters": {
+            "right": {
+                "background": "#b3b3b3"
+            },
+            "left": {
+                "background": "#b3b3b3"
+            }
+        },
+        "gain": {
+            "background": "#e6e6e6",
+            "text": "#222222"
+        },
+        "pan": {
+            "background": "#e6e6e6",
+            "text": "#222222"
+        },
+        "fader": {
+            "background": "#cccccc",
+            "thumb": {
+                "background": "#ffffff",
+                "body": "#999999",
+                "notch": "#333333"
+            },
+            "gain": {
+                "background": "#e6e6e6",
+                "text": "#222222"
+            }
+        },
+        "name": {
+            "background": "#e6e6e6",
+            "text": "#222222"
+        },
+        "mute": {
+            "active": {
+                "background": "#ffd633",
+                "text": "#000000"
+            },
+            "inactive": {
+                "background": "#e6e6e6",
+                "text": "#222222"
+            }
+        },
+        "solo": {
+            "active": {
+                "background": "#ff9966",
+                "text": "#000000"
+            },
+            "inactive": {
+                "background": "#e6e6e6",
+                "text": "#222222"
+            }
+        },
+        "monitor": {
+            "active": {
+                "background": "#ffa033",
+                "text": "#000000"
+            },
+            "inactive": {
+                "background": "#e6e6e6",
+                "text": "#222222"
+            }
+        },
+        "record": {
+            "active": {
+                "background": "#eb2323",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "#e6e6e6",
+                "text": "#222222"
+            }
         }
     }
 }

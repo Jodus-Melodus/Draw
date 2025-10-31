@@ -1,5 +1,5 @@
 {
-    "background": "#ff0000",
+    "background": "rgb(72, 72, 72)",
     "text": "#ffffff",
     "track": {
         "background": "#464646",
@@ -9,20 +9,44 @@
             "text": "#ffffff"
         },
         "mute": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "active": {
+                "background": "#ffd633",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
         },
         "solo": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "active": {
+                "background": "#e75b3c",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
         },
         "monitor": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "active": {
+                "background": "#ffa033",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
         },
         "record": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "active": {
+                "background": "#eb2323",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
         }
     },
     "channel": {
@@ -61,20 +85,44 @@
             "text": "#ffffff"
         },
         "mute": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "active": {
+                "background": "#ffd633",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
         },
         "solo": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "active": {
+                "background": "#e75b3c",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
         },
         "monitor": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "active": {
+                "background": "#ffa033",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
         },
         "record": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "active": {
+                "background": "#eb2323",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            }
         }
     }
 }
