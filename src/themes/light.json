@@ -1,0 +1,28 @@
+{
+    "background": "#00ff00",
+    "text": "",
+    "track": {
+        "background": "",
+        "color": "",
+        "name": {
+            "background": "",
+            "color": ""
+        },
+        "mute": {
+            "background": "",
+            "color": ""
+        },
+        "solo": {
+            "background": "",
+            "color": ""
+        },
+        "monitor": {
+            "background": "",
+            "color": ""
+        },
+        "record": {
+            "background": "",
+            "color": ""
+        }
+    }
+}
