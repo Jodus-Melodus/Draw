@@ -1,127 +1,148 @@
 {
-    "background": "#f5f5f5",
-    "text": "#222222",
+    "background": "#222222",
+    "text": "#ffffff",
     "track": {
-        "background": "#e0e0e0",
-        "text": "#222222",
+        "background1": "#414141",
+        "background2": "#242424",
+        "text": "#ffffff",
         "name": {
-            "background": "#ffffff",
-            "text": "#222222"
+            "text": "#ffffff"
         },
         "mute": {
             "active": {
-                "background": "#ffd633",
-                "text": "#000000"
+                "background1": "#ff5e00",
+                "background2": "#8a3f14",
+                "text": "#ffffff"
             },
             "inactive": {
-                "background": "#f0f0f0",
-                "text": "#555555"
+                "background1": "#858585",
+                "background2": "#444444",
+                "text": "#ffffff"
             }
         },
         "solo": {
             "active": {
-                "background": "#ff9966",
-                "text": "#000000"
+                "background1": "#ffae00",
+                "background2": "#7a5400",
+                "text": "#ffffff"
             },
             "inactive": {
-                "background": "#f0f0f0",
-                "text": "#555555"
+                "background1": "#858585",
+                "background2": "#444444",
+                "text": "#ffffff"
             }
         },
         "monitor": {
             "active": {
-                "background": "#ffa033",
-                "text": "#000000"
+                "background1": "#01ffea",
+                "background2": "#00867b",
+                "text": "#ffffff"
             },
             "inactive": {
-                "background": "#f0f0f0",
-                "text": "#555555"
+                "background1": "#858585",
+                "background2": "#444444",
+                "text": "#ffffff"
             }
         },
         "record": {
             "active": {
-                "background": "#eb2323",
+                "background1": "#ffae00",
+                "background2": "#7a5400",
                 "text": "#ffffff"
             },
             "inactive": {
-                "background": "#f0f0f0",
-                "text": "#555555"
+                "background1": "#858585",
+                "background2": "#444444",
+                "text": "#ffffff"
             }
         }
     },
     "channel": {
-        "background": "#ffffff",
-        "text": "#222222",
+        "background1": "#6d6d6d",
+        "background2": "#2e2e2e",
+        "text": "#ffffff",
         "meters": {
-            "right": {
-                "background": "#b3b3b3"
-            },
-            "left": {
-                "background": "#b3b3b3"
+            "gain": {
+                "background1": "#ff0000",
+                "background2": "#ffff00",
+                "background3": "#00ff00"
             }
         },
         "gain": {
-            "background": "#e6e6e6",
-            "text": "#222222"
+            "background": "rgb(153, 153, 153)",
+            "text": "#ffffff"
         },
         "pan": {
-            "background": "#e6e6e6",
-            "text": "#222222"
+            "background1": "#242424",
+            "background2": "#aaaaaa",
+            "background3": "#242424",
+            "text": "#ffffff"
         },
         "fader": {
-            "background": "#cccccc",
+            "background": "#dddddd",
             "thumb": {
-                "background": "#ffffff",
-                "body": "#999999",
-                "notch": "#333333"
+                "background1": "#c9c9c9",
+                "background2": "#797979",
+                "body": "rgb(153, 153, 153)",
+                "notch": "#000000"
             },
             "gain": {
-                "background": "#e6e6e6",
-                "text": "#222222"
+                "background": "rgb(153, 153, 153)",
+                "text": "#ffffff"
+            },
+            "slit": {
+                "background": "#434343"
             }
         },
         "name": {
-            "background": "#e6e6e6",
-            "text": "#222222"
+            "text": "#ffffff"
         },
         "mute": {
             "active": {
-                "background": "#ffd633",
-                "text": "#000000"
+                "background1": "#ff5e00",
+                "background2": "#8a3f14",
+                "text": "#ffffff"
             },
             "inactive": {
-                "background": "#e6e6e6",
-                "text": "#222222"
+                "background1": "#858585",
+                "background2": "#444444",
+                "text": "#ffffff"
             }
         },
         "solo": {
             "active": {
-                "background": "#ff9966",
-                "text": "#000000"
+                "background1": "#ffae00",
+                "background2": "#7a5400",
+                "text": "#ffffff"
             },
             "inactive": {
-                "background": "#e6e6e6",
-                "text": "#222222"
+                "background1": "#858585",
+                "background2": "#444444",
+                "text": "#ffffff"
             }
         },
         "monitor": {
             "active": {
-                "background": "#ffa033",
-                "text": "#000000"
+                "background1": "#01ffea",
+                "background2": "#00867b",
+                "text": "#ffffff"
             },
             "inactive": {
-                "background": "#e6e6e6",
-                "text": "#222222"
+                "background1": "#858585",
+                "background2": "#444444",
+                "text": "#ffffff"
             }
         },
         "record": {
             "active": {
-                "background": "#eb2323",
+                "background1": "#ffae00",
+                "background2": "#7a5400",
                 "text": "#ffffff"
             },
             "inactive": {
-                "background": "#e6e6e6",
-                "text": "#222222"
+                "background1": "#858585",
+                "background2": "#444444",
+                "text": "#ffffff"
             }
         }
     }
