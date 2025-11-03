@@ -10,46 +10,53 @@ type TrackTheme = {
     background: string;
     text: string;
     name: {
-        background: string;
         text: string;
     };
     mute: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     solo: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     monitor: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     record: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
@@ -151,6 +158,8 @@ export function applyTheme(theme: BodyTheme) {
                 walk(value, newPath);
             } else {
                 const varName = "--" + newPath.join("-");
+                console.log(varName);
+                
                 root.setProperty(varName, String(value));
             }
         }

@@ -14,19 +14,19 @@
 
 <template id="channel-track-template">
   <div class="channel-strip">
-  
+
     <!-- meters -->
     <div class="meters">
       <div class="meterR"></div>
       <div class="meterL"></div>
       <div class="metergain"></div>
     </div>
-  
+
     <!-- buttons & pan -->
     <button class="channel-mute">M</button>
     <button class="channel-solo">S</button>
     <button class="channel-pan">C</button>
-  
+
     <!-- fader -->
     <div class="fader">
       <div class="fader-thumb">
@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="fadergain"></div>
-  
+
     <!-- monitor & record -->
     <button class="channel-record">
       <img src="assets/record_icon.png" class="channel-record-icon" />
@@ -44,7 +44,7 @@
     <button class="channel-monitor">
       <img src="assets/monitor_icon.png" class="channel-monitor-icon" />
     </button>
-  
+
     <!-- channel name  -->
     <div class="channel-name"></div>
   </div>
@@ -53,14 +53,16 @@
 <template id="track-template">
   <div class="track">
     <div class="track-name"></div>
-    <button class="track-mute">M</button>
-    <button class="track-solo">S</button>
-    <button class="track-record">
-      <img src="assets/record_icon.png" class="track-record-icon" />
-    </button>
-    <button class="track-monitor">
-      <img src="assets/monitor_icon.png" class="track-monitor-icon" />
-    </button>
+    <div class="track-buttons">
+      <button class="track-mute">M</button>
+      <button class="track-solo">S</button>
+      <button class="track-record">
+        <img src="assets/record_icon.png" class="track-record-icon" />
+      </button>
+      <button class="track-monitor">
+        <img src="assets/monitor_icon.png" class="track-monitor-icon" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -85,7 +87,7 @@
   </div> -->
 
   <!-- track-time-->
-   <!-- <div class="track-time">0:00:00.00</div> -->
+  <!-- <div class="track-time">0:00:00.00</div> -->
 </body>
 
 <script type="module" src='main.ts'></script>

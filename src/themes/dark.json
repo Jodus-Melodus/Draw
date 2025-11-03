@@ -1,50 +1,58 @@
 {
-    "background": "rgb(72, 72, 72)",
+    "background": "#222222",
     "text": "#ffffff",
     "track": {
-        "background": "#464646",
+        "background1": "#414141",
+        "background2": "#242424",
         "text": "#ffffff",
         "name": {
-            "background": "rgb(153, 153, 153)",
             "text": "#ffffff"
         },
         "mute": {
             "active": {
-                "background": "#ffd633",
+                "background1": "#ff5e00",
+                "background2": "#8a3f14",
                 "text": "#ffffff"
             },
             "inactive": {
-                "background": "rgb(153, 153, 153)",
+                "background1": "#858585",
+                "background2": "#444444",
                 "text": "#ffffff"
             }
         },
         "solo": {
             "active": {
-                "background": "#e75b3c",
+                "background1": "#ffae00",
+                "background2": "#7a5400",
                 "text": "#ffffff"
             },
             "inactive": {
-                "background": "rgb(153, 153, 153)",
+                "background1": "#858585",
+                "background2": "#444444",
                 "text": "#ffffff"
             }
         },
         "monitor": {
             "active": {
-                "background": "#ffa033",
+                "background1": "#01ffea",
+                "background2": "#00867b",
                 "text": "#ffffff"
             },
             "inactive": {
-                "background": "rgb(153, 153, 153)",
+                "background1": "#858585",
+                "background2": "#444444",
                 "text": "#ffffff"
             }
         },
         "record": {
             "active": {
-                "background": "#eb2323",
+                "background1": "#ffae00",
+                "background2": "#7a5400",
                 "text": "#ffffff"
             },
             "inactive": {
-                "background": "rgb(153, 153, 153)",
+                "background1": "#858585",
+                "background2": "#444444",
                 "text": "#ffffff"
             }
         }
