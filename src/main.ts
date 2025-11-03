@@ -14,12 +14,6 @@ async function init() {
   await listen("updated-track-list", (_) => {
     updateTrackList();
   });
-
-  await listen("audio-samples", (_) => {
-    // handle audio samples
-    // display wave form or gain
-    console.log("Received audio");
-  });
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -27,7 +21,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   loadTheme(savedTheme);
 })
 
-window.addEventListener("storage", (event) => {
+window.addEventListener("storage", event => {
   if (event.key === "theme" && event.newValue) {
     loadTheme(event.newValue);
   }

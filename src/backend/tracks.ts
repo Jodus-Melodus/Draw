@@ -1,6 +1,7 @@
 import type { TrackInfo, TrackListResponse, TrackUpdate } from "./types.js";
 import { invoke } from "@tauri-apps/api/core";
 import { percentToDb } from "./utils.js";
+import { listen } from "@tauri-apps/api/event";
 
 var trackList: TrackListResponse;
 
@@ -57,6 +58,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const channelMonitorButton = newChannel.querySelector(".channel-monitor") as HTMLButtonElement;
     const channelFader = newChannel.querySelector(".fader") as HTMLElement;
     const channelFaderThumb = newChannel.querySelector(".fader-thumb") as HTMLElement;
+    const channelGainLevelLeft = newChannel.getElementById("gain-level-l") as HTMLElement;
+    const channelGainLevelRight = newChannel.getElementById("gain-level-r") as HTMLElement;
 
     trackName.textContent = track.name;
     channelName.textContent = track.name;
@@ -267,6 +270,16 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         // let gain = percentToGain(percent);
         const gain = Math.pow(10, percentToDb(percent) / 20);
         updateTrack(track.name, { Gain: gain });
+    });
+
+    listen(`audio-samples`, (sample) => {
+        let level = sample.payload as number;
+        level = Math.abs(level);
+        level = level * 50;
+        level = Math.min(Math.max(level, 0), 1);
+        let position = 100 - (level * 100);
+        channelGainLevelLeft.style.top = `${position}%`;
+        channelGainLevelLeft.style.bottom = 'auto';
     });
 
     trackContainer.appendChild(newTrack);
