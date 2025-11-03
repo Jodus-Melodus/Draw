@@ -65,7 +65,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
 
     trackName.textContent = track.name;
     channelName.textContent = track.name;
-    channelFaderGain.textContent = track.gain.toFixed(0) + '%';
+    channelFaderGain.textContent = (100 * track.gain).toFixed(0) + '%';
     channelFaderThumb.dataset.dragging = "false";
     channelFaderThumb.dataset.offSetY = "0";
 
