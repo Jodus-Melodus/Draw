@@ -10,123 +10,143 @@ type TrackTheme = {
     background: string;
     text: string;
     name: {
-        background: string;
         text: string;
     };
     mute: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     solo: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     monitor: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     record: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
 };
 
 type ChannelTheme = {
-    background: string;
+    background1: string;
+    background2: string;
     text: string;
     meters: {
-        right: {
-            background: string
-        };
-        left: {
-            background: string
-        };
+        gain: {
+            background1: string;
+            background2: string;
+            background3: string;
+        }
     };
     gain: {
         background: string;
         text: string;
     };
     pan: {
-        background: string;
+        background1: string;
+        background2: string;
+        background3: string;
         text: string;
     };
     fader: {
         background: string;
         thumb: {
-            background: string;
+            background1: string;
+            background2: string;
             body: string;
             notch: string;
         };
         gain: {
             background: string;
             text: string;
+        },
+        slit: {
+            background: string;
         }
     };
     name: {
-        background: string;
         text: string;
     };
     mute: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     solo: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     monitor: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     };
     record: {
         active: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         };
         inactive: {
-            background: string;
+            background1: string;
+            background2: string;
             text: string;
         }
     }

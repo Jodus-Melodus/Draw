@@ -1,79 +1,99 @@
 .track {
-  background-color: var(--track-background);
+  background: linear-gradient(var(--track-background-gratient-1), var(--track-background-gratient-2));
   color: var(--track-text);
 
   width: 100%;
-  height: 50px;
-  position: relative;
-  border: 5px solid rgb(161, 161, 161);
-  border-radius: 5px;
+  height: 12%;
+  border: 2px solid #8f8f8f;
+  border-radius: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 5px;
 }
 
 .track-name {
-  background-color: var(--track-name-background);
   color: var(--track-name-text);
+  padding: 1%;
+}
 
+.track-buttons {
+  margin-top: 6%;
   display: flex;
-  justify-content: center;
-  position: relative;
-  font-size: clamp(16px, 2.5vw, 24px);
+  width: 100%;
+  height: 30%;
+  justify-content: space-between;
 }
 
 .track-mute {
-  background-color: var(--track-mute-inactive-background);
+  background: linear-gradient(var(--track-mute-inactive-background1), var(--track-mute-inactive-background2));
   color: var(--track-mute-inactive-text);
 
-  width: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 15px;
-  font-size: 12px;
-  position: absolute;
-  top: 50%;
-  left: 1%;
-  border: 2px solid rgb(161, 161, 161);
+
+  width: 23%;
+  border: none;
   cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
+}
+
+.track-mute.active {
+  background: linear-gradient(var(--track-mute-active-background1), var(--track-mute-active-background2));
+  color: var(--track-mute-active-text);
 }
 
 .track-solo {
-  background-color: var(--track-solo-inactive-background);
+  background: linear-gradient(var(--track-solo-inactive-background1), var(--track-solo-inactive-background2));
   color: var(--track-solo-inactive-text);
 
-  width: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 15px;
-  font-size: 12px;
-  position: absolute;
-  top: 50%;
-  left: 26%;
-  border: 2px solid rgb(83, 83, 83);
+
+  width: 23%;
+  border: none;
   cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease
+}
+
+.track-solo.active {
+  background: linear-gradient(var(--track-solo-active-background1), var(--track-solo-active-background2));
+  color: var(--track-solo-active-text);
 }
 
 .track-record {
-  background-color: var(--track-record-inactive-background);
+  background: linear-gradient(var(--track-record-inactive-background1), var(--track-record-inactive-background2));
   color: var(--track-record-inactive-text);
 
-  width: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 15px;
-  font-size: 12px;
-  position: absolute;
-  top: 50%;
-  left: 51%;
-  border: 2px solid rgb(83, 83, 83);
+
+  width: 23%;
+  border: none;
   cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease
+}
+
+.track-record.active {
+  background: linear-gradient(var(--track-record-active-background1), var(--track-record-active-background2));
+  color: var(--track-record-active-text);
+}
+
+.track-monitor {
+  background: linear-gradient(var(--track-monitor-inactive-background1), var(--track-monitor-inactive-background2));
+  color: var(--track-monitor-inactive-text);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 23%;
+  border: none;
+  cursor: pointer;
+}
+
+.track-monitor.active {
+  background: linear-gradient(var(--track-monitor-active-background1), var(--track-monitor-active-background2));
+  color: var(--track-monitor-active-text);
 }
 
 .track-record-icon {
@@ -81,46 +101,7 @@
   height: 15px;
 }
 
-.track-monitor {
-  background-color: var(--track-monitor-inactive-background);
-  color: var(--track-monitor-inactive-text);
-
-  width: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 15px;
-  font-size: 12px;
-  position: absolute;
-  top: 50%;
-  left: 76%;
-  border: 2px solid rgb(83, 83, 83);
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease
-}
-
 .track-monitor-icon {
   width: 15px;
   height: 15px;
-}
-
-.track-mute.active {
-  background-color: var(--track-mute-active-background);
-  color: var(--track-mute-active-text);
-}
-
-.track-solo.active {
-  background-color: var(--track-solo-active-background);
-  color: var(--track-solo-active-text);
-}
-
-.track-record.active {
-  background-color: var(--track-record-active-background);
-  color: var(--track-record-active-text);
-}
-
-.track-monitor.active {
-  background-color: var(--track-monitor-active-background);
-  color: var(--track-monitor-active-text);
 }
