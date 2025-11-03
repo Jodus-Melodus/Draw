@@ -14,39 +14,40 @@
 
 <template id="channel-track-template">
   <div class="channel-strip">
+    <div class="channel-name"></div>
+    <div class="channel-pan">C</div>
 
-    <!-- meters -->
-    <div class="meters">
-      <div class="meterR"></div>
-      <div class="meterL"></div>
-      <div class="metergain"></div>
-    </div>
-
-    <!-- buttons & pan -->
-    <button class="channel-mute">M</button>
-    <button class="channel-solo">S</button>
-    <button class="channel-pan">C</button>
-
-    <!-- fader -->
-    <div class="fader">
-      <div class="fader-thumb">
-        <div class="fader-thumb-body">
-          <div class="fader-thumb-notch"></div>
+    <div class="gain-control">
+      <div class="fader-controller">
+        <div class="fader">
+          <div class="fader-slit">
+            <div class="fader-thumb">
+              <div class="fader-thumb-notch"></div>
+            </div>
+          </div>
         </div>
+        <div class="fadergain"></div>
+      </div>
+
+      <div class="meter">
+        <div class="meters">
+          <div id="meterR" class="gain-meter"></div>
+          <div id="meterL" class="gain-meter"></div>
+        </div>
+        <div class="metergain"></div>
       </div>
     </div>
-    <div class="fadergain"></div>
 
-    <!-- monitor & record -->
-    <button class="channel-record">
-      <img src="assets/record_icon.png" class="channel-record-icon" />
-    </button>
-    <button class="channel-monitor">
-      <img src="assets/monitor_icon.png" class="channel-monitor-icon" />
-    </button>
-
-    <!-- channel name  -->
-    <div class="channel-name"></div>
+    <div class="channel-buttons">
+      <button class="channel-mute">M</button>
+      <button class="channel-solo">S</button>
+      <button class="channel-record">
+        <img src="assets/record_icon.png" class="channel-record-icon" />
+      </button>
+      <button class="channel-monitor">
+        <img src="assets/monitor_icon.png" class="channel-monitor-icon" />
+      </button>
+    </div>
   </div>
 </template>
 

@@ -1,198 +1,144 @@
 .channel-strip {
-  background-color: var(--channel-background);
+  background: radial-gradient(var(--channel-background1), var(--channel-background2));
   color: var(--channel-text);
 
   width: 6%;
   height: 100%;
-  position: relative;
-  border: 5px solid rgb(116, 116, 116);
-  border-radius: 5px;
-  flex-shrink: 0;
-  margin-left: 5px
+  border: 2px solid #8f8f8f;
+  border-radius: 2px;
+  padding: 5px;
 }
 
-.meterR {
-  width: 15%;
-  height: 50%;
-  background-image: linear-gradient(0deg, #54aef7 40%, yellow, red 100%);
-  position: absolute;
-  top: 17%;
-  left: 60%;
-  border: 1px solid rgb(128, 128, 128);
+.channel-name {
+  color: var(--channel-name-text);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.meterL {
-  width: 15%;
-  height: 50%;
-  background-image: linear-gradient(0deg, #54aef7 40%, yellow, red 100%);
-  position: absolute;
-  top: 17%;
-  left: 80%;
-  border: 1px solid rgb(128, 128, 128);
+.channel-pan {
+  background: linear-gradient(90deg, var(--channel-pan-background1), var(--channel-pan-background2), var(--channel-background3));
+  color: var(--channel-pan-text);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+}
+
+.gain-control {
+  height: 65%;
+  display: flex;
+  padding-top: 5%;
+  justify-content: space-around;
+  gap: 5px;
+}
+
+.meter {
+  width: 50%;
+  height: 100%;
+}
+
+.meters {
+  display: flex;
+  height: 80%;
+  justify-content: space-around;
+  margin: 5%;
+}
+
+.gain-meter {
+  background: linear-gradient(var(--channel-meters-gain-background1), var(--channel-meters-gain-background2), var(--channel-meters-gain-background3));
+  width: 40%;
+  border: 2px #5c5c5c solid;
 }
 
 .metergain {
   background-color: var(--channel-gain-background);
   color: var(--channel-gain-text);
 
-  width: 40%;
+  width: 100%;
+  height: 15%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 5%;
-  font-size: 15px;
-  position: absolute;
-  top: 70%;
-  left: 55%;
-  border: 2px solid rgb(83, 83, 83);
+  border-radius: 10px;
 }
 
-.channel-mute {
-  background-color: var(--channel-mute-inactive-background);
-  color: var(--channel-mute-inactive-text);
-
-  width: 40%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 5%;
-  position: relative;
-  top: 1%;
-  left: 4%;
-  border: 2px solid rgb(83, 83, 83);
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
-}
-
-.channel-mute.active {
-  background-color: var(--channel-mute-active-background);
-  color: var(--channel-mute-active-text);
-}
-
-.channel-solo {
-  background-color: var(--channel-solo-inactive-background);
-  color: var(--channel-solo-inactive-text);
-
-  width: 40%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 5%;
-  position: absolute;
-  top: 1%;
-  left: 53%;
-  border: 2px solid rgb(83, 83, 83);
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
-}
-
-.channel-solo.active {
-  background-color: var(--channel-solo-active-background);
-  color: var(--channel-solo-active-text);
-}
-
-.channel-pan {
-  background-color: var(--channel-pan-background);
-  color: var(--channel-pan-text);
-
-  width: 89%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 5%;
-  position: absolute;
-  top: 8%;
-  left: 4%;
-  border: 2px solid rgb(83, 83, 83);
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
+.fader-controller {
+  width: 50%;
+  height: 100%;
 }
 
 .fader {
-  background-color: var(--channel-fader-background);
+  border-radius: 5px;
+  width: 100%;
+  height: 80%;
 
-  width: 15%;
-  height: 50%;
-  position: absolute;
-  top: 17%;
-  left: 15%;
+  display: flex;
+  margin: 5%;
+  justify-content: center;
+}
+
+.fader-slit {
+  background-color: var(--channel-fader-slit-background);
+  height: 100%;
+  width: 10%;
   border-radius: 10px;
 }
 
 .fader-thumb {
-  background-color: var(--channel-fader-thumb-background);
-
-  width: 175%;
-  height: 30%;
-  position: relative;
-  left: 50%;
-  top: 50%;
+  background:linear-gradient(var(--channel-fader-thumb-background1), var(--channel-fader-thumb-background2));
   transform: translate(-50%, -50%);
-  border: 1px solid #999999;
-  user-select: none;
-  transition: background-color 0.2s ease;
-}
-
-.fader-thumb-body {
-  background-color: var(--channel-fader-thumb-body);
-
-  width: 98%;
-  height: 80%;
+  height: 40%;
+  width: 600%;
   position: relative;
-  top: 10%;
-  left: 1%;
+  display: flex;
+  align-items: center;
 }
 
 .fader-thumb-notch {
   background-color: var(--channel-fader-thumb-notch);
-
-  width: 90%;
-  height: 2%;
-  position: relative;
-  top: 50%;
-  left: 5%;
+  width: 100%;
+  height: 5%;
+  border-radius: 5px;
 }
 
 .fadergain {
   background-color: var(--channel-fader-gain-background);
   color: var(--channel-fader-gain-text);
+  width: 100%;
+  height: 15%;
 
-  width: 40%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 5%;
-  font-size: 15px;
-  position: absolute;
-  top: 70%;
-  left: 4%;
-  border: 2px solid rgb(83, 83, 83);
+  border-radius: 10px;
+}
+
+.channel-buttons {
+  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+  margin: 2px;
 }
 
 .channel-record {
-  background-color: var(--channel-record-inactive-background);
+  background: linear-gradient(var(--channel-record-inactive-background1), var(--channel-record-inactive-background2));
   color: var(--channel-record-inactive-text);
 
-  width: 40%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 5%;
-  font-size: 14px;
-  position: absolute;
-  top: 77%;
-  left: 4%;
-  border: 2px solid rgb(83, 83, 83);
+
+  border: none;
   cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
 }
 
 .channel-record.active {
-  background-color: var(--channel-record-active-background);
+  background: linear-gradient(var(--channel-record-active-background1), var(--channel-record-active-background2));
   color: var(--channel-record-active-text);
 }
 
@@ -202,26 +148,19 @@
 }
 
 .channel-monitor {
-  background-color: var(--channel-monitor-inactive-background);
+  background: linear-gradient(var(--channel-monitor-inactive-background1), var(--channel-monitor-inactive-background2));
   color: var(--channel-monitor-inactive-text);
 
-  width: 40%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 5%;
-  font-size: 14px;
-  position: absolute;
-  top: 77%;
-  left: 55%;
-  border: 2px solid rgb(83, 83, 83);
+
+  border: none;
   cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
 }
 
 .channel-monitor.active {
-  background-color: var(--channel-monitor-active-background);
+  background: linear-gradient(var(--channel-monitor-active-background1), var(--channel-monitor-active-background2));
   color: var(--channel-monitor-active-text);
 }
 
@@ -230,19 +169,36 @@
   height: 15px;
 }
 
-.channel-name {
-  background-color: var(--channel-name-background);
-  color: var(--channel-name-text);
+.channel-mute {
+  background: linear-gradient(var(--channel-mute-inactive-background1), var(--channel-mute-inactive-background2));
+  color: var(--channel-mute-inactive-text);
 
-  width: 95%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 12%;
-  font-size: 18px;
-  position: absolute;
-  top: 86%;
-  left: -2%;
-  border: 5px solid rgb(116, 116, 116);
-  border-radius: 10px;
+
+  border: none;
+  cursor: pointer;
+}
+
+.channel-mute.active {
+  background: linear-gradient(var(--channel-mute-active-background1), var(--channel-mute-active-background2));
+  color: var(--channel-mute-active-text);
+}
+
+.channel-solo {
+  background: linear-gradient(var(--track-solo-inactive-background1), var(--track-solo-inactive-background2));
+  color: var(--channel-solo-inactive-text);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: none;
+  cursor: pointer;
+}
+
+.channel-solo.active {
+  background: linear-gradient(var(--track-solo-active-background1), var(--track-solo-active-background2));
+  color: var(--channel-solo-active-text);
 }

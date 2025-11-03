@@ -10,7 +10,6 @@
     background-color: #2B2B2B;
     width: 12%;
     height: 100%;
-    padding: 5px;
     padding-right: 15px;
     border-radius: 5px;
 
@@ -26,12 +25,8 @@
     display: flex;
     position: relative;
     background-color: #2B2B2B;
-    padding-top: 5px;
-    padding-bottom: 15px;
-    padding-right: 15px;
-    margin-bottom: 15px;
-    margin: 5px;
     border-radius: 5px;
+    padding-bottom: 20px;
 
     /* Scrolling */
     box-sizing: border-box;
