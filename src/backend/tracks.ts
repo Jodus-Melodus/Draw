@@ -60,9 +60,12 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const channelFaderThumb = newChannel.querySelector(".fader-thumb") as HTMLElement;
     const channelGainLevelLeft = newChannel.getElementById("gain-level-l") as HTMLElement;
     const channelGainLevelRight = newChannel.getElementById("gain-level-r") as HTMLElement;
+    const channelMeterGain = newChannel.querySelector(".metergain") as HTMLElement;
+    const channelFaderGain = newChannel.querySelector(".fadergain") as HTMLElement;
 
     trackName.textContent = track.name;
     channelName.textContent = track.name;
+    channelFaderGain.textContent = track.gain.toFixed(0) + '%';
     channelFaderThumb.dataset.dragging = "false";
     channelFaderThumb.dataset.offSetY = "0";
 
@@ -254,6 +257,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         // let gain = percentToGain(percent);
         const gain = Math.pow(10, percentToDb(percent) / 20);
         updateTrack(track.name, { Gain: gain });
+        channelFaderGain.textContent = percent + '%';
     });
 
     channelFader.addEventListener("wheel", (e) => {
@@ -270,9 +274,10 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         // let gain = percentToGain(percent);
         const gain = Math.pow(10, percentToDb(percent) / 20);
         updateTrack(track.name, { Gain: gain });
+        channelFaderGain.textContent = percent + '%';
     });
 
-    listen(`audio-samples`, (sample) => {
+    listen(`${track.name}-audio-samples`, (sample) => {
         let level = sample.payload as number;
         level = Math.abs(level);
         level = level * 50;
@@ -280,6 +285,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         let position = 100 - (level * 100);
         channelGainLevelLeft.style.top = `${position}%`;
         channelGainLevelLeft.style.bottom = 'auto';
+        channelMeterGain.textContent = `${(level * 100).toFixed(2)}`;
     });
 
     trackContainer.appendChild(newTrack);

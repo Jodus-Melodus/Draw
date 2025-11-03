@@ -26,7 +26,7 @@ pub struct StreamSource {
 }
 
 impl StreamSource {
-    pub fn new(device: Arc<Device>, app: AppHandle) -> Self {
+    pub fn new(device: Arc<Device>, app: AppHandle, track_name: String) -> Self {
         if !device.supports_input() {
             panic!("Device doesn't support input");
         }
@@ -48,7 +48,9 @@ impl StreamSource {
                                 rb.push(sample);
                                 sum += sample;
                             }
-                            window.emit("audio-samples", sum / count).unwrap();
+                            window
+                                .emit(&format!("{}-audio-samples", track_name), sum / count)
+                                .unwrap();
                         }
                     },
                     move |err| eprintln!("Source stream error: {}", err),
