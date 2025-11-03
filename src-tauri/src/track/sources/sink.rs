@@ -15,6 +15,7 @@ use cpal::{
     Device, OutputCallbackInfo, Stream, SupportedStreamConfig,
 };
 use hound::{WavSpec, WavWriter};
+use tauri::{window, AppHandle, Emitter, Manager};
 
 use crate::track;
 
@@ -49,8 +50,7 @@ impl StreamSink {
                                             if t.monitor {
                                                 let ring_buffer = t.source.get_ring_buffer();
                                                 if let Ok(mut rb) = ring_buffer.lock() {
-                                                    sum +=
-                                                        rb.pop().unwrap_or(0.0) * t.gain;
+                                                    sum += rb.pop().unwrap_or(0.0) * t.gain;
                                                 };
                                             }
                                         }

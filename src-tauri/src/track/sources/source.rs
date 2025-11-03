@@ -13,6 +13,7 @@ use cpal::{
     Device, InputCallbackInfo, Stream, SupportedStreamConfig,
 };
 use hound::{WavReader, WavSpec};
+use tauri::{AppHandle, Emitter, Manager};
 
 use crate::types;
 
@@ -25,10 +26,11 @@ pub struct StreamSource {
 }
 
 impl StreamSource {
-    pub fn new(device: Arc<Device>) -> Self {
+    pub fn new(device: Arc<Device>, app: AppHandle, track_name: String) -> Self {
         if !device.supports_input() {
             panic!("Device doesn't support input");
         }
+        let window = app.get_webview_window("main").unwrap();
         let device_name = device.name().unwrap();
         let streaming = Arc::new(AtomicBool::new(false));
         let ring_buffer = Arc::new(Mutex::new(types::RingBuffer::new()));
@@ -40,9 +42,15 @@ impl StreamSource {
                     &config.config(),
                     move |data: &[f32], _: &InputCallbackInfo| {
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
+                            let mut sum = 0.0;
+                            let count = data.len() as f32;
                             for &sample in data {
                                 rb.push(sample);
+                                sum += sample;
                             }
+                            window
+                                .emit(&format!("{}-audio-samples", track_name), sum / count)
+                                .unwrap();
                         }
                     },
                     move |err| eprintln!("Source stream error: {}", err),
