@@ -171,8 +171,6 @@ export function applyTheme(theme: BodyTheme) {
                 walk(value, newPath);
             } else {
                 const varName = "--" + newPath.join("-");
-                console.log(varName);
-
                 root.setProperty(varName, String(value));
             }
         }
