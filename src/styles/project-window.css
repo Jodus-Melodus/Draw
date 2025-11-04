@@ -7,7 +7,7 @@
 }
 
 .track-list {
-    background-color: #2B2B2B;
+    background-color: var(--tracklist-background);
     width: 12%;
     height: 100%;
     padding-right: 15px;
@@ -24,7 +24,7 @@
     height: 35vh;
     display: flex;
     position: relative;
-    background-color: #2B2B2B;
+    background-color: var(--mixconsole-background);
     border-radius: 5px;
     padding-bottom: 20px;
 

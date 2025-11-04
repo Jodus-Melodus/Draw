@@ -1,6 +1,12 @@
 {
     "background": "#222222",
     "text": "#ffffff",
+    "tracklist": {
+        "background": "#2B2B2B"
+    },
+    "mixconsole": {
+        "background": "#2B2B2B"
+    },
     "track": {
         "background1": "#414141",
         "background2": "#242424",

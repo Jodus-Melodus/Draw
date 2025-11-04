@@ -1,148 +1,154 @@
 {
-    "background": "#f3f3f3",
-    "text": "#000000",
+    "background": "#f2f2f2",
+    "text": "#111111",
+    "tracklist": {
+        "background": "#e6e6e6"
+    },
+    "mixconsole": {
+        "background": "#e6e6e6"
+    },
     "track": {
-        "background1": "#e6e6e6",
-        "background2": "#ffffff",
-        "text": "#000000",
+        "background1": "#ffffff",
+        "background2": "#dddddd",
+        "text": "#111111",
         "name": {
-            "text": "#000000"
+            "text": "#111111"
         },
         "mute": {
             "active": {
                 "background1": "#ff7a33",
-                "background2": "#ffb580",
-                "text": "#000000"
+                "background2": "#ffb380",
+                "text": "#ffffff"
             },
             "inactive": {
                 "background1": "#d0d0d0",
                 "background2": "#f0f0f0",
-                "text": "#000000"
+                "text": "#111111"
             }
         },
         "solo": {
             "active": {
-                "background1": "#ffcc33",
-                "background2": "#ffe699",
-                "text": "#000000"
+                "background1": "#ffce33",
+                "background2": "#ffd966",
+                "text": "#111111"
             },
             "inactive": {
                 "background1": "#d0d0d0",
                 "background2": "#f0f0f0",
-                "text": "#000000"
+                "text": "#111111"
             }
         },
         "monitor": {
             "active": {
-                "background1": "#00cfc0",
-                "background2": "#99f0e9",
-                "text": "#000000"
+                "background1": "#00e5d1",
+                "background2": "#66fff5",
+                "text": "#111111"
             },
             "inactive": {
                 "background1": "#d0d0d0",
                 "background2": "#f0f0f0",
-                "text": "#000000"
+                "text": "#111111"
             }
         },
         "record": {
             "active": {
-                "background1": "#ff4d4d",
-                "background2": "#ff9999",
-                "text": "#000000"
+                "background1": "#ff6b6b",
+                "background2": "#ff9f9f",
+                "text": "#ffffff"
             },
             "inactive": {
                 "background1": "#d0d0d0",
                 "background2": "#f0f0f0",
-                "text": "#000000"
+                "text": "#111111"
             }
         }
     },
     "channel": {
         "background1": "#ffffff",
-        "background2": "#e6e6e6",
-        "text": "#000000",
+        "background2": "#dcdcdc",
+        "text": "#111111",
         "meters": {
             "gain": {
                 "background1": "#ff0000",
                 "background2": "#ffff00",
-                "background3": "#00cc00"
+                "background3": "#00ff00"
             }
         },
         "gain": {
-            "background": "#cccccc",
-            "text": "#000000"
+            "background": "#e0e0e0",
+            "text": "#111111"
         },
         "pan": {
-            "background1": "#ffffff",
+            "background1": "#f5f5f5",
             "background2": "#cccccc",
-            "background3": "#ffffff",
-            "text": "#000000"
+            "background3": "#f5f5f5",
+            "text": "#111111"
         },
         "fader": {
             "background": "#f0f0f0",
             "thumb": {
-                "background1": "#e0e0e0",
-                "background2": "#b0b0b0",
-                "body": "#cccccc",
+                "background1": "#dcdcdc",
+                "background2": "#aaaaaa",
+                "body": "#c0c0c0",
                 "notch": "#000000"
             },
             "gain": {
-                "background": "#cccccc",
-                "text": "#000000"
+                "background": "#e0e0e0",
+                "text": "#111111"
             },
             "slit": {
-                "background": "#d0d0d0"
+                "background": "#cccccc"
             }
         },
         "name": {
-            "text": "#000000"
+            "text": "#111111"
         },
         "mute": {
             "active": {
                 "background1": "#ff7a33",
-                "background2": "#ffb580",
-                "text": "#000000"
+                "background2": "#ffb380",
+                "text": "#ffffff"
             },
             "inactive": {
                 "background1": "#d0d0d0",
                 "background2": "#f0f0f0",
-                "text": "#000000"
+                "text": "#111111"
             }
         },
         "solo": {
             "active": {
-                "background1": "#ffcc33",
-                "background2": "#ffe699",
-                "text": "#000000"
+                "background1": "#ffce33",
+                "background2": "#ffd966",
+                "text": "#111111"
             },
             "inactive": {
                 "background1": "#d0d0d0",
                 "background2": "#f0f0f0",
-                "text": "#000000"
+                "text": "#111111"
             }
         },
         "monitor": {
             "active": {
-                "background1": "#00cfc0",
-                "background2": "#99f0e9",
-                "text": "#000000"
+                "background1": "#00e5d1",
+                "background2": "#66fff5",
+                "text": "#111111"
             },
             "inactive": {
                 "background1": "#d0d0d0",
                 "background2": "#f0f0f0",
-                "text": "#000000"
+                "text": "#111111"
             }
         },
         "record": {
             "active": {
-                "background1": "#ff4d4d",
-                "background2": "#ff9999",
-                "text": "#000000"
+                "background1": "#ff6b6b",
+                "background2": "#ff9f9f",
+                "text": "#ffffff"
             },
             "inactive": {
                 "background1": "#d0d0d0",
                 "background2": "#f0f0f0",
-                "text": "#000000"
+                "text": "#111111"
             }
         }
     }

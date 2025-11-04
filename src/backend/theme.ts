@@ -1,9 +1,21 @@
+const THEMES = ["dark", "light", "green"];
+
 type BodyTheme = {
     background: string;
     text: string;
 
+    tracklist: TrackListTheme;
+    mixconsole: MixConsoleTheme;
     track: TrackTheme
     channel: ChannelTheme
+};
+
+type TrackListTheme = {
+    background: string;
+};
+
+type MixConsoleTheme = {
+    background: string;
 };
 
 type TrackTheme = {
@@ -154,9 +166,11 @@ type ChannelTheme = {
 
 
 export async function loadTheme(mode: string) {
-    const response = await fetch(`themes/${mode}.json`);
-    const theme = await response.json();
-    applyTheme(theme);
+    if (THEMES.includes(mode)) {
+        const response = await fetch(`themes/${mode}.json`);
+        const theme = await response.json();
+        applyTheme(theme);
+    }
 }
 
 export function applyTheme(theme: BodyTheme) {

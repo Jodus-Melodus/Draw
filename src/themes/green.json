@@ -1,0 +1,155 @@
+{
+    "background": "#0f1a13",
+    "text": "#e8f5e1",
+    "tracklist": {
+        "background": "#16231a"
+    },
+    "mixconsole": {
+        "background": "#16231a"
+    },
+    "track": {
+        "background1": "#1f2e24",
+        "background2": "#142018",
+        "text": "#e8f5e1",
+        "name": {
+            "text": "#e8f5e1"
+        },
+        "mute": {
+            "active": {
+                "background1": "#2e7d32",
+                "background2": "#1b5e20",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background1": "#4a574a",
+                "background2": "#2a352c",
+                "text": "#cdd8cf"
+            }
+        },
+        "solo": {
+            "active": {
+                "background1": "#aeea00",
+                "background2": "#689f38",
+                "text": "#0f1a13"
+            },
+            "inactive": {
+                "background1": "#4a574a",
+                "background2": "#2a352c",
+                "text": "#cdd8cf"
+            }
+        },
+        "monitor": {
+            "active": {
+                "background1": "#00c853",
+                "background2": "#007e33",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background1": "#4a574a",
+                "background2": "#2a352c",
+                "text": "#cdd8cf"
+            }
+        },
+        "record": {
+            "active": {
+                "background1": "#ff6f00",
+                "background2": "#bf360c",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background1": "#4a574a",
+                "background2": "#2a352c",
+                "text": "#cdd8cf"
+            }
+        }
+    },
+    "channel": {
+        "background1": "#253528",
+        "background2": "#1a261c",
+        "text": "#e8f5e1",
+        "meters": {
+            "gain": {
+                "background1": "#ff3d00",
+                "background2": "#ffff00",
+                "background3": "#00e676"
+            }
+        },
+        "gain": {
+            "background": "#3a4b3d",
+            "text": "#e8f5e1"
+        },
+        "pan": {
+            "background1": "#142018",
+            "background2": "#607d63",
+            "background3": "#142018",
+            "text": "#e8f5e1"
+        },
+        "fader": {
+            "background": "#2f4033",
+            "thumb": {
+                "background1": "#6a7b6e",
+                "background2": "#405343",
+                "body": "#607d63",
+                "notch": "#000000"
+            },
+            "gain": {
+                "background": "#3a4b3d",
+                "text": "#e8f5e1"
+            },
+            "slit": {
+                "background": "#233025"
+            }
+        },
+        "name": {
+            "text": "#e8f5e1"
+        },
+        "mute": {
+            "active": {
+                "background1": "#2e7d32",
+                "background2": "#1b5e20",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background1": "#4a574a",
+                "background2": "#2a352c",
+                "text": "#cdd8cf"
+            }
+        },
+        "solo": {
+            "active": {
+                "background1": "#aeea00",
+                "background2": "#689f38",
+                "text": "#0f1a13"
+            },
+            "inactive": {
+                "background1": "#4a574a",
+                "background2": "#2a352c",
+                "text": "#cdd8cf"
+            }
+        },
+        "monitor": {
+            "active": {
+                "background1": "#00c853",
+                "background2": "#007e33",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background1": "#4a574a",
+                "background2": "#2a352c",
+                "text": "#cdd8cf"
+            }
+        },
+        "record": {
+            "active": {
+                "background1": "#ff6f00",
+                "background2": "#bf360c",
+                "text": "#ffffff"
+            },
+            "inactive": {
+                "background1": "#4a574a",
+                "background2": "#2a352c",
+                "text": "#cdd8cf"
+            }
+        }
+    }
+}
