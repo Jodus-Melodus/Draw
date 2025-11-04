@@ -1,148 +1,148 @@
 {
-    "background": "#222222",
-    "text": "#ffffff",
+    "background": "#f3f3f3",
+    "text": "#000000",
     "track": {
-        "background1": "#414141",
-        "background2": "#242424",
-        "text": "#ffffff",
+        "background1": "#e6e6e6",
+        "background2": "#ffffff",
+        "text": "#000000",
         "name": {
-            "text": "#ffffff"
+            "text": "#000000"
         },
         "mute": {
             "active": {
-                "background1": "#ff5e00",
-                "background2": "#8a3f14",
-                "text": "#ffffff"
+                "background1": "#ff7a33",
+                "background2": "#ffb580",
+                "text": "#000000"
             },
             "inactive": {
-                "background1": "#858585",
-                "background2": "#444444",
-                "text": "#ffffff"
+                "background1": "#d0d0d0",
+                "background2": "#f0f0f0",
+                "text": "#000000"
             }
         },
         "solo": {
             "active": {
-                "background1": "#ffae00",
-                "background2": "#7a5400",
-                "text": "#ffffff"
+                "background1": "#ffcc33",
+                "background2": "#ffe699",
+                "text": "#000000"
             },
             "inactive": {
-                "background1": "#858585",
-                "background2": "#444444",
-                "text": "#ffffff"
+                "background1": "#d0d0d0",
+                "background2": "#f0f0f0",
+                "text": "#000000"
             }
         },
         "monitor": {
             "active": {
-                "background1": "#01ffea",
-                "background2": "#00867b",
-                "text": "#ffffff"
+                "background1": "#00cfc0",
+                "background2": "#99f0e9",
+                "text": "#000000"
             },
             "inactive": {
-                "background1": "#858585",
-                "background2": "#444444",
-                "text": "#ffffff"
+                "background1": "#d0d0d0",
+                "background2": "#f0f0f0",
+                "text": "#000000"
             }
         },
         "record": {
             "active": {
-                "background1": "#ffae00",
-                "background2": "#7a5400",
-                "text": "#ffffff"
+                "background1": "#ff4d4d",
+                "background2": "#ff9999",
+                "text": "#000000"
             },
             "inactive": {
-                "background1": "#858585",
-                "background2": "#444444",
-                "text": "#ffffff"
+                "background1": "#d0d0d0",
+                "background2": "#f0f0f0",
+                "text": "#000000"
             }
         }
     },
     "channel": {
-        "background1": "#6d6d6d",
-        "background2": "#2e2e2e",
-        "text": "#ffffff",
+        "background1": "#ffffff",
+        "background2": "#e6e6e6",
+        "text": "#000000",
         "meters": {
             "gain": {
                 "background1": "#ff0000",
                 "background2": "#ffff00",
-                "background3": "#00ff00"
+                "background3": "#00cc00"
             }
         },
         "gain": {
-            "background": "rgb(153, 153, 153)",
-            "text": "#ffffff"
+            "background": "#cccccc",
+            "text": "#000000"
         },
         "pan": {
-            "background1": "#242424",
-            "background2": "#aaaaaa",
-            "background3": "#242424",
-            "text": "#ffffff"
+            "background1": "#ffffff",
+            "background2": "#cccccc",
+            "background3": "#ffffff",
+            "text": "#000000"
         },
         "fader": {
-            "background": "#dddddd",
+            "background": "#f0f0f0",
             "thumb": {
-                "background1": "#c9c9c9",
-                "background2": "#797979",
-                "body": "rgb(153, 153, 153)",
+                "background1": "#e0e0e0",
+                "background2": "#b0b0b0",
+                "body": "#cccccc",
                 "notch": "#000000"
             },
             "gain": {
-                "background": "rgb(153, 153, 153)",
-                "text": "#ffffff"
+                "background": "#cccccc",
+                "text": "#000000"
             },
             "slit": {
-                "background": "#434343"
+                "background": "#d0d0d0"
             }
         },
         "name": {
-            "text": "#ffffff"
+            "text": "#000000"
         },
         "mute": {
             "active": {
-                "background1": "#ff5e00",
-                "background2": "#8a3f14",
-                "text": "#ffffff"
+                "background1": "#ff7a33",
+                "background2": "#ffb580",
+                "text": "#000000"
             },
             "inactive": {
-                "background1": "#858585",
-                "background2": "#444444",
-                "text": "#ffffff"
+                "background1": "#d0d0d0",
+                "background2": "#f0f0f0",
+                "text": "#000000"
             }
         },
         "solo": {
             "active": {
-                "background1": "#ffae00",
-                "background2": "#7a5400",
-                "text": "#ffffff"
+                "background1": "#ffcc33",
+                "background2": "#ffe699",
+                "text": "#000000"
             },
             "inactive": {
-                "background1": "#858585",
-                "background2": "#444444",
-                "text": "#ffffff"
+                "background1": "#d0d0d0",
+                "background2": "#f0f0f0",
+                "text": "#000000"
             }
         },
         "monitor": {
             "active": {
-                "background1": "#01ffea",
-                "background2": "#00867b",
-                "text": "#ffffff"
+                "background1": "#00cfc0",
+                "background2": "#99f0e9",
+                "text": "#000000"
             },
             "inactive": {
-                "background1": "#858585",
-                "background2": "#444444",
-                "text": "#ffffff"
+                "background1": "#d0d0d0",
+                "background2": "#f0f0f0",
+                "text": "#000000"
             }
         },
         "record": {
             "active": {
-                "background1": "#ffae00",
-                "background2": "#7a5400",
-                "text": "#ffffff"
+                "background1": "#ff4d4d",
+                "background2": "#ff9999",
+                "text": "#000000"
             },
             "inactive": {
-                "background1": "#858585",
-                "background2": "#444444",
-                "text": "#ffffff"
+                "background1": "#d0d0d0",
+                "background2": "#f0f0f0",
+                "text": "#000000"
             }
         }
     }
