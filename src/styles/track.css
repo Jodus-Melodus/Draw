@@ -6,19 +6,33 @@
   height: 12%;
   border: 2px solid #8f8f8f;
   border-radius: 2px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding: 5px;
   margin-bottom: 5px;
 }
 
 .track-name {
   color: var(--track-name-text);
-  padding: 1%;
+
+  display: flex;
+  justify-content: left;
+  align-items: center;
   cursor: pointer;
+
+  font-family: 'Digital-7 Mono', monospace;
+  font-size: 1rem;
+  color: #ff2a00;
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 5px #ff0000,
+    0 0 10px #ff0000,
+    0 0 20px #ff4000,
+    0 0 40px #ff4000;
+  background: radial-gradient(circle at center, #100 0%, #000 100%);
+  padding: 5px;
+  border-radius: 8px;
 }
 
 .track-name.editing {
-  border: 1px solid red;
   cursor: text;
 }
 
@@ -44,8 +58,12 @@
 }
 
 .track-mute.active {
-  background: linear-gradient(var(--track-mute-active-background1), var(--track-mute-active-background2));
-  color: var(--track-mute-active-text);
+  color: var(--track-mute-active-background2);
+  text-shadow:
+      0 0 5px var(--track-mute-active-background2),
+      0 0 10px var(--track-mute-active-background2),
+      0 0 20px var(--track-mute-active-background1),
+      0 0 40px var(--track-mute-active-background1);
 }
 
 .track-solo {
@@ -62,8 +80,12 @@
 }
 
 .track-solo.active {
-  background: linear-gradient(var(--track-solo-active-background1), var(--track-solo-active-background2));
-  color: var(--track-solo-active-text);
+  color: var(--track-solo-active-background2);
+  text-shadow:
+      0 0 5px var(--track-solo-active-background2),
+      0 0 10px var(--track-solo-active-background2),
+      0 0 20px var(--track-solo-active-background1),
+      0 0 40px var(--track-solo-active-background1);
 }
 
 .track-record {
@@ -80,8 +102,12 @@
 }
 
 .track-record.active {
-  background: linear-gradient(var(--track-record-active-background1), var(--track-record-active-background2));
-  color: var(--track-record-active-text);
+  color: var(--track-record-active-background2);
+  text-shadow:
+      0 0 5px var(--track-record-active-background2),
+      0 0 10px var(--track-record-active-background2),
+      0 0 20px var(--track-record-active-background1),
+      0 0 40px var(--track-record-active-background1);
 }
 
 .track-monitor {
@@ -98,16 +124,10 @@
 }
 
 .track-monitor.active {
-  background: linear-gradient(var(--track-monitor-active-background1), var(--track-monitor-active-background2));
-  color: var(--track-monitor-active-text);
-}
-
-.track-record-icon {
-  width: 15px;
-  height: 15px;
-}
-
-.track-monitor-icon {
-  width: 15px;
-  height: 15px;
+  color: var(--track-monitor-active-background2);
+  text-shadow:
+      0 0 5px var(--track-monitor-active-background2),
+      0 0 10px var(--track-monitor-active-background2),
+      0 0 20px var(--track-monitor-active-background1),
+      0 0 40px var(--track-monitor-active-background1);
 }

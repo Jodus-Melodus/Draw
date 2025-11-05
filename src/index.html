@@ -6,16 +6,30 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>Draw</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <link href="https://fonts.cdnfonts.com/css/digital-7-mono" rel="stylesheet">
+
   <link rel='stylesheet' type='text/css' media='screen' href='styles/styles.css'>
   <link rel='stylesheet' type='text/css' media='screen' href='styles/channel-strip.css'>
   <link rel='stylesheet' type='text/css' media='screen' href='styles/track.css'>
   <link rel='stylesheet' type='text/css' media='screen' href='styles/project-window.css'>
 </head>
 
+<template id="track-template">
+  <div class="track">
+    <span class="track-name"></span>
+    <div class="track-buttons">
+      <button class="track-mute">M</button>
+      <button class="track-solo">S</button>
+      <button class="track-record">•</button>
+      <button class="track-monitor">♪</button>
+    </div>
+  </div>
+</template>
+
 <template id="channel-track-template">
   <div class="channel-strip">
-    <!-- <div class="channel-name"></div> -->
-     <span class="channel-name"></span>
+    <span class="channel-name"></span>
     <div class="channel-pan">C</div>
 
     <div class="gain-control">
@@ -27,7 +41,7 @@
             </div>
           </div>
         </div>
-        <div class="fadergain"></div>
+        <span class="fadergain">0</span>
       </div>
 
       <div class="meter">
@@ -39,35 +53,15 @@
             <div class="gain-level" id="gain-level-r"></div>
           </div>
         </div>
-        <div class="metergain"></div>
+        <span class="metergain">0</span>
       </div>
     </div>
 
     <div class="channel-buttons">
       <button class="channel-mute">M</button>
       <button class="channel-solo">S</button>
-      <button class="channel-record">
-        <img src="assets/record_icon.png" class="channel-record-icon" />
-      </button>
-      <button class="channel-monitor">
-        <img src="assets/monitor_icon.png" class="channel-monitor-icon" />
-      </button>
-    </div>
-  </div>
-</template>
-
-<template id="track-template">
-  <div class="track">
-    <span class="track-name"></span>
-    <div class="track-buttons">
-      <button class="track-mute">M</button>
-      <button class="track-solo">S</button>
-      <button class="track-record">
-        <img src="assets/record_icon.png" class="track-record-icon" />
-      </button>
-      <button class="track-monitor">
-        <img src="assets/monitor_icon.png" class="track-monitor-icon" />
-      </button>
+      <button class="channel-record">•</button>
+      <button class="channel-monitor">♪</button>
     </div>
   </div>
 </template>

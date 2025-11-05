@@ -67,7 +67,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
 
     trackName.textContent = track.name;
     channelName.textContent = track.name;
-    channelFaderGain.textContent = (100 * track.gain).toFixed(0) + '%';
+    channelFaderGain.textContent = (100 * track.gain).toFixed(0);
     channelFaderThumb.dataset.dragging = "false";
     channelFaderThumb.dataset.offSetY = "0";
 
@@ -259,7 +259,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         // let gain = percentToGain(percent);
         const gain = Math.pow(10, percentToDb(percent) / 20);
         updateTrack(track.name, { Gain: gain });
-        channelFaderGain.textContent = percent + '%';
+        channelFaderGain.textContent = percent.toString();
     });
 
     channelFader.addEventListener("wheel", (e) => {
@@ -276,7 +276,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         // let gain = percentToGain(percent);
         const gain = Math.pow(10, percentToDb(percent) / 20);
         updateTrack(track.name, { Gain: gain });
-        channelFaderGain.textContent = percent + '%';
+        channelFaderGain.textContent = percent.toFixed(0);
     });
 
     listen(`${track.name}-audio-samples`, (sample) => {
@@ -287,7 +287,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         let position = 100 - (level * 100);
         channelGainLevelLeft.style.top = `${position}%`;
         channelGainLevelLeft.style.bottom = 'auto';
-        channelMeterGain.textContent = `${(level * 100).toFixed(2)}`;
+        channelMeterGain.textContent = `${(level * 100).toFixed(0)}`;
     });
 
     trackName.addEventListener("dblclick", () => {
