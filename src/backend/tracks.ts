@@ -322,7 +322,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     channelName.addEventListener("blur", () => {
         channelName.contentEditable = "false";
         channelName.classList.remove("editing");
-        const newName = channelName.textContent.trim();
+        const newName = channelName.textContent.trim() ?? track.name;
         updateTrack(track.name, { Name: newName });
         updateTrackList();
     });
