@@ -15,6 +15,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+}
+
+.channel-name.editing {
+  border: 1px solid red;
+  cursor: text;
 }
 
 .channel-pan {

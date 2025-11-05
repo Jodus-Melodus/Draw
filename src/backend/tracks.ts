@@ -45,13 +45,13 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const newTrack = trackTemplate.content.cloneNode(true) as DocumentFragment;
     const newChannel = channelTrackTemplate.content.cloneNode(true) as DocumentFragment;
 
-    const trackName = newTrack.querySelector(".track-name") as HTMLElement;
+    const trackName = newTrack.querySelector(".track-name") as HTMLSpanElement;
     const trackMuteButton = newTrack.querySelector(".track-mute") as HTMLButtonElement;
     const trackSoloButton = newTrack.querySelector(".track-solo") as HTMLButtonElement;
     const trackRecordButton = newTrack.querySelector(".track-record") as HTMLButtonElement;
     const trackMonitorButton = newTrack.querySelector(".track-monitor") as HTMLButtonElement;
 
-    const channelName = newChannel.querySelector(".channel-name") as HTMLElement;
+    const channelName = newChannel.querySelector(".channel-name") as HTMLSpanElement;
     const channelMuteButton = newChannel.querySelector(".channel-mute") as HTMLButtonElement;
     const channelSoloButton = newChannel.querySelector(".channel-solo") as HTMLButtonElement;
     const channelRecordButton = newChannel.querySelector(".channel-record") as HTMLButtonElement;
@@ -59,9 +59,11 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const channelFader = newChannel.querySelector(".fader") as HTMLElement;
     const channelFaderThumb = newChannel.querySelector(".fader-thumb") as HTMLElement;
     const channelGainLevelLeft = newChannel.getElementById("gain-level-l") as HTMLElement;
-    const channelGainLevelRight = newChannel.getElementById("gain-level-r") as HTMLElement;
     const channelMeterGain = newChannel.querySelector(".metergain") as HTMLElement;
     const channelFaderGain = newChannel.querySelector(".fadergain") as HTMLElement;
+
+    console.log("adding track");
+
 
     trackName.textContent = track.name;
     channelName.textContent = track.name;
@@ -286,6 +288,50 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         channelGainLevelLeft.style.top = `${position}%`;
         channelGainLevelLeft.style.bottom = 'auto';
         channelMeterGain.textContent = `${(level * 100).toFixed(2)}`;
+    });
+
+    trackName.addEventListener("dblclick", () => {
+        if (trackName.isContentEditable) return;
+        trackName.contentEditable = "true";
+        trackName.classList.add("editing");
+        trackName.focus();
+    });
+
+    trackName.addEventListener("blur", () => {
+        trackName.contentEditable = "false";
+        trackName.classList.remove("editing");
+        const newName = trackName.textContent.trim();
+        updateTrack(track.name, { Name: newName });
+        updateTrackList();
+    });
+
+    trackName.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            trackName.blur();
+        }
+    });
+
+    channelName.addEventListener("dblclick", () => {
+        if (channelName.isContentEditable) return;
+        channelName.contentEditable = "true";
+        channelName.classList.add("editing");
+        channelName.focus();
+    });
+
+    channelName.addEventListener("blur", () => {
+        channelName.contentEditable = "false";
+        channelName.classList.remove("editing");
+        const newName = channelName.textContent.trim();
+        updateTrack(track.name, { Name: newName });
+        updateTrackList();
+    });
+
+    channelName.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            channelName.blur();
+        }
     });
 
     trackContainer.appendChild(newTrack);

@@ -14,6 +14,12 @@
 .track-name {
   color: var(--track-name-text);
   padding: 1%;
+  cursor: pointer;
+}
+
+.track-name.editing {
+  border: 1px solid red;
+  cursor: text;
 }
 
 .track-buttons {
