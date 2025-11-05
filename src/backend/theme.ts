@@ -1,9 +1,21 @@
+export const THEMES = ["dark", "light", "green", "blue", "red"];
+
 type BodyTheme = {
     background: string;
     text: string;
 
+    tracklist: TrackListTheme;
+    mixconsole: MixConsoleTheme;
     track: TrackTheme
     channel: ChannelTheme
+};
+
+type TrackListTheme = {
+    background: string;
+};
+
+type MixConsoleTheme = {
+    background: string;
 };
 
 type TrackTheme = {
@@ -153,10 +165,49 @@ type ChannelTheme = {
 }
 
 
-export async function loadTheme(mode: string) {
-    const response = await fetch(`themes/${mode}.json`);
-    const theme = await response.json();
-    applyTheme(theme);
+export async function loadTheme(modeIndex: number | string) {
+    // Accept either a numeric index or a theme-name string. If a string is
+    // provided and it's numeric ("2"), parse it. If it's a name ("dark"),
+    // find its index in THEMES. Normalize to a valid index with wrap-around.
+    if (THEMES.length === 0) {
+        console.warn("No themes available to load");
+        return;
+    }
+
+    let idx: number | null = null;
+
+    if (typeof modeIndex === "number") {
+        if (Number.isInteger(modeIndex)) idx = modeIndex;
+    } else if (typeof modeIndex === "string") {
+        // Try numeric string first
+        const asNum = Number(modeIndex);
+        if (!Number.isNaN(asNum) && Number.isInteger(asNum)) {
+            idx = asNum;
+        } else {
+            // Treat as theme name
+            const found = THEMES.indexOf(modeIndex);
+            if (found !== -1) idx = found;
+        }
+    }
+
+    if (idx === null) {
+        console.warn("loadTheme called with invalid index", modeIndex);
+        return;
+    }
+
+    const normalized = ((idx % THEMES.length) + THEMES.length) % THEMES.length;
+    const mode = THEMES[normalized];
+    try {
+        const response = await fetch(`themes/${mode}.json`);
+        if (!response.ok) {
+            console.error(`Failed to fetch theme ${mode}: ${response.status}`);
+            return;
+        }
+        const theme = await response.json();
+        applyTheme(theme);
+    } catch (err) {
+        console.error("Error loading theme", mode, err);
+    }
 }
 
 export function applyTheme(theme: BodyTheme) {
