@@ -2,19 +2,38 @@
   background: radial-gradient(var(--channel-background1), var(--channel-background2));
   color: var(--channel-text);
 
-  width: 6%;
+  width: 7%;
   height: 100%;
   border: 2px solid #8f8f8f;
   border-radius: 2px;
   padding: 5px;
+  margin-right: 5px;
 }
 
 .channel-name {
   color: var(--channel-name-text);
 
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
+  cursor: pointer;
+
+  font-family: 'Digital-7 Mono', monospace;
+  font-size: 0.9rem;
+  color: #ff2a00;
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 5px #ff0000,
+    0 0 10px #ff0000,
+    0 0 20px #ff4000,
+    0 0 40px #ff4000;
+  background: radial-gradient(circle at center, #100 0%, #000 100%);
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.channel-name.editing {
+  cursor: text;
 }
 
 .channel-pan {
@@ -73,9 +92,21 @@
   width: 100%;
   height: 15%;
   display: flex;
-  justify-content: center;
+  justify-content: right;
   align-items: center;
-  border-radius: 10px;
+
+  font-family: 'Digital-7 Mono', monospace;
+  font-size: 1.5rem;
+  color: #ff2a00;
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 5px #ff0000,
+    0 0 10px #ff0000,
+    0 0 20px #ff4000,
+    0 0 40px #ff4000;
+  background: radial-gradient(circle at center, #100 0%, #000 100%);
+  border-radius: 4px;
+  padding-right: 4px;
 }
 
 .fader-controller {
@@ -101,7 +132,7 @@
 }
 
 .fader-thumb {
-  background:linear-gradient(var(--channel-fader-thumb-background1), var(--channel-fader-thumb-background2));
+  background: linear-gradient(var(--channel-fader-thumb-background1), var(--channel-fader-thumb-background2));
   transform: translate(-50%, -50%);
   height: 40%;
   width: 600%;
@@ -124,9 +155,21 @@
   height: 15%;
 
   display: flex;
-  justify-content: center;
+  justify-content: right;
   align-items: center;
-  border-radius: 10px;
+
+  font-family: 'Digital-7 Mono', monospace;
+  font-size: 1.5rem;
+  color: #ff2a00;
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 5px #ff0000,
+    0 0 10px #ff0000,
+    0 0 20px #ff4000,
+    0 0 40px #ff4000;
+  background: radial-gradient(circle at center, #100 0%, #000 100%);
+  border-radius: 4px;
+  padding-right: 4px;
 }
 
 .channel-buttons {
@@ -150,13 +193,12 @@
 }
 
 .channel-record.active {
-  background: linear-gradient(var(--channel-record-active-background1), var(--channel-record-active-background2));
-  color: var(--channel-record-active-text);
-}
-
-.channel-record-icon {
-  width: 15px;
-  height: 15px;
+  color: var(--channel-record-active-background2);
+  text-shadow:
+    0 0 5px var(--channel-record-active-background2),
+    0 0 10px var(--channel-record-active-background2),
+    0 0 20px var(--channel-record-active-background1),
+    0 0 40px var(--channel-record-active-background1);
 }
 
 .channel-monitor {
@@ -172,13 +214,12 @@
 }
 
 .channel-monitor.active {
-  background: linear-gradient(var(--channel-monitor-active-background1), var(--channel-monitor-active-background2));
-  color: var(--channel-monitor-active-text);
-}
-
-.channel-monitor-icon {
-  width: 15px;
-  height: 15px;
+  color: var(--channel-monitor-active-background2);
+  text-shadow:
+    0 0 5px var(--channel-monitor-active-background2),
+    0 0 10px var(--channel-monitor-active-background2),
+    0 0 20px var(--channel-monitor-active-background1),
+    0 0 40px var(--channel-monitor-active-background1);
 }
 
 .channel-mute {
@@ -194,12 +235,16 @@
 }
 
 .channel-mute.active {
-  background: linear-gradient(var(--channel-mute-active-background1), var(--channel-mute-active-background2));
-  color: var(--channel-mute-active-text);
+  color: var(--channel-mute-active-background2);
+  text-shadow:
+    0 0 5px var(--channel-mute-active-background2),
+    0 0 10px var(--channel-mute-active-background2),
+    0 0 20px var(--channel-mute-active-background1),
+    0 0 40px var(--channel-mute-active-background1);
 }
 
 .channel-solo {
-  background: linear-gradient(var(--track-solo-inactive-background1), var(--track-solo-inactive-background2));
+  background: linear-gradient(var(--channel-solo-inactive-background1), var(--channel-solo-inactive-background2));
   color: var(--channel-solo-inactive-text);
 
   display: flex;
@@ -211,6 +256,10 @@
 }
 
 .channel-solo.active {
-  background: linear-gradient(var(--track-solo-active-background1), var(--track-solo-active-background2));
-  color: var(--channel-solo-active-text);
+  color: var(--channel-solo-active-background2);
+  text-shadow:
+    0 0 5px var(--channel-solo-active-background2),
+    0 0 10px var(--channel-solo-active-background2),
+    0 0 20px var(--channel-solo-active-background1),
+    0 0 40px var(--channel-solo-active-background1);
 }

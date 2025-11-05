@@ -15,7 +15,6 @@ use cpal::{
     Device, OutputCallbackInfo, Stream, SupportedStreamConfig,
 };
 use hound::{WavSpec, WavWriter};
-use tauri::{window, AppHandle, Emitter, Manager};
 
 use crate::track;
 

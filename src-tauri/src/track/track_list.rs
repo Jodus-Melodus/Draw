@@ -79,7 +79,7 @@ impl TrackList {
                 track.source.stop_stream();
             }
         } else {
-            eprintln!("Track not found");
+            eprintln!("Track {} not found", track_name);
         }
     }
 
