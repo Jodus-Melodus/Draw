@@ -198,13 +198,9 @@ export async function loadTheme(modeIndex: number | string) {
     const normalized = ((idx % THEMES.length) + THEMES.length) % THEMES.length;
     const mode = THEMES[normalized];
     try {
-        const response = await fetch(`themes/${mode}.json`);
-        if (!response.ok) {
-            console.error(`Failed to fetch theme ${mode}: ${response.status}`);
-            return;
-        }
-        const theme = await response.json();
-        applyTheme(theme);
+        // Use dynamic import for loading theme files
+        const theme = await import(`../themes/${mode}.json`);
+        applyTheme(theme.default || theme);
     } catch (err) {
         console.error("Error loading theme", mode, err);
     }
