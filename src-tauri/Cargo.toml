@@ -27,4 +27,5 @@ hound = "3.5.1"
 tokio = { version = "1.47.1", features = ["rt-multi-thread", "macros"] }
 tauri-plugin-dialog = "2.4.0"
 bincode = "2.0.1"
+discord-rich-presence = "1.0.0"
 
