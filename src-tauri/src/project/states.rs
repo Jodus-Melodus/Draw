@@ -7,6 +7,7 @@ use std::{
 };
 
 use cpal::Device;
+use discord_rich_presence::{activity::Activity, DiscordIpc, DiscordIpcClient};
 
 use crate::{track, types};
 
@@ -29,20 +30,53 @@ pub struct StateMixerGuard(pub Arc<Mutex<StateMixer>>);
 pub struct StateMixer {
     pub track_list: Arc<Mutex<track::track_list::TrackList>>,
     pub master_out: Arc<Mutex<track::tracks::OutputTrack>>,
+    pub discord_client: Mutex<DiscordIpcClient>,
 }
 
 impl StateMixer {
     pub fn new(device: Arc<Device>) -> Self {
         let track_list = Arc::new(Mutex::new(track::track_list::TrackList::new()));
         let master_out = Arc::new(Mutex::new(track::tracks::OutputTrack::new()));
-        let sink = track::sources::sink::StreamSink::new(device, track_list.clone(), master_out.clone());
+        let sink =
+            track::sources::sink::StreamSink::new(device, track_list.clone(), master_out.clone());
         if let Ok(mut out) = master_out.lock() {
             out.initialize(Box::new(sink));
             out.sink.start_stream();
         }
-        StateMixer {
+        let discord_client = Mutex::new(DiscordIpcClient::new("1435880809767637164"));
+
+        let sm = StateMixer {
             track_list,
             master_out,
+            discord_client,
+        };
+        sm.connect_to_discord();
+        sm
+    }
+
+    pub fn connect_to_discord(&self) {
+        if let Ok(mut client) = self.discord_client.lock() {
+            if let Err(e) = client.connect() {
+                eprintln!("Failed to connect to Discord: {}", e);
+            } else {
+                self.set_discord_activity("DRAW", "Making some noise with DRAW");
+            }
+        }
+    }
+
+    pub fn set_discord_activity(&self, state: &str, details: &str) {
+        if let Ok(mut client) = self.discord_client.lock() {
+            if let Err(e) = client.set_activity(Activity::new().state(state).details(details)) {
+                eprintln!("Failed to set Discord activity: {}", e);
+            }
+        }
+    }
+
+    pub fn disconnect_from_discord(&self) {
+        if let Ok(mut client) = self.discord_client.lock() {
+            if let Err(e) = client.close() {
+                eprintln!("Failed to close Discord connection : {}", e);
+            }
         }
     }
 }
@@ -50,10 +84,12 @@ impl StateMixer {
 impl From<StateMixerRaw> for StateMixer {
     fn from(value: StateMixerRaw) -> Self {
         let track_list = value.track_list;
+        let discord_client = Mutex::new(DiscordIpcClient::new("1435880809767637164"));
         StateMixer {
             track_list: Arc::new(Mutex::new(track::track_list::TrackList::from_raw(
                 track_list,
             ))),
+            discord_client,
             master_out: { todo!() },
         }
     }
