@@ -59,11 +59,9 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const channelFader = newChannel.querySelector(".fader") as HTMLElement;
     const channelFaderThumb = newChannel.querySelector(".fader-thumb") as HTMLElement;
     const channelGainLevelLeft = newChannel.getElementById("gain-level-l") as HTMLElement;
+    const channelGainLevelRight = newChannel.getElementById("gain-level-r") as HTMLElement;
     const channelMeterGain = newChannel.querySelector(".metergain") as HTMLElement;
     const channelFaderGain = newChannel.querySelector(".fadergain") as HTMLElement;
-
-    console.log("adding track");
-
 
     trackName.textContent = track.name;
     channelName.textContent = track.name;
@@ -280,14 +278,24 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     });
 
     listen(`${track.name}-audio-samples`, (sample) => {
-        let level = sample.payload as number;
-        level = Math.abs(level);
-        level = level * 50;
-        level = Math.min(Math.max(level, 0), 1);
-        let position = 100 - (level * 100);
-        channelGainLevelLeft.style.top = `${position}%`;
+        let [left, right] = sample.payload as [number, number];
+
+        left = Math.abs(left);
+        left = left * 50;
+        left = Math.min(Math.max(left, 0), 1);
+        let leftPosition = 100 - (left * 100);
+        channelGainLevelLeft.style.top = `${leftPosition}%`;
         channelGainLevelLeft.style.bottom = 'auto';
-        channelMeterGain.textContent = `${(level * 100).toFixed(0)}`;
+
+        right = Math.abs(right);
+        right = right * 50;
+        right = Math.min(Math.max(right, 0), 1);
+        let rightPosition = 100 - (right * 100);
+        channelGainLevelRight.style.top = `${rightPosition}%`;
+        channelGainLevelRight.style.bottom = 'auto';
+
+        let average = (left + right) / 2;
+        channelMeterGain.textContent = `${(average * 100).toFixed(0)}`;
     });
 
     trackName.addEventListener("dblclick", () => {
