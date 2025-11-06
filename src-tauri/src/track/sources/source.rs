@@ -42,14 +42,25 @@ impl StreamSource {
                     &config.config(),
                     move |data: &[f32], _: &InputCallbackInfo| {
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
-                            let mut sum = 0.0;
+                            let mut left_sum = 0.0;
+                            let mut right_sum = 0.0;
+                            let mut channel = false;
                             let count = data.len() as f32;
+
                             for &sample in data {
                                 rb.push(sample);
-                                sum += sample;
+                                if channel {
+                                    left_sum += sample;
+                                } else {
+                                    right_sum += sample;
+                                }
+                                channel = !channel;
                             }
                             window
-                                .emit(&format!("{}-audio-samples", track_name), sum / count)
+                                .emit(
+                                    &format!("{}-audio-samples", track_name),
+                                    (left_sum / (count / 2.0), right_sum / (count / 2.0)),
+                                )
                                 .unwrap();
                         }
                     },
