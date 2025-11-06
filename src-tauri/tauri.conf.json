@@ -20,6 +20,20 @@
         "url": "index.html",
         "minHeight": 810,
         "minWidth": 1440
+      },
+      {
+        "label": "settings",
+        "title": "Settings",
+        "center": true,
+        "url": "settings.html",
+        "visible": false,
+        "alwaysOnTop": true,
+        "maximizable": false,
+        "minimizable": false,
+        "resizable": false,
+        "skipTaskbar": true,
+        "minWidth": 800,
+        "minHeight": 400
       }
     ],
     "security": {

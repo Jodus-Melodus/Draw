@@ -1,4 +1,4 @@
-export const THEMES = ["dark", "light", "green", "blue", "red"];
+export const THEMES = ["light", "dark", "red", "green", "blue"];
 
 type BodyTheme = {
     background: string;

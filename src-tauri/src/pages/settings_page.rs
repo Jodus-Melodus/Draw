@@ -1,20 +1,16 @@
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
+use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
 
 pub fn open_settings(app: &AppHandle) {
-    tauri::WebviewWindowBuilder::new(
-        app,
-        "settings",
-        tauri::WebviewUrl::App("settings.html".into()),
-    )
-    .title("Settings")
-    .always_on_top(true)
-    .center()
-    .maximizable(false)
-    .menu(tauri::menu::Menu::new(app).unwrap())
-    .minimizable(false)
-    .resizable(false)
-    .inner_size(800.0, 400.0)
-    .skip_taskbar(true)
-    .build()
-    .unwrap();
+    let settings_window = app.get_webview_window("settings");
+    if let Some(window) = settings_window {
+        let _ = window.show();
+    } else {
+        app.dialog()
+            .message("Invalid input device")
+            .title("Input Device Error")
+            .kind(MessageDialogKind::Warning)
+            .buttons(MessageDialogButtons::Ok)
+            .blocking_show();
+    }
 }
