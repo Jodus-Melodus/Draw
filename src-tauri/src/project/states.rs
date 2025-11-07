@@ -44,14 +44,17 @@ impl StateMixer {
             out.sink.start_stream();
         }
         let discord_client = Mutex::new(DiscordIpcClient::new("1435880809767637164"));
+        if let Ok(mut client) = discord_client.lock() {
+            if let Err(e) = client.connect() {
+                eprintln!("Failed to connect to Discord: {}", e);
+            }
+        }
 
-        let sm = StateMixer {
+        StateMixer {
             track_list,
             master_out,
             discord_client,
-        };
-        sm.connect_to_discord();
-        sm
+        }
     }
 
     pub fn connect_to_discord(&self) {
