@@ -1,6 +1,6 @@
 import type { TrackInfo, TrackListResponse, TrackUpdate } from "./types.js";
 import { invoke } from "@tauri-apps/api/core";
-import { percentToDb } from "./utils.js";
+import { percentToDb, replaceHyphensWithSpaces, replaceSpacesWithHyphens } from "./utils.js";
 import { listen } from "@tauri-apps/api/event";
 
 var trackList: TrackListResponse;
@@ -63,8 +63,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const channelMeterGain = newChannel.querySelector(".metergain") as HTMLElement;
     const channelFaderGain = newChannel.querySelector(".fadergain") as HTMLElement;
 
-    trackName.textContent = track.name;
-    channelName.textContent = track.name;
+    trackName.textContent = replaceHyphensWithSpaces(track.name);
+    channelName.textContent = replaceHyphensWithSpaces(track.name);
     channelFaderGain.textContent = (100 * track.gain).toFixed(0);
     channelFaderThumb.dataset.dragging = "false";
 
@@ -305,7 +305,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     trackName.addEventListener("blur", () => {
         trackName.contentEditable = "false";
         trackName.classList.remove("editing");
-        const newName = (trackName.textContent ?? track.name).trim();
+        const newName = replaceSpacesWithHyphens((trackName.textContent ?? track.name).trim());
         updateTrack(track.name, { Name: newName });
         updateTrackList();
     });
@@ -327,7 +327,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     channelName.addEventListener("blur", () => {
         channelName.contentEditable = "false";
         channelName.classList.remove("editing");
-        const newName = (channelName.textContent ?? track.name).trim();
+        const newName = replaceHyphensWithSpaces((channelName.textContent ?? track.name).trim());
         updateTrack(track.name, { Name: newName });
         updateTrackList();
     });
