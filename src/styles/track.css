@@ -60,10 +60,10 @@
 .track-mute.active {
   color: var(--track-mute-active-background2);
   text-shadow:
-      0 0 5px var(--track-mute-active-background2),
-      0 0 10px var(--track-mute-active-background2),
-      0 0 20px var(--track-mute-active-background1),
-      0 0 40px var(--track-mute-active-background1);
+    0 0 5px var(--track-mute-active-background2),
+    0 0 10px var(--track-mute-active-background2),
+    0 0 20px var(--track-mute-active-background1),
+    0 0 40px var(--track-mute-active-background1);
 }
 
 .track-solo {
@@ -82,10 +82,10 @@
 .track-solo.active {
   color: var(--track-solo-active-background2);
   text-shadow:
-      0 0 5px var(--track-solo-active-background2),
-      0 0 10px var(--track-solo-active-background2),
-      0 0 20px var(--track-solo-active-background1),
-      0 0 40px var(--track-solo-active-background1);
+    0 0 5px var(--track-solo-active-background2),
+    0 0 10px var(--track-solo-active-background2),
+    0 0 20px var(--track-solo-active-background1),
+    0 0 40px var(--track-solo-active-background1);
 }
 
 .track-record {
@@ -104,10 +104,10 @@
 .track-record.active {
   color: var(--track-record-active-background2);
   text-shadow:
-      0 0 5px var(--track-record-active-background2),
-      0 0 10px var(--track-record-active-background2),
-      0 0 20px var(--track-record-active-background1),
-      0 0 40px var(--track-record-active-background1);
+    0 0 5px var(--track-record-active-background2),
+    0 0 10px var(--track-record-active-background2),
+    0 0 20px var(--track-record-active-background1),
+    0 0 40px var(--track-record-active-background1);
 }
 
 .track-monitor {
@@ -126,8 +126,10 @@
 .track-monitor.active {
   color: var(--track-monitor-active-background2);
   text-shadow:
-      0 0 5px var(--track-monitor-active-background2),
-      0 0 10px var(--track-monitor-active-background2),
-      0 0 20px var(--track-monitor-active-background1),
-      0 0 40px var(--track-monitor-active-background1);
+    0 0 5px var(--track-monitor-active-background2),
+    0 0 10px var(--track-monitor-active-background2),
+    0 0 20px var(--track-monitor-active-background1),
+    0 0 40px var(--track-monitor-active-background1);
 }
+
+/* TODO move text colors to theme file */
