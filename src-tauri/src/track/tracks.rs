@@ -20,7 +20,7 @@ impl InputTrack {
             name: name.to_string(),
             pan: 0.0,
             mute: false,
-            gain: 0.5, 
+            gain: 1.0,
             record: false,
             monitor: false,
         }
