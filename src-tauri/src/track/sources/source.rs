@@ -44,7 +44,7 @@ impl StreamSource {
                         if let Ok(mut rb) = ring_buffer_clone.lock() {
                             let mut left_sum = 0.0;
                             let mut right_sum = 0.0;
-                            let mut channel = false;
+                            let mut channel = true;
                             let count = data.len() as f32;
 
                             for &sample in data {
