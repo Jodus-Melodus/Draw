@@ -73,7 +73,7 @@
   border: 2px #5c5c5c solid;
   position: relative;
   overflow: hidden;
-  height: 100%;
+  height: 98%;
 }
 
 .gain-level {
@@ -118,9 +118,8 @@
   border-radius: 5px;
   width: 100%;
   height: 80%;
-
-  display: flex;
   margin: 5%;
+  display: flex;
   justify-content: center;
 }
 
@@ -129,11 +128,12 @@
   height: 100%;
   width: 10%;
   border-radius: 10px;
+  justify-content: center;
 }
 
 .fader-thumb {
   background: linear-gradient(var(--channel-fader-thumb-background1), var(--channel-fader-thumb-background2));
-  transform: translate(-50%, -50%);
+  transform: translate(-40%);
   height: 40%;
   width: 600%;
   position: relative;

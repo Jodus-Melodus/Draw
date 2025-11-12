@@ -1,6 +1,6 @@
 import type { TrackInfo, TrackListResponse, TrackUpdate } from "./types.js";
 import { invoke } from "@tauri-apps/api/core";
-import { percentToDb } from "./utils.js";
+import { percentToDb, replaceHyphensWithSpaces, replaceSpacesWithHyphens } from "./utils.js";
 import { listen } from "@tauri-apps/api/event";
 
 var trackList: TrackListResponse;
@@ -63,11 +63,10 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const channelMeterGain = newChannel.querySelector(".metergain") as HTMLElement;
     const channelFaderGain = newChannel.querySelector(".fadergain") as HTMLElement;
 
-    trackName.textContent = track.name;
-    channelName.textContent = track.name;
+    trackName.textContent = replaceHyphensWithSpaces(track.name);
+    channelName.textContent = replaceHyphensWithSpaces(track.name);
     channelFaderGain.textContent = (100 * track.gain).toFixed(0);
     channelFaderThumb.dataset.dragging = "false";
-    channelFaderThumb.dataset.offSetY = "0";
 
     trackMuteButton.addEventListener("click", async () => {
         const active = trackMuteButton.classList.contains("active");
@@ -229,9 +228,8 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         }
     });
 
-    channelFaderThumb.addEventListener("mousedown", (e) => {
+    channelFaderThumb.addEventListener("mousedown", () => {
         channelFaderThumb.dataset.dragging = "true";
-        channelFaderThumb.dataset.offsetY = (e.clientY - channelFaderThumb.getBoundingClientRect().top).toString();
         channelFaderThumb.style.cursor = "ns-resize";
     });
 
@@ -243,8 +241,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     window.addEventListener("mousemove", (e) => {
         if (channelFaderThumb.dataset.dragging !== "true") return;
         const faderRect = channelFader.getBoundingClientRect();
-        const offsetY = parseFloat(channelFaderThumb.dataset.offsetY ?? "0");
-        let newY = e.clientY - faderRect.top - offsetY;
+        let newY = e.clientY - faderRect.top;
         newY = Math.max(
             channelFaderThumb.offsetHeight / 2,
             Math.min(newY, faderRect.height - channelFaderThumb.offsetHeight / 2)
@@ -252,7 +249,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
         const faderRange = faderRect.height - channelFaderThumb.offsetHeight;
         let percent = 100 - ((newY - channelFaderThumb.offsetHeight / 2) / faderRange) * 100;
         percent = Math.round(percent);
-        newY = ((100 - percent) / 100) * faderRange + (channelFaderThumb.offsetHeight / 2);
+        newY = (-percent / 100) * faderRange + (channelFaderThumb.offsetHeight * 1.5);
         channelFaderThumb.style.top = `${newY}px`;
         // let gain = percentToGain(percent);
         const gain = Math.pow(10, percentToDb(percent) / 20);
@@ -308,7 +305,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     trackName.addEventListener("blur", () => {
         trackName.contentEditable = "false";
         trackName.classList.remove("editing");
-        const newName = (trackName.textContent ?? track.name).trim();
+        const newName = replaceSpacesWithHyphens((trackName.textContent ?? track.name).trim());
         updateTrack(track.name, { Name: newName });
         updateTrackList();
     });
@@ -330,7 +327,7 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     channelName.addEventListener("blur", () => {
         channelName.contentEditable = "false";
         channelName.classList.remove("editing");
-        const newName = (channelName.textContent ?? track.name).trim();
+        const newName = replaceHyphensWithSpaces((channelName.textContent ?? track.name).trim());
         updateTrack(track.name, { Name: newName });
         updateTrackList();
     });

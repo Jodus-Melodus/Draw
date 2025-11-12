@@ -11,3 +11,15 @@ export function percentToDb(p: number) {
     const maxDb = 0;   // 0 dB = full volume
     return minDb + (maxDb - minDb) * (p / 100);
 }
+
+export function isValidTrackName(str: string): boolean {
+    return /^[A-Za-z0-9_-]+$/.test(str);
+}
+
+export function replaceHyphensWithSpaces(str: string): string {
+    return str.replace("-", " ");
+}
+
+export function replaceSpacesWithHyphens(str: string): string {
+    return str.replace(" ", "-");
+}
