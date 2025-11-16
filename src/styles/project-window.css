@@ -2,7 +2,6 @@
     width: 100vw;
     height: 60vh;
     display: flex;
-    flex-direction: column;
     padding: 5px;
 }
 
@@ -13,7 +12,18 @@
     padding-right: 15px;
     border-radius: 5px;
 
-    /* Scrolling */
+    overflow: hidden;
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+.clip-list {
+    background-color: var(--tracklist-background);
+    width: 88%;
+    height: 100%;
+    padding-right: 15px;
+    border-radius: 5px;
+
     overflow: hidden;
     overflow-y: scroll;
     box-sizing: border-box;

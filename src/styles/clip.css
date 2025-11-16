@@ -1,0 +1,31 @@
+.clip {
+    background-color: #64064d;
+    width: 100%;
+    height: 12%;
+    border-radius: 5px;
+    margin: 2px;
+    padding: 5px;
+    margin-bottom: 5px;
+    width: max-content;
+}
+
+.clip-name {
+    color: #ffffff;
+    font-size: 0.7rem;
+}
+
+.waveform {
+    height: 80%;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    background: #5f0259;
+}
+
+.wave {
+    background-color: #d10a9f;
+    width: 2px;
+    height: 100%;
+    border-radius: 2px;
+}

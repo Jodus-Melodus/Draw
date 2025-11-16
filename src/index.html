@@ -13,6 +13,7 @@
   <link rel='stylesheet' type='text/css' media='screen' href='styles/channel-strip.css'>
   <link rel='stylesheet' type='text/css' media='screen' href='styles/track.css'>
   <link rel='stylesheet' type='text/css' media='screen' href='styles/project-window.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='styles/clip.css'>
 </head>
 
 <template id="track-template">
@@ -24,6 +25,13 @@
       <button class="track-record" title="Record">•</button>
       <button class="track-monitor" title="Monitor">♪</button>
     </div>
+  </div>
+</template>
+
+<template id="clip-template">
+  <div class="clip">
+    <div class="clip-name"></div>
+    <div class="waveform"></div>
   </div>
 </template>
 
@@ -68,11 +76,12 @@
 
 <body>
   <!-- project-window -->
+  <div class="project-buttons">
+    <button class="add-track">+</button>
+  </div>
   <div class="project-window" id="project-window">
-    <div class="project-buttons">
-      <button class="add-track">+</button>
-    </div>
     <div id="track-list" class="track-list"></div>
+    <div id="clip-list" class="clip-list"></div>
   </div>
 
   <!-- mix-console -->
