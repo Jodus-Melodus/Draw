@@ -41,9 +41,10 @@ export async function addEmptyTrack() {
     }
 }
 
-export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemplate: HTMLTemplateElement, track: TrackInfo, trackContainer: HTMLElement, channelTrackContainer: HTMLElement) {
+export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemplate: HTMLTemplateElement, clipTemplate: HTMLTemplateElement, track: TrackInfo, trackContainer: HTMLElement, channelTrackContainer: HTMLElement, clipContainer: HTMLElement) {
     const newTrack = trackTemplate.content.cloneNode(true) as DocumentFragment;
     const newChannel = channelTrackTemplate.content.cloneNode(true) as DocumentFragment;
+    const newClip = clipTemplate.content.cloneNode(true) as DocumentFragment;
 
     const trackName = newTrack.querySelector(".track-name") as HTMLSpanElement;
     const trackMuteButton = newTrack.querySelector(".track-mute") as HTMLButtonElement;
@@ -63,8 +64,12 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
     const channelMeterGain = newChannel.querySelector(".metergain") as HTMLElement;
     const channelFaderGain = newChannel.querySelector(".fadergain") as HTMLElement;
 
+    const clipName = newClip.querySelector(".clip-name") as HTMLElement;
+    const clipWaveform = newClip.querySelector(".waveform") as HTMLElement;
+
     trackName.textContent = replaceHyphensWithSpaces(track.name);
     channelName.textContent = replaceHyphensWithSpaces(track.name);
+    clipName.textContent = replaceHyphensWithSpaces(track.name);
     channelFaderGain.textContent = (100 * track.gain).toFixed(0);
     channelFaderThumb.dataset.dragging = "false";
 
@@ -293,6 +298,11 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
 
         let average = (left + right) / 2;
         channelMeterGain.textContent = `${(average * 100).toFixed(0)}`;
+
+        const newWave = document.createElement("div");
+        newWave.className = "wave";
+        newWave.style.height = `${average * 95}%`;
+        clipWaveform.appendChild(newWave);
     });
 
     trackName.addEventListener("dblclick", () => {
@@ -341,21 +351,25 @@ export function addNewTrack(trackTemplate: HTMLTemplateElement, channelTrackTemp
 
     trackContainer.appendChild(newTrack);
     channelTrackContainer.appendChild(newChannel);
+    clipContainer.appendChild(newClip);
 }
 
 export async function updateTrackList() {
     const channelTrackContainer = document.getElementById("mix-console");
     const trackContainer = document.getElementById("track-list");
+    const clipContainer = document.getElementById("clip-list");
     const channelTrackTemplate = document.getElementById("channel-track-template") as HTMLTemplateElement;
     const trackTemplate = document.getElementById("track-template") as HTMLTemplateElement;
+    const clipTemplate = document.getElementById("clip-template") as HTMLTemplateElement;
 
-    if (channelTrackContainer && channelTrackTemplate && trackContainer && trackTemplate) {
+    if (channelTrackContainer && channelTrackTemplate && trackContainer && trackTemplate && clipContainer && clipTemplate) {
         channelTrackContainer.replaceChildren();
         trackContainer.replaceChildren();
+        clipContainer.replaceChildren();
         trackList = await getTrackList();
 
         trackList.tracks.forEach(track => {
-            addNewTrack(trackTemplate, channelTrackTemplate, track, trackContainer, channelTrackContainer);
+            addNewTrack(trackTemplate, channelTrackTemplate, clipTemplate, track, trackContainer, channelTrackContainer, clipContainer);
         });
     }
 }
